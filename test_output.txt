@@ -1,0 +1,22 @@
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[01000]: Warning: 1265 Data truncated for column 'estado' at row 1 (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: stitch, SQL: insert into `ventas` (`user_id`, `email`, `nombre_cliente`, `telefono`, `direccion`, `ciudad`, `total_venta`, `metodo_pago`, `estado`, `tipo_envio`, `costo_envio`, `updated_at`, `created_at`) values (1, admin@stitchco.com.ve, Admin, 123456, Test, Test, 100.5, transferencia, pending, retiro_tienda, 0, 2026-03-24 15:35:46, 2026-03-24 15:35:46))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:838
+    834▕             $exceptionType = $this->isUniqueConstraintError($e)
+    835▕                 ? UniqueConstraintViolationException::class
+    836▕                 : QueryException::class;
+    837▕ 
+  ➜ 838▕             throw new $exceptionType(
+    839▕                 $this->getNameWithReadWriteType(),
+    840▕                 $query,
+    841▕                 $this->prepareBindings($bindings),
+    842▕                 $e,
+
+  1   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:53
+      PDOException::("SQLSTATE[01000]: Warning: 1265 Data truncated for column 'estado' at row 1")
+
+  2   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:53
+      PDOStatement::execute()
+

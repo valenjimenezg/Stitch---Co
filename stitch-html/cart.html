@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Carrito de Compras - Stitch &amp; Co</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b52ff",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#160f23",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Navigation Header -->
+<header class="sticky top-0 z-40 w-full bg-white dark:bg-background-dark/95 border-b border-primary/10 px-4 md:px-10 lg:px-40 py-3 flex items-center justify-between whitespace-nowrap">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">grid_view</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Stitch &amp; Co</h2>
+</div>
+<div class="hidden lg:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Telas</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Hilos</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Agujas</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Patrones</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-primary/5 dark:bg-primary/10 rounded-lg px-3 py-1.5 border border-primary/10">
+<span class="material-symbols-outlined text-primary/60 text-xl">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 placeholder:text-slate-400" placeholder="Buscar insumos..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-primary/10 rounded-full transition-colors relative">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">favorite</span>
+</button>
+<button class="p-2 hover:bg-primary/10 rounded-full transition-colors relative">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">shopping_bag</span>
+<span class="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">3</span>
+</button>
+<div class="size-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden ml-2">
+<img alt="Usuario" class="w-full h-full object-cover" data-alt="Avatar de perfil del usuario" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvCuI62l-I4OwKXN44zelrksIP-FRUpASwYxwAL7oSlPX-bSYOX7eYlyWqmDY5Y4IDz9FW2FqlNHWULln3a3Awr5C6wywEgWCnX7Q0z_6AsoQrI4S-ynY5CTs-AqfDHh8mcp7yF9BeZcG2gGeKNEKCscPzPSpd8aZ-evjpyMORLMkWfPUsZeC4xO4Biy-pncERnPmAwn84V4jElbRBFRUGoCKbkzTo4jdOIlf6TP042KPoPynJjYJrE9AKnPmS6tK6p9QrviiS3KYK"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="max-w-7xl mx-auto w-full px-4 lg:px-10 py-8">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 mb-8 text-sm font-medium">
+<a class="text-primary hover:underline" href="#">Inicio</a>
+<span class="material-symbols-outlined text-base text-slate-400">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-100">Carrito de compras</span>
+</nav>
+<h1 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-8 tracking-tight">Tu Carrito de Compras</h1>
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Left Column: Cart Items (70%) -->
+<div class="lg:w-[70%] space-y-4">
+<!-- Item 1 -->
+<div class="bg-white dark:bg-background-dark/40 border border-primary/10 rounded-xl p-4 flex gap-4 items-center shadow-sm">
+<div class="h-24 w-24 bg-primary/5 rounded-lg flex-shrink-0 overflow-hidden border border-primary/10">
+<img alt="Tela Lino" class="w-full h-full object-cover" data-alt="Rollo de tela de lino color lavanda" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRdBF496FtCghXR9sjhhjTPvvB7mWZ_jbu4qiMGa897tyuX43tDS4hwS2pZsLxYQ6rqxgXgIQfMBVAjY4u2XASHzodNEpX69_xFtSxSwIlG33tj_E91VUpkL4dMOQVro3UDW6ZcgF1ITQccUfFa7kvwheiQ5OyM9KMrKmH_b6HXDnLWArl9zccnBmYWjXlazI9mBKtQRzWdYOFIOEGT_4BHvqY4GBiN9vPpq2rEgmdtzQpLCwUEs5wl_wu7tIo4zYma2KN66gcZ1W4"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Tela de Lino Premium</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Color: Lavanda • Ref: 48292</p>
+<span class="text-sm font-semibold text-primary">€24.00 / metro</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center border border-primary/20 rounded-lg overflow-hidden bg-background-light dark:bg-background-dark/60">
+<button class="px-3 py-1 hover:bg-primary/10 transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 text-sm font-bold">1</span>
+<button class="px-3 py-1 hover:bg-primary/10 transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<div class="w-24 text-right">
+<p class="text-sm font-bold text-slate-900 dark:text-slate-100">€24.00</p>
+</div>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-white dark:bg-background-dark/40 border border-primary/10 rounded-xl p-4 flex gap-4 items-center shadow-sm">
+<div class="h-24 w-24 bg-primary/5 rounded-lg flex-shrink-0 overflow-hidden border border-primary/10">
+<img alt="Hilos Seda" class="w-full h-full object-cover" data-alt="Set de hilos de seda de colores brillantes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjtyKnkH-Qva2ZykGAE1ggZe7xmsjYRqoL-XEYij75XWh_4nqAjNowRcbvdmHtbm034N6aBMLm_4agNMERsSdB3RvY6G4C4FSlb3LP122kgbdZdydsH77dVPIpjvQNhtPfqU_gsHfI3YAHZu8TbPgWCVya_F7Z2eXszf9BGwFyhvTCZjlVWUpQqIe34JNEGt9R7wM9XdI56evTE6XTPBpQCS-Oge8p5oPYRR3l4zt43nuOz1uU9zHaxsv9drL9vcBwVz6lza4cdU6A"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Hilos de Seda Natural (Set 5)</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Variante: Pastel Mix • Ref: 10294</p>
+<span class="text-sm font-semibold text-primary">€15.50</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center border border-primary/20 rounded-lg overflow-hidden bg-background-light dark:bg-background-dark/60">
+<button class="px-3 py-1 hover:bg-primary/10 transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 text-sm font-bold">2</span>
+<button class="px-3 py-1 hover:bg-primary/10 transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<div class="w-24 text-right">
+<p class="text-sm font-bold text-slate-900 dark:text-slate-100">€31.00</p>
+</div>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-white dark:bg-background-dark/40 border border-primary/10 rounded-xl p-4 flex gap-4 items-center shadow-sm">
+<div class="h-24 w-24 bg-primary/5 rounded-lg flex-shrink-0 overflow-hidden border border-primary/10">
+<img alt="Agujas" class="w-full h-full object-cover" data-alt="Caja de agujas de coser profesionales" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqJVU5irEbkwjTFpyXpUTlYoNwYp-ZmQEOwKmysYprDfgqhsOU7zrRn5tuEotwtEDyB7gP2ImDUzI8r0s8mf_VmBVSixJxyBK4VelGAN2yJ1wSmcHMTpE7NqGXPUyxbJBL3Ej6jPtE3JmBGyOHjN_vrmzSluFtnhtaIjbJSJV11JjNQAvGB9Mpy5sLnqcle3A1i3PmA1WRA_kbFRqW54NnZaWIBjFWqkgmK0OTza0nJEnIGLhSlWZzcJDH-oUoTWePv1ESh82eaUuo"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Agujas Bordado Oro</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Tamaño: Mixto (3-9) • Ref: 99201</p>
+<span class="text-sm font-semibold text-primary">€8.00</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center border border-primary/20 rounded-lg overflow-hidden bg-background-light dark:bg-background-dark/60">
+<button class="px-3 py-1 hover:bg-primary/10 transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-3 text-sm font-bold">1</span>
+<button class="px-3 py-1 hover:bg-primary/10 transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<div class="w-24 text-right">
+<p class="text-sm font-bold text-slate-900 dark:text-slate-100">€8.00</p>
+</div>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Summary (30%) -->
+<div class="lg:w-[30%]">
+<div class="bg-white dark:bg-background-dark/40 border border-primary/20 rounded-xl p-6 shadow-xl sticky top-24">
+<h2 class="text-xl font-bold mb-6 text-slate-900 dark:text-slate-100">Resumen del pedido</h2>
+<div class="space-y-4 mb-6">
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Subtotal (4 artículos)</span>
+<span>€63.00</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Envío</span>
+<span>€5.00</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Impuestos (21%)</span>
+<span>€13.23</span>
+</div>
+<div class="pt-4 border-t border-primary/10 flex justify-between items-center">
+<span class="text-lg font-bold text-slate-900 dark:text-slate-100">Total</span>
+<span class="text-2xl font-black text-primary">€81.23</span>
+</div>
+</div>
+<button class="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2" onclick="document.getElementById('checkout-modal').classList.remove('hidden')">
+                            Proceder al pago
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<div class="mt-6 flex flex-col gap-3">
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-green-500 text-sm">verified_user</span>
+                                Pago 100% seguro y encriptado
+                            </div>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-primary/60 text-sm">local_shipping</span>
+                                Entrega estimada: 48-72 horas
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Checkout Modal Overlay (Hidden by default, shown for demo purpose or via JS) -->
+<!-- Remove 'hidden' class to see the modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4 hidden" id="checkout-modal">
+<div class="bg-white dark:bg-background-dark w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative">
+<button class="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-primary/10 rounded-full transition-colors" onclick="document.getElementById('checkout-modal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="p-8 lg:p-12">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-8 flex items-center gap-3">
+<span class="h-8 w-8 bg-primary/20 text-primary rounded-full flex items-center justify-center text-sm">1</span>
+                        Información de Pago y Envío
+                    </h2>
+<div class="grid lg:grid-cols-2 gap-12">
+<!-- Column 1: Shipping Form -->
+<div class="space-y-6">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Dirección de Entrega</h3>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium mb-1.5 opacity-80">Nombre Completo</label>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg p-2.5 focus:ring-primary focus:border-primary" placeholder="Ej: Ana García" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5 opacity-80">Dirección</label>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg p-2.5 focus:ring-primary focus:border-primary" placeholder="Calle, Número, Piso..." type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium mb-1.5 opacity-80">Ciudad</label>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg p-2.5 focus:ring-primary focus:border-primary" placeholder="Madrid" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5 opacity-80">Código Postal</label>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-lg p-2.5 focus:ring-primary focus:border-primary" placeholder="28001" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: Payment Methods -->
+<div class="space-y-6">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Método de Pago</h3>
+<div class="space-y-3">
+<!-- Option 1 Card -->
+<label class="flex items-center p-4 border-2 border-primary bg-primary/5 rounded-xl cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary mr-4" name="payment" type="radio"/>
+<div class="flex-grow flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">credit_card</span>
+<span class="font-bold">Tarjeta Bancaria</span>
+</div>
+<div class="flex gap-1 opacity-60">
+<span class="material-symbols-outlined text-sm">payment</span>
+<span class="material-symbols-outlined text-sm">contactless</span>
+</div>
+</div>
+</label>
+<!-- Option 2 PayPal -->
+<label class="flex items-center p-4 border border-slate-200 dark:border-primary/20 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<input class="text-primary focus:ring-primary mr-4" name="payment" type="radio"/>
+<div class="flex-grow flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-500">account_balance_wallet</span>
+<span class="font-bold">PayPal</span>
+</div>
+</label>
+<!-- Option 3 Transfer -->
+<label class="flex items-center p-4 border border-slate-200 dark:border-primary/20 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<input class="text-primary focus:ring-primary mr-4" name="payment" type="radio"/>
+<div class="flex-grow flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-500">account_balance</span>
+<span class="font-bold">Transferencia Bancaria</span>
+</div>
+</label>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-100 dark:border-primary/10">
+<div class="flex justify-between items-center mb-4">
+<span class="text-slate-500">Total a pagar</span>
+<span class="text-2xl font-black text-primary">€81.23</span>
+</div>
+<button class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-transform active:scale-95">
+                                    Finalizar compra
+                                </button>
+<p class="text-[10px] text-center text-slate-400 mt-4">
+                                    Al hacer clic, aceptas nuestros <a class="underline" href="#">Términos y Condiciones</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-auto border-t border-primary/10 bg-white dark:bg-background-dark py-10 px-4 md:px-10 lg:px-40">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-3 text-primary mb-4">
+<span class="material-symbols-outlined">grid_view</span>
+<h2 class="text-slate-900 dark:text-slate-100 font-bold">Stitch &amp; Co</h2>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400">Inspiración y calidad para tus proyectos de costura desde 1995.</p>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 mb-4">Tienda</h4>
+<ul class="text-sm space-y-2 text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Nuevo</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Best Sellers</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Ofertas</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 mb-4">Soporte</h4>
+<ul class="text-sm space-y-2 text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Envíos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Devoluciones</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 mb-4">Newsletter</h4>
+<div class="flex gap-2">
+<input class="bg-primary/5 border-primary/10 rounded-lg p-2 text-sm w-full" placeholder="Email" type="email"/>
+<button class="bg-primary text-white px-4 rounded-lg text-sm">OK</button>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

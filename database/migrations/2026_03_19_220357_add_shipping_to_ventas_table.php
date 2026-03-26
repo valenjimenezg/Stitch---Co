@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->string('tipo_envio')->default('retiro_tienda')->after('metodo_pago');
+            $table->decimal('costo_envio', 10, 2)->default(0)->after('tipo_envio');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->dropColumn(['tipo_envio', 'costo_envio']);
+        });
+    }
+};

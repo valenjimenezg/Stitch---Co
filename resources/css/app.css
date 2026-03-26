@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@import './variables.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Paleta Stitch & Co */
+    --color-primary:          #8b52ff;
+    --color-primary-dark:     #6d3de0;
+    --color-background-light: #f6f5f8;
+    --color-background-dark:  #160f23;
+}

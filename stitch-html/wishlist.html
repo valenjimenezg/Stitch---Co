@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch &amp; Co - Mi Lista de Deseos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#590df2",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#161022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen flex-col">
+<!-- Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between gap-8">
+<!-- Logo -->
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-2xl">architecture</span>
+</div>
+<h1 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">Stitch &amp; Co</h1>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 transition-colors" href="#">Telas</a>
+<a class="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 transition-colors" href="#">Hilos</a>
+<a class="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 transition-colors" href="#">Agujas</a>
+<a class="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 transition-colors" href="#">Patrones</a>
+<a class="text-sm font-semibold text-primary dark:text-primary border-b-2 border-primary pb-1" href="#">Mi Lista</a>
+</nav>
+<!-- Search & Actions -->
+<div class="flex flex-1 items-center justify-end gap-4 max-w-md">
+<div class="relative hidden sm:block w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full rounded-lg border-none bg-primary/5 py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 dark:bg-primary/10 dark:text-white" placeholder="Buscar suministros..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="relative flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-slate-700 hover:bg-primary/10 dark:bg-primary/10 dark:text-slate-200">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">3</span>
+</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-slate-700 hover:bg-primary/10 dark:bg-primary/10 dark:text-slate-200">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<!-- Breadcrumbs -->
+<nav class="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary" href="#">Inicio</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-medium text-slate-900 dark:text-white">Mi Lista de Deseos</span>
+</nav>
+<!-- Page Header -->
+<div class="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+<div>
+<h2 class="text-4xl font-black tracking-tight text-slate-900 dark:text-white">Mi Lista de Deseos</h2>
+<p class="mt-2 text-slate-600 dark:text-slate-400">Tienes <span class="font-bold text-primary">6 artículos</span> guardados para tu próximo proyecto.</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 hover:bg-primary/5 dark:bg-background-dark dark:text-slate-200">
+<span class="material-symbols-outlined text-lg">delete_sweep</span>
+                        Limpiar lista
+                    </button>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90">
+<span class="material-symbols-outlined text-lg">add_shopping_cart</span>
+                        Agregar todo al carrito
+                    </button>
+</div>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+<!-- Product Card 1 -->
+<div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white dark:bg-background-dark/40">
+<div class="aspect-square w-full overflow-hidden bg-slate-100">
+<div class="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" data-alt="Luxury organic linen fabric rolls in neutral tones" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1LiULhE-GHRPfCDSH4j6UIE70wcO5icncleAOGyLOouzNDY-HvQpqC0QV5l9xD9bAft0hL2XCnQzl_QXjVVDHDbDiHfh6v-sB6TUyn2rwJeZGeBcS_vhGMEOlTP64p86yfysXaOP70PgjBjZShwSWQcYZ9Bnl1d1rHemDxxxgWojtQiJ1GRj4UulWaO1lFMQ8NDJX4YoA7YWXfBJZP4PT5qLLZ0RnEfL0PmftKSYpUH0E8DfxvK-Hsn6Rc8pYSv_DlD3xGcHZ6mYO')"></div>
+<button class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm hover:bg-white dark:bg-background-dark/90">
+<span class="material-symbols-outlined filled-icon text-xl">favorite</span>
+</button>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">Lino</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Tela de Lino Premium</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Beige Natural - 100% Orgánico</p>
+<div class="mt-auto pt-4">
+<div class="flex items-center justify-between">
+<span class="text-lg font-black text-slate-900 dark:text-white">$24.90 <small class="font-normal text-slate-500">/m</small></span>
+<span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">EN STOCK</span>
+</div>
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">shopping_basket</span>
+                                Agregar al carrito
+                            </button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white dark:bg-background-dark/40">
+<div class="aspect-square w-full overflow-hidden bg-slate-100">
+<div class="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" data-alt="Assorted high quality silk sewing threads in vibrant colors" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAY9j1NzWVd8u39ndor-YX92md-m-GxrEU6MCG0TWWejzlVO0TCsI8F2gJuJonWOV01JOjBr_atV6lWRIOG391XuSxFC5DNZtMrgbztJBTJwCdzAQ-xOSFwSgZUlI40lQDrsJiWPG7STSCIM3vobk2XgJKcJTr8jHCDw9lpLZKm4dt20FSOr6WnbJWUzfRYOCGVP-cgeHk6l-emFB0OqkdsHs4IrgFbJjneaIJiUY3VDKv9dZbsM84SvNW99sbmIM3VypAiM5vgJH0f')"></div>
+<button class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm hover:bg-white dark:bg-background-dark/90">
+<span class="material-symbols-outlined filled-icon text-xl">favorite</span>
+</button>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">Mercería</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Set de Hilos de Seda</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Colección "Amanecer" - 12 colores</p>
+<div class="mt-auto pt-4">
+<div class="flex items-center justify-between">
+<span class="text-lg font-black text-slate-900 dark:text-white">$45.00</span>
+<span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">EN STOCK</span>
+</div>
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">shopping_basket</span>
+                                Agregar al carrito
+                            </button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white dark:bg-background-dark/40">
+<div class="aspect-square w-full overflow-hidden bg-slate-100">
+<div class="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" data-alt="Professional tailoring scissors on a clean workspace" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDeYRrdlpk_daXQ65eTElg1EX2-XF7TGzvjovbBnTrtE77Ej3k_diPmaROG5THI2SFJ3UzGcnrGLUIydPoeD0zV07AjvDeVFtlxKiArVRlc-PMZc8a_t9d5dj9WKFFLZMR7iM4Iz996SARORkX1tS6ithgePGNnH15CRSBSQ5dOAa132qvG60HFnV8_ejUz-_Lm8XdQ1CIFJhoE2ztcuelsmbBqe2xj-XSdgCyPG1senWYG8Ian-7qKEd_uPcqC1aiSILMU-87Z_cC6')"></div>
+<button class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm hover:bg-white dark:bg-background-dark/90">
+<span class="material-symbols-outlined filled-icon text-xl">favorite</span>
+</button>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">Herramientas</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Tijeras de Sastrería</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Acero Inoxidable - 10 pulgadas</p>
+<div class="mt-auto pt-4">
+<div class="flex items-center justify-between">
+<span class="text-lg font-black text-slate-900 dark:text-white">$32.50</span>
+<span class="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">POCO STOCK</span>
+</div>
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">shopping_basket</span>
+                                Agregar al carrito
+                            </button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white dark:bg-background-dark/40">
+<div class="aspect-square w-full overflow-hidden bg-slate-100">
+<div class="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" data-alt="Antique wooden sewing box with various notions" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDjAcXY_O2OmBFmg_w_RECGjbdM6jJASSTHTrzS8QMYXMOmHoMVuGZAva5woLMbP6RhpBD-eBR21YgzvT-ZilFQOPK4Njl3ki66nO7TR2hV8kWrpKZMFBGKLVj-aEHpKYOovey5RVUiR6GrcKxG_gry7ycjuyZw4hNgEJBYwQCI1FL8nnRbr1oaoJXKbnTjjyoREnSgM3NqOC7cfUveNrx4LGUfLmqP2XuihLxs6k-zBwKOJnGX7aFLzUZS0pUod9ii-zXzLbtBwvEL')"></div>
+<button class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm hover:bg-white dark:bg-background-dark/90">
+<span class="material-symbols-outlined filled-icon text-xl">favorite</span>
+</button>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">Accesorios</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Alfiletero de Terciopelo</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Diseño Vintage - Color Esmeralda</p>
+<div class="mt-auto pt-4">
+<div class="flex items-center justify-between">
+<span class="text-lg font-black text-slate-900 dark:text-white">$18.00</span>
+<span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">EN STOCK</span>
+</div>
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">shopping_basket</span>
+                                Agregar al carrito
+                            </button>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white dark:bg-background-dark/40">
+<div class="aspect-square w-full overflow-hidden bg-slate-100">
+<div class="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" data-alt="Vintage measuring tape on rustic wood background" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvxkqxogtIPq_NZ6aqUbrfxyDaMPEUp4r3fm3FTJBJUDFCu1wo73glRVJlPXobW4xDC8Sq_zVNaobHFQvWPc4I8w2fbOnFgiHDlmg4eTvyXP5I8_BnpVz1N3JpsVexyE4FPOnUJFCFC6C_sOegWWI6LfQcC6liCc9Z-bP7oN_hoUnYJ4Wl8B-WShzAIJUlTRw_mxyamRsdlK77lIkrgcwt0OlxqC73MJO3PjdVL6Ch7CGdWIQCpGffWYWcanhqNXACr6l8BVLDxIRm')"></div>
+<button class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm hover:bg-white dark:bg-background-dark/90">
+<span class="material-symbols-outlined filled-icon text-xl">favorite</span>
+</button>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">Accesorios</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Cinta Métrica Vintage</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Retráctil - Estuche de cuero</p>
+<div class="mt-auto pt-4">
+<div class="flex items-center justify-between">
+<span class="text-lg font-black text-slate-900 dark:text-white">$12.00</span>
+<span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">EN STOCK</span>
+</div>
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">shopping_basket</span>
+                                Agregar al carrito
+                            </button>
+</div>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white dark:bg-background-dark/40 opacity-70">
+<div class="aspect-square w-full overflow-hidden bg-slate-100 grayscale">
+<div class="h-full w-full bg-cover bg-center" data-alt="Modern sewing pattern envelopes on white table" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDQssu1GpsWwMEm0LpPIzkKzzNpDfPUzlXBPj75MEFz23EzWnHgf9gkoQ8c4yF7Lz1d-iNfoC0sNwRv2b2c2JYB5FvKtvbsibUkcT8L5qzapUdoeKI-b_mUjnX-nOVgDv11Ft6dGAFuNor19KUA6bBVg4U6_Swu30Y8KiSGFacD4ELbd2V6E5OSp1CJpnLguIfH5IL3gjXDO9nz5kL_zW2_aHvuuQRLcS99nkir7FdflFUxgJb4XkYth6ru0rXiPBVbdjHOml0bgwUL')"></div>
+<div class="absolute inset-0 flex items-center justify-center bg-black/20">
+<span class="rounded bg-white px-3 py-1 text-xs font-black uppercase text-slate-900">Agotado</span>
+</div>
+<button class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm hover:bg-white dark:bg-background-dark/90">
+<span class="material-symbols-outlined filled-icon text-xl">favorite</span>
+</button>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">Patrones</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white line-through">Patrón Vestido "Midi"</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Diseño Exclusivo - Nivel Medio</p>
+<div class="mt-auto pt-4">
+<div class="flex items-center justify-between">
+<span class="text-lg font-black text-slate-900 dark:text-white">$15.00</span>
+<span class="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-400">SIN STOCK</span>
+</div>
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-slate-100 py-2.5 text-sm font-bold text-slate-400 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-lg">notifications</span>
+                                Avisarme
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-primary/10 bg-white py-12 dark:bg-background-dark">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+<div class="col-span-1 md:col-span-2">
+<div class="flex items-center gap-3">
+<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">architecture</span>
+</div>
+<h2 class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Stitch &amp; Co</h2>
+</div>
+<p class="mt-4 max-w-xs text-sm leading-relaxed text-slate-600 dark:text-slate-400">Elegancia y calidad en cada puntada. Tu destino premium para suministros de costura y diseño de moda.</p>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Explorar</h4>
+<ul class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Nuevas Telas</a></li>
+<li><a class="hover:text-primary" href="#">Best Sellers</a></li>
+<li><a class="hover:text-primary" href="#">Cursos Online</a></li>
+<li><a class="hover:text-primary" href="#">Showroom</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Ayuda</h4>
+<ul class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Envíos y Devoluciones</a></li>
+<li><a class="hover:text-primary" href="#">Guía de Tallas</a></li>
+<li><a class="hover:text-primary" href="#">Contacto</a></li>
+<li><a class="hover:text-primary" href="#">FAQ</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 border-t border-primary/5 pt-8 text-center text-xs text-slate-500">
+<p>© 2024 Stitch &amp; Co Haberdashery. Todos los derechos reservados.</p>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

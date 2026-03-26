@@ -1,0 +1,31 @@
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.2.12
+Configuration: C:\xampp\htdocs\stitch-and-co\phpunit.xml
+
+....F.                                                              6 / 6 (100%)
+
+Time: 00:03.902, Memory: 48.00 MB
+
+There was 1 failure:
+
+1) Tests\Feature\StockManagementTest::test_checkout_fails_if_insufficient_stock
+Failed asserting that two strings are equal.
+
+The following errors occurred during the last request:
+
+Agotado: No hay suficiente stock para Lana (Rojo).
+
+--- Expected
++++ Actual
+@@ @@
+-'http://localhost/carrito'
++'http://localhost'
+
+C:\xampp\htdocs\stitch-and-co\vendor\laravel\framework\src\Illuminate\Testing\TestResponseAssert.php:45
+C:\xampp\htdocs\stitch-and-co\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:431
+C:\xampp\htdocs\stitch-and-co\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:205
+C:\xampp\htdocs\stitch-and-co\tests\Feature\StockManagementTest.php:72
+
+FAILURES!
+Tests: 6, Assertions: 9, Failures: 1.

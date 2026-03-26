@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch &amp; Co - Product Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a4fff",
+                        "secondary": "#5b13ec",
+                        "background": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "text-main": "#333333",
+                        "text-muted": "#666666",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --primary: #8a4fff;
+        }
+        body {
+            color: #333333;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body class="font-display min-h-screen selection:bg-primary/20">
+<header class="border-b border-slate-100 sticky top-0 bg-white/90 backdrop-blur-md z-50 px-4 md:px-10 lg:px-40 py-4">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between gap-8">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">architecture</span>
+</div>
+<h1 class="text-xl font-extrabold tracking-tight text-slate-900">Stitch &amp; <span class="text-primary">Co</span></h1>
+</div>
+<div class="hidden lg:flex items-center gap-8">
+<a class="text-sm font-semibold text-slate-600 hover:text-primary transition-colors" href="#">Telas</a>
+<a class="text-sm font-semibold text-primary" href="#">Hilos</a>
+<a class="text-sm font-semibold text-slate-600 hover:text-primary transition-colors" href="#">Agujas</a>
+<a class="text-sm font-semibold text-slate-600 hover:text-primary transition-colors" href="#">Patrones</a>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-1 justify-end">
+<div class="hidden md:flex flex-1 max-w-xs relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-slate-50 border border-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all" placeholder="Buscar hilos, telas..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2.5 hover:bg-slate-50 text-slate-600 rounded-xl transition-colors relative">
+<span class="material-symbols-outlined">favorite</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-white"></span>
+</button>
+<button class="p-2.5 hover:bg-slate-50 text-slate-600 rounded-xl transition-colors relative">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="absolute top-1.5 right-1.5 size-4 bg-primary text-[10px] text-white flex items-center justify-center rounded-full font-bold">2</span>
+</button>
+<div class="w-9 h-9 rounded-full border-2 border-slate-50 ml-2 overflow-hidden cursor-pointer hover:border-primary/30 transition-colors">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3WDV4UQqrapNKuoQjI05c-mv0_hXicPYAIJVvzTp2SWxET19aHduVVzb6x7sSCbVBvNyzlHqcCdAGdzeBIExiNHnHviNRFzL-6x4bg1Bvmf-yeGEHrFh6WVtqNSDJS4LyjQGI_z-OdqtjgFz-uwVuTVAB_m1QVM08OdOB4LHDfEOE7WKm_uYb_zLsFoh8b86yXcrhxOzVu5m8cnAOYnHSoCWe6egFNhAKw2JBgfEmQYrO41uXDA86fkdN9yqrx61lRGpxc6S5DJ-f"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-4 md:px-10 lg:px-40 py-10">
+<nav class="flex items-center gap-2 text-sm text-slate-400 mb-10">
+<a class="hover:text-primary transition-colors" href="#">Inicio</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Materiales</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Hilos</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 font-semibold">Hilo de Algodón Premium</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+<div class="space-y-6">
+<div class="aspect-square w-full rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm">
+<img alt="Product Image" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLrmSh0aOJN61TFwbKnlML5LwvNJDc5Qrw2CC5ee-C6aW9GJlAfBtcNaDjD_-fVyg_ktDq-HlP1XBCEnbY7MVohCfME-3Nv-3e2t-1VxeijWwBIlUvPyYcTfZUcbFpePiSO2zLoEWH89tvERKAocH9mIIA_uwukpSbj-leUCSXLuGCGF5wpX2cy9ZODTV8qtWoON5y_w3STx9SUH21P-Knwnp9u9ZM1mFKwItf2laEaxT6SnNLGerAUKh4EtZaLcxRNyg9PHfSHfit"/>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="aspect-square rounded-xl overflow-hidden border-2 border-primary cursor-pointer shadow-md">
+<img alt="Thumbnail 1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq1bilrVdxFziFu70fgbpEXXAdGWuWr1P_DZuPEI9UN7qOUCD7dB2c4w8TVDSlGQzesvriQfuPEmYILMkuN3c5NmQpn4NkO4_f13x4v0XpbdDjtPNUKPdlZbOwubJaedhxuuRboN_46FMpUuest0OXqc1cxD7qKxCFzN3Poh_Z4yJe60dfkvwAABoPdYwixfGZDaLz45ZPOLSsN0JTbM_U87ee39_FvPmtgVJ09rYsS-0AlEMY9qfnR7DrNJIPqVKWuVjCF9Au-5cF"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden border border-slate-100 cursor-pointer hover:border-primary/50 transition-all">
+<img alt="Thumbnail 2" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcUWgnw_6UAeSd6-i7TGOdt-pC2y3TrM1wyE8Nc0fEYT2VP15iO86OJlcMEYUk9_eSzy5e---3k2dTF3cYZ08-usj1OVmFRgsLufpm70dMSZjtHDTX-fEc-Faw4FqVUf4Qv0LNspS0QZ_5MTw_srRCLPTDB1lckm1Du3AJS4r_7jseEh6kttJRPnVFAwTq0vNVG4Tiyur6fNO9_STRO83Id7aM7nnbir6GB6HLxcV2yzEOdjF5sgcjY44Sh8cSEKbMC6HF2W5qP8Ar"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden border border-slate-100 cursor-pointer hover:border-primary/50 transition-all">
+<img alt="Thumbnail 3" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd4mR6B60d9uox0fDCfgSp7nZBj94_-0C20lzYjaVLxIE27r37tq-XrhhrGJGhfNGhVZ0SztQqEk8jSx3b7kEOIAmM4timSNnONehXAWY_Ny4iY2qSpjFOUCvnIwC5OR1M0ChcflXJrwA3ycDGn3wX2-dhvSdvqSGp3c9skkYHCPltOSkf0w2IjevQxNCpepfo37AxtjDGYzkwKPDlgdUR4YI3psgBk3ayi5PlQxnvTPCghVPMaZPjYT5mD5w6w_NhdehbaWD3Ncc_"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden border border-slate-100 cursor-pointer hover:border-primary/50 transition-all">
+<img alt="Thumbnail 4" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP3ZyCFbvP56V6c6wAv3_Rjr-bflVN6nQpRZhjeoIFM9wftuypSdqwF4XjWnQ01DxCAsJchAlVnUEmJWLHI3NR9pu_rlv2ONNdMltHyUxaaU3FTXdFpWMteqrFCalbM_zMqD98Q-yPHm5sZpdtiRZIffwQy2vAUN7EuAGYJIfj--O2mQBIe6-6EKl-fwBzH9VR7zJcZmqmRIvJnbo_dwfOulruAC_4YoUF-LItK-_Snjvi2OdPXWmvqB48Bjvlp-hYxZRPN9Qv-igt"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-primary/10 text-primary text-xs font-bold px-3 py-1.5 rounded-full tracking-wider uppercase">Premium Edition</span>
+<div class="flex items-center gap-1 text-amber-400">
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined fill-1">star</span>
+<span class="material-symbols-outlined">star_half</span>
+<span class="text-slate-400 text-sm ml-2 font-medium">(4.5) 24 Reseñas</span>
+</div>
+</div>
+<h2 class="text-4xl font-black text-slate-900 mb-3 leading-tight">Hilo de Algodón Premium</h2>
+<div class="flex items-baseline gap-4 mb-8">
+<span class="text-3xl font-black text-primary">Bs. 45.00</span>
+<span class="text-emerald-500 flex items-center gap-1 text-sm font-bold bg-emerald-50 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-lg">check_circle</span> En stock
+                    </span>
+</div>
+<p class="text-slate-600 leading-relaxed mb-10 text-lg">
+                    Nuestro Hilo de Algodón Giza Premium es la elección perfecta para costuras que requieren suavidad excepcional y máxima resistencia. Tratado con un proceso de mercerizado doble, ofrece un brillo sutil y una durabilidad inigualable.
+                </p>
+<div class="space-y-8 mb-10">
+<div>
+<span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">Color: <span class="text-slate-500 font-normal">Lavanda Intenso</span></span>
+<div class="flex gap-4">
+<button class="size-11 rounded-full border-2 border-primary p-1 bg-white ring-4 ring-primary/10 transition-transform hover:scale-105">
+<div class="w-full h-full rounded-full bg-primary shadow-inner"></div>
+</button>
+<button class="size-11 rounded-full border border-slate-200 p-1 bg-white hover:border-pink-400 transition-all hover:scale-105">
+<div class="w-full h-full rounded-full bg-pink-400 shadow-inner"></div>
+</button>
+<button class="size-11 rounded-full border border-slate-200 p-1 bg-white hover:border-emerald-500 transition-all hover:scale-105">
+<div class="w-full h-full rounded-full bg-emerald-500 shadow-inner"></div>
+</button>
+<button class="size-11 rounded-full border border-slate-200 p-1 bg-white hover:border-amber-500 transition-all hover:scale-105">
+<div class="w-full h-full rounded-full bg-amber-500 shadow-inner"></div>
+</button>
+</div>
+</div>
+<div>
+<span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">Cantidad</span>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-white rounded-xl p-1.5 border border-slate-200 shadow-sm">
+<button class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="w-14 text-center font-bold text-lg">1</span>
+<button class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<span class="text-slate-400 text-sm italic font-medium">¡Solo quedan 12 unidades disponibles!</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary hover:bg-[#7a3fee] text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined">shopping_cart</span>
+                        Agregar al carrito
+                    </button>
+<button class="px-6 border-2 border-slate-100 hover:border-primary/20 hover:bg-primary/5 rounded-2xl transition-all text-slate-400 hover:text-primary">
+<span class="material-symbols-outlined text-3xl">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-24">
+<div class="flex border-b border-slate-100 mb-10 overflow-x-auto">
+<button class="px-10 py-5 border-b-2 border-primary text-primary font-extrabold text-sm uppercase tracking-widest whitespace-nowrap">Especificaciones</button>
+<button class="px-10 py-5 border-b-2 border-transparent text-slate-400 hover:text-primary font-bold text-sm uppercase tracking-widest transition-colors whitespace-nowrap">Reseñas (24)</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="p-8 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-primary mb-4">
+<span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg">straighten</span>
+<span class="font-black uppercase text-xs tracking-widest">Grosor</span>
+</div>
+<p class="text-xl font-semibold text-slate-900">40/2 (Estándar)</p>
+</div>
+<div class="p-8 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-primary mb-4">
+<span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg">sell</span>
+<span class="font-black uppercase text-xs tracking-widest">Marca</span>
+</div>
+<p class="text-xl font-semibold text-slate-900">Stitch &amp; Co Premium</p>
+</div>
+<div class="p-8 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-primary mb-4">
+<span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg">horizontal_rule</span>
+<span class="font-black uppercase text-xs tracking-widest">Longitud</span>
+</div>
+<p class="text-xl font-semibold text-slate-900">1000 Metros</p>
+</div>
+</div>
+</div>
+<div class="mt-28">
+<div class="flex items-center justify-between mb-12">
+<h3 class="text-3xl font-black text-slate-900">Productos Relacionados</h3>
+<div class="flex gap-3">
+<button class="size-11 rounded-full border border-slate-200 flex items-center justify-center hover:bg-primary/5 hover:border-primary hover:text-primary transition-all text-slate-600 shadow-sm">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-11 rounded-full border border-slate-200 flex items-center justify-center hover:bg-primary/5 hover:border-primary hover:text-primary transition-all text-slate-600 shadow-sm">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl overflow-hidden mb-5 bg-slate-50 border border-slate-100 group-hover:shadow-xl group-hover:shadow-primary/5 transition-all duration-300">
+<img alt="Related Item 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTf3JkCwnnEbGlOrwKTS_OYiA3hTb91jxqYr4k0ur8TOwTNqco9uCVNS5qm1jGbOZNxwhGIvIT2DALxyUXDvFi0iNGZueudZmzxsBOKpKFiIdobZsY0B-AfqjXOF6nI13Z3LQqAsWGgRGnCBh-Qv1eD3MgBavLJ9P5EndwXMtXYaGFDUrqxtSRL4vAdmEk_G5yYR-kaRPGfeA7Iu-6RCZ5sIzYl2e3BHnnFp-7pb0lH-lxzM3lhRj8H1MgA5aXQ8VjHMbZlLB-PCF9"/>
+<button class="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-md rounded-full text-slate-400 hover:text-pink-500 shadow-sm opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+</div>
+<p class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-2">Hilos</p>
+<h4 class="font-bold text-lg mb-1 text-slate-900 group-hover:text-primary transition-colors">Hilo de Seda Natural</h4>
+<p class="font-black text-slate-900">Bs. 85.00</p>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl overflow-hidden mb-5 bg-slate-50 border border-slate-100 group-hover:shadow-xl group-hover:shadow-primary/5 transition-all duration-300">
+<img alt="Related Item 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmAXtTBebX9puCJ1p159qWBl74yHtPd0XXq_-qBY4al-Cy8KALSPqF5D91SOlc1noWv_4eMV4B_YNFsKjLEXMZUrKy4x_jjX-eblvwNC1HuSozlSsJ4OH8gM1pRMbfN4FrL9YQCCeq1h5xRWcbtiZvhyHi_EaSyNPkIpXOwi-2QdprRZIOIqUz1LQjSjUX_OhLi5RStBxKswhVyT7nfkCdjv6fIIIttAeN9DNEKcTnXMoKplFRTGSSlmkoje0yptCZeJmoVrqxfIys"/>
+</div>
+<p class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-2">Agujas</p>
+<h4 class="font-bold text-lg mb-1 text-slate-900 group-hover:text-primary transition-colors">Set Agujas Premium</h4>
+<p class="font-black text-slate-900">Bs. 32.00</p>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl overflow-hidden mb-5 bg-slate-50 border border-slate-100 group-hover:shadow-xl group-hover:shadow-primary/5 transition-all duration-300">
+<img alt="Related Item 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM1IW2jb0Ux6WDUlaK5-6WBLrTDR66XXJHKHyLGIRdarU3yx4z8fXCMxEJlU4pWXH3fsBtsYWWBT0sQJAWh9fczbTtQpQeuHqqLOSVlsYGqPpa45QMhkxRdBrdavr9ApSil2ZaUljzP0fZQ7OX-B9Lzt5AAQ4Lb-elTkxiil9mdoPw1RReF0X11prautScBf0-wNikr_iqdoVFqAYdNWyrh_mOJgEk2PH95maCqmoCYo7WVinETHYjt0ts4OfusjBi_Xze47-xy6k4"/>
+</div>
+<p class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-2">Telas</p>
+<h4 class="font-bold text-lg mb-1 text-slate-900 group-hover:text-primary transition-colors">Lino Natural Crudo</h4>
+<p class="font-black text-slate-900">Bs. 120.00</p>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl overflow-hidden mb-5 bg-slate-50 border border-slate-100 group-hover:shadow-xl group-hover:shadow-primary/5 transition-all duration-300">
+<img alt="Related Item 4" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2Y-kVYFSUSv0CPTpIywZPk3lP4Kae81-nMgBEZxef-YnmFEtfheenaRWFTZ8R2RDeqE5HIiunKPJkFwujlH9Kv51DfAyUMdcY_vVG7ZAT8QpLMYkyrklKkSBxpoO1p8s6CCELwdr7cotx0QNgIjiIB6iTdswKrVI5VPBqxlNHGc1Gib2WG9MEdCQcOQWmurYmImSR4ZDfllSFmrH12as_PYbHl4luZ7Yxv80DnF6GL2c8fQUrtgNPQvWxhLhoxwS2J3wtaFqsuQds"/>
+</div>
+<p class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-2">Herramientas</p>
+<h4 class="font-bold text-lg mb-1 text-slate-900 group-hover:text-primary transition-colors">Tijeras de Precisión</h4>
+<p class="font-black text-slate-900">Bs. 95.00</p>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-32 py-20 border-t border-slate-100 bg-surface">
+<div class="max-w-[1200px] mx-auto px-4 md:px-10 lg:px-40 grid grid-cols-1 md:grid-cols-4 gap-16">
+<div class="col-span-1 md:col-span-2">
+<div class="flex items-center gap-3 mb-8">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">architecture</span>
+</div>
+<h2 class="text-2xl font-black tracking-tight text-slate-900">Stitch &amp; <span class="text-primary">Co</span></h2>
+</div>
+<p class="text-slate-500 max-w-sm mb-8 leading-relaxed text-lg">
+                    Elevando el arte de la costura con materiales de la más alta calidad y un servicio dedicado a creadores apasionados.
+                </p>
+<div class="flex gap-4">
+<a class="size-11 rounded-xl bg-white border border-slate-100 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm" href="#">
+<span class="material-symbols-outlined text-xl">language</span>
+</a>
+<a class="size-11 rounded-xl bg-white border border-slate-100 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm" href="#">
+<span class="material-symbols-outlined text-xl">alternate_email</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="font-black mb-8 text-slate-900 uppercase text-xs tracking-[0.2em]">Colecciones</h4>
+<ul class="space-y-4 text-sm text-slate-500 font-semibold">
+<li><a class="hover:text-primary transition-colors" href="#">Nuevos Productos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Best Sellers</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Ofertas Temporales</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Catálogo Completo</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-black mb-8 text-slate-900 uppercase text-xs tracking-[0.2em]">Atención</h4>
+<ul class="space-y-4 text-sm text-slate-500 font-semibold">
+<li><a class="hover:text-primary transition-colors" href="#">Envíos y Entregas</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Devoluciones</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Preguntas Frecuentes</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-[1200px] mx-auto px-4 md:px-10 lg:px-40 mt-16 pt-10 border-t border-slate-200/50 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-slate-400 font-medium">
+<p>© 2024 Stitch &amp; Co Haberdashery. Todos los derechos reservados.</p>
+<div class="flex gap-8">
+<a class="hover:text-primary transition-colors" href="#">Políticas de Privacidad</a>
+<a class="hover:text-primary transition-colors" href="#">Términos de Servicio</a>
+</div>
+</div>
+</footer>
+
+</body></html>

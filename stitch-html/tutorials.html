@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tutorials &amp; Sewing Guides | Stitch &amp; Co</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b52ff",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#160f23",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex min-h-screen flex-col">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-10 lg:px-40 py-3">
+<div class="flex items-center justify-between gap-8 max-w-[1200px] mx-auto">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">grid_view</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Stitch &amp; Co</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Shop</a>
+<a class="text-primary text-sm font-semibold transition-colors border-b-2 border-primary" href="#">Tutorials</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Patterns</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Workshops</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<div class="relative hidden sm:block w-full max-w-xs">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-slate-100 placeholder:text-slate-500" placeholder="Search guides..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">shopping_bag</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary/20 border-2 border-primary/10 flex items-center justify-center overflow-hidden ml-2 cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="User profile avatar smiling woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC24mILq8fTdKnljgAqqABwtAFdw63Xg60hvIIfrlkCqdpfDEJanj2oGsOLxzLRzgstb9_6WDBH8FEfiVkwgEA-olp5iBOG8rkzpo5tFEnxQkqCxdb07TcbLpgq58LcisNUpc2E3z2YlMY9QdMmumTaN72joV45kM1cr4Pqi1LU5HwHR1fWY4-6CfMt0jaTrRU6ArWe0rYf4bKjXsDmHgrJKbkl-Nr-2b1Xl0-BLsFupIhWT7ymw6cHybn9ItQUiAHisQQiwbtCjpJT"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-[1200px] mx-auto w-full px-6 md:px-10 lg:px-40 py-8">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-sm mb-8 text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Tutorials &amp; Sewing Guides</span>
+</nav>
+<!-- Hero Header -->
+<div class="mb-12">
+<h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-4">Tutorials &amp; Sewing Guides</h1>
+<p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+                    Master new techniques with our expert-led DIY guides. From basic stitches to professional tailoring, explore the art of creation.
+                </p>
+</div>
+<!-- Category Filters -->
+<div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar">
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/25 transition-transform hover:scale-105 active:scale-95">All Content</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium text-sm hover:border-primary/50 hover:bg-primary/5 transition-all">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">apparel</span>
+                        Costura
+                    </div>
+</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium text-sm hover:border-primary/50 hover:bg-primary/5 transition-all">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">potted_plant</span>
+                        Bordado
+                    </div>
+</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium text-sm hover:border-primary/50 hover:bg-primary/5 transition-all">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">auto_fix</span>
+                        Manualidades
+                    </div>
+</button>
+</div>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+<!-- Card 1 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-[16/10] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Macro photography of blue fabric with white embroidery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjsc7onIsp5OpAJvCaQ_36Zi4pCeCDvdP3lqGUbs8V2x2Ei2pKsWKSduBLUJIUZYrl2hQWI5xAX5BIcQy5utoFxh9EdhsjBI-Ye2ncoOauEQmZ72B3Qb12J4P0QhD1MOcC4QS28GcwRrkyTv53lqOofQZp0dV7JYXQsR6--rHCPFoxhitv0Vrs4cFoGEdOWaO4qpatL3dfuvo9EzxI8ttQ3JGdn3b3RyQEGRLHa4pMVEWxrra2v0nwDCr_ndVW48-bSChCZE0R2wmi"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-md bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">Bordado</span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">Beginner's Guide to Sashiko</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6">Learn the ancient Japanese art of decorative reinforcement stitching with our step-by-step masterclass.</p>
+<div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> 15 min read
+                            </span>
+<a class="text-primary hover:text-primary/80 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-[16/10] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Sewing machine stitching a classic navy blazer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDoK3tIQueh4b325a5czTDhjzSCH8EzcN3DEywr9a429hIOLj45c9StC9MaCNfSGgAK7T28HEoC0xcJRGTVUOOqGNnvkrCSeVz4K-o0Am0NBSthBPApTZUeo6iKDDwVbrybmEPJzaSbd_zGtGme2sMGSPNvsVJ1DxtDjFj-Fx-k0ktPca_dobhscOhvdSLxL_aXOsBTpa-2V3tAKdrMTJE3RkjilkiaugRrx2e2-7KmfS_dFgHDF5I_gjVlS3GNE3267IMHfSOX9aX"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-md bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">Costura</span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">Tailoring a Classic Blazer</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6">A deep dive into structural sewing, interfacing, and professional finishing techniques for a perfect fit.</p>
+<div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">play_circle</span> 45 min video
+                            </span>
+<a class="text-primary hover:text-primary/80 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-[16/10] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of small pink floral embroidery knots" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7D70Xca4CZqAUpWOXgL8p5KD0WKOM4VzlzZQLU8Sauf0mqPmW9XVRzCJRxwt4zdXGFAj_5wb1mS1yHNhOH3z1uuxBi9LPILXFlD5ECWFGFEtQbs5IAZVocjj2hQs9TJ0756imXx2uvmn9SA26MQuo0SRredhyKVXhGQ5hlJCYR_RDGPvERKBdbtVpwEfGA7R0aaEJ9TmOy0EdM0OxsLMOZyjEWK15CThdvVhryWNuOzaBu7ZooTqYL7cUFqsWdmJqHFV6W4pGJ9MG"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-md bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">Bordado</span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">French Knot Embroidery 101</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6">Add texture and dimension to your designs with this essential embroidery knot. Perfect for floral patterns.</p>
+<div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> 8 min read
+                            </span>
+<a class="text-primary hover:text-primary/80 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-[16/10] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Assortment of vintage linens and sewing threads" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ20DbhqqN01Wa6eGoyD4lFKPx6BnqP7pobXjnz8pihs9pSW-oQEHYFdhgYAUknqvXNJ3aWY3whFPzJtKGip15lJon-DWMFSg2JxlRfFVM4VavsS2oc8cpqxN86_1EHjg5GsxBM3H9jvtflB7w1BnYkhtug8UVx8Sv94Fs4c47vg32e4qBCJ_I5PTKGX3zSv6jO8vVEl9fedtRNjUYVEz4PHs9gOvgLKxdF01H6ALWs36KWC6nRE1w2aPiCl8evV0KCfg0lhz1eQ4H"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-md bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">Manualidades</span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">Upcycling Vintage Linens</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6">Transform heirloom fabrics into modern home decor items like napkins and throw pillow cases.</p>
+<div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">article</span> 5 steps
+                            </span>
+<a class="text-primary hover:text-primary/80 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-[16/10] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of a serger machine sewing an overlock seam" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD9G9jIs4L_utNHruWiIE3BvgO0-tAM2wMLImTEV-iLGiW3h0tA5DsisEKSWoaKlr7ivDLBGEf2HIelG8wYWbuLCuRgdkgHqPyXCv7gg716WrQlWNXAYFZB5tT2JeQOTZUw62V0-NKrYnfqgd7vHP8vXoPRNDOoMz16qKmyiIXof2VijRznmmjl6J7cEFPw-bJOzCwnSEKdpP5dA9zR-HyIQ1YAYMOCCMSu3-jknp_6dtzQlstLCgWc9vWJe5Rcbao2NjZSpY8ssJD"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-md bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">Costura</span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">Mastering the Overlock Stitch</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6">Get the most out of your serger machine to create professional-grade, durable seams for stretch fabrics.</p>
+<div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">play_circle</span> 12 min video
+                            </span>
+<a class="text-primary hover:text-primary/80 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-[16/10] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Small handmade leather pouch with neat hand stitching" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCct-Y9xaeTgNaQL9HwUqAtW0-ZeHWb1vMtrQ9ltnV12SGFl-5FCmkjgXrSweASLvNm18mIThLLHW_1u_TaT0XWEsC5n_3pktZ6R9-tlhYcSqxQDqvXhFmCBssvdXmZ8E_zEmC_MlUb9uVQCl0VAZzfVtrb7GN8tGUy-N27-WHult__66z70-rG_pvnjcFCqgFLNoL_sN4wBNsHHoRAydwB2rsEBB-ksGvGYSqYVALZAPvYMSnEOmGqF6nVtOkMzTr5DRYVsSHfUhA_"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-md bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">Manualidades</span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">Hand-Stitched Leather Pouches</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 mb-6">Create durable and stylish accessories using basic hand-sewing tools and thick leather threads.</p>
+<div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> 20 min read
+                            </span>
+<a class="text-primary hover:text-primary/80 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination/Load More -->
+<div class="mt-16 flex flex-col items-center gap-4">
+<button class="px-8 py-3 rounded-lg border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all">
+                    Load More Tutorials
+                </button>
+<p class="text-sm text-slate-500">Showing 6 of 42 tutorials</p>
+</div>
+</main>
+<!-- Newsletter Section -->
+<section class="mt-20 bg-primary/10 py-16 px-6">
+<div class="max-w-[1200px] mx-auto text-center">
+<h2 class="text-3xl font-black text-slate-900 dark:text-slate-100 mb-4">Never miss a stitch.</h2>
+<p class="text-slate-600 dark:text-slate-400 mb-8 max-w-lg mx-auto">Get weekly sewing tips, new pattern alerts, and exclusive tutorials delivered to your inbox.</p>
+<form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+<input class="flex-1 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-primary" placeholder="Your email address" type="email"/>
+<button class="bg-primary text-white font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-all" type="submit">Subscribe</button>
+</form>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-white dark:bg-background-dark border-t border-slate-100 dark:border-slate-800 py-12 px-6">
+<div class="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="col-span-2 md:col-span-1">
+<div class="flex items-center gap-2 text-primary mb-6">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Stitch &amp; Co</h2>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">The modern home for sewing enthusiasts, makers, and creators.</p>
+</div>
+<div>
+<h4 class="font-bold mb-4 text-slate-900 dark:text-slate-100">Tutorials</h4>
+<ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Sewing Basics</a></li>
+<li><a class="hover:text-primary" href="#">Embroidery Art</a></li>
+<li><a class="hover:text-primary" href="#">Upcycling</a></li>
+<li><a class="hover:text-primary" href="#">Pattern Drafting</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4 text-slate-900 dark:text-slate-100">Company</h4>
+<ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Our Story</a></li>
+<li><a class="hover:text-primary" href="#">Workshops</a></li>
+<li><a class="hover:text-primary" href="#">Contact</a></li>
+<li><a class="hover:text-primary" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4 text-slate-900 dark:text-slate-100">Social</h4>
+<div class="flex gap-4">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">camera</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">video_library</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">chat</span></a>
+</div>
+</div>
+</div>
+<div class="max-w-[1200px] mx-auto pt-8 mt-8 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
+                © 2024 Stitch &amp; Co Haberdashery. All rights reserved.
+            </div>
+</footer>
+</div>
+</body></html>

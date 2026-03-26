@@ -1,0 +1,43 @@
+/* ============================================
+   Stitch & Co — CSS Custom Properties
+   ============================================ */
+
+:root {
+    /* Colores principales — extraídos del diseño Stitch */
+    --sc-primary:       #8b52ff;   /* púrpura principal */
+    --sc-primary-dark:  #6d3de0;   /* púrpura oscuro */
+    --sc-primary-light: rgba(139, 82, 255, 0.1); /* púrpura suave */
+
+    /* Fondos */
+    --sc-bg:            #f6f5f8;   /* background-light */
+    --sc-bg-card:       #FFFFFF;
+    --sc-bg-dark:       #160f23;   /* background-dark */
+
+    /* Texto */
+    --sc-text:          #0f172a;   /* slate-900 */
+    --sc-text-light:    #64748b;   /* slate-500 */
+    --sc-text-muted:    #94a3b8;   /* slate-400 */
+
+    /* Bordes */
+    --sc-border:        #e2e8f0;   /* slate-200 */
+    --sc-border-dark:   #1e293b;   /* slate-800 */
+
+    /* Estados */
+    --sc-success:       #5A8A5A;
+    --sc-warning:       #D4944A;
+    --sc-danger:        #C0392B;
+    --sc-info:          #5B8FA8;
+
+    /* Ofertas */
+    --sc-offer-bg:      #FFF3E0;
+    --sc-offer-badge:   #E65100;
+
+    /* Espaciado */
+    --sc-radius:        0.5rem;
+    --sc-radius-lg:     1rem;
+    --sc-shadow:        0 2px 8px rgba(44, 24, 16, 0.08);
+    --sc-shadow-lg:     0 8px 24px rgba(44, 24, 16, 0.12);
+
+    /* Transiciones */
+    --sc-transition:    0.2s ease;
+}

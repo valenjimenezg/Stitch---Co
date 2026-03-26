@@ -1,0 +1,222 @@
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6366f1",
+                        "primary-dark": "#4f46e5",
+                        "background-light": "#fafafa",
+                        "background-dark": "#0a0a0c",
+                    },
+                    fontFamily: {
+                        "body": ["Inter", "sans-serif"],
+                        "heading": ["Outfit", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    html { scroll-behavior: smooth; }
+</style>
+<title>Novedades de Temporada - Stitch &amp; Co</title>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Header / Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 bg-white dark:bg-slate-900 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">architecture</span>
+</div>
+                <div class="ml-4">
+                    <span class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Stitch &amp; <span class="text-primary">Co</span></span>
+                    <p class="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">Venezuela</p>
+                </div>
+</div>
+<nav class="hidden lg:flex items-center gap-9">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="home.html">Inicio</a>
+<a class="text-primary text-sm font-semibold leading-normal border-b-2 border-primary" href="#">Novedades</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="category.html">Telas</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Costura</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 flex border-none bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-400 px-4 rounded-l-none pl-2 text-base font-normal leading-normal" placeholder="Buscar novedades..." value=""/>
+</div>
+</label>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all relative">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center">
+<div class="w-full max-w-[1280px] px-10 py-8 text-center mt-12 mb-16">
+    <span class="text-primary font-black uppercase tracking-[0.3em] text-xs mb-4 block">Exclusividad</span>
+    <h1 class="text-slate-900 dark:text-slate-100 text-6xl font-black leading-tight tracking-tight mb-6">Novedades de Temporada</h1>
+    <p class="text-slate-600 dark:text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">
+        Descubre las últimas joyas de nuestro catálogo. Productos seleccionados por su calidad excepcional y diseño único, recién llegados a Venezuela.
+    </p>
+</div>
+
+<!-- Featured New Arrival -->
+<div class="w-full max-w-[1280px] px-10 mb-20">
+    <div class="relative group overflow-hidden rounded-[2rem] h-[600px] shadow-2xl flex items-center">
+        <img src="../public/img/new_arrivals_highlight.png" 
+             alt="Highlight New Arrival" 
+             class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+        <div class="relative z-10 px-16 max-w-2xl">
+            <span class="bg-primary text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase mb-6 inline-block tracking-widest">Lanzamiento Especial</span>
+            <h2 class="text-5xl font-black text-white mb-6 leading-tight">Kit de Costura Luxury <br>Gold Edition</h2>
+            <p class="text-white/80 text-lg mb-8 leading-relaxed">Presentamos nuestra edición más exclusiva. Herramientas de precisión con acabados en oro y materiales de la más alta alcurnia japonesa.</p>
+            <div class="flex items-center gap-6">
+                <span class="text-4xl font-black text-white">$ 145.00</span>
+                <button class="bg-white text-slate-900 px-10 py-4 rounded-2xl font-black text-base hover:bg-primary hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl">Comprar Ahora</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="w-full max-w-[1280px] px-10">
+    <div class="flex items-center justify-between mb-12">
+        <h3 class="text-3xl font-black text-slate-900 dark:text-white">Recién Llegados</h3>
+        <div class="flex gap-4">
+            <button class="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl hover:bg-primary hover:text-white transition-all">
+                <span class="material-symbols-outlined">filter_list</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-24">
+        <!-- Novelty 1 -->
+        <div class="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
+            <div class="relative aspect-[4/5] overflow-hidden bg-slate-50">
+                <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTf3JkCwnnEbGlOrwKTS_OYiA3hTb91jxqYr4k0ur8TOwTNqco9uCVNS5qm1jGbOZNxwhGIvIT2DALxyUXDvFi0iNGZueudZmzxsBOKpKFiIdobZsY0B-AfqjXOF6nI13Z3LQqAsWGgRGnCBh-Qv1eD3MgBavLJ9P5EndwXMtXYaGFDUrqxtSRL4vAdmEk_G5yYR-kaRPGfeA7Iu-6RCZ5sIzYl2e3BHnnFp-7pb0lH-lxzM3lhRj8H1MgA5aXQ8VjHMbZlLB-PCF9" alt="Product">
+                <div class="absolute top-4 left-4">
+                    <span class="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-wider shadow-lg">Nuevo</span>
+                </div>
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+                <span class="text-primary text-[10px] font-black uppercase tracking-widest mb-2 block">Premium Silk</span>
+                <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-primary transition-colors">Hilo de Seda Orgánica</h4>
+                <div class="flex items-center justify-between mt-auto">
+                    <span class="text-2xl font-black text-slate-900 dark:text-white">$ 24.50</span>
+                    <button class="size-12 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center hover:bg-primary transition-all">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Novelty 2 -->
+        <div class="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
+            <div class="relative aspect-[4/5] overflow-hidden bg-slate-50">
+                <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX_xdgyl91X6IWwaFddhI8YVRmaxv8QQ4DOkg6x0A9AvU3sBDZoHNYVgdbHXmGFbIq2GvjiJnAhxQ4v0XHB1eGV6qPQbKuJ84TWdJZFq6UA_ByNlv8vSn-xR7lkgtG-ivUyZ3rQYQD0CLIBS-j_McPt1c0gVlk98mtFL89yKeXm5HBNtBI5ZnM7N_SfdKC7qFaplyrIrXQlI_6aWy4bTce8Oj8f4gFX3i3KNkgS-3Jph7y58NrN9YGL81kcQvLi1nWFQsOe8C96SAf" alt="Product">
+                <div class="absolute top-4 left-4">
+                    <span class="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-wider shadow-lg">Nuevo</span>
+                </div>
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+                <span class="text-primary text-[10px] font-black uppercase tracking-widest mb-2 block">Belgian Linen</span>
+                <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-primary transition-colors">Lino Belga Premium</h4>
+                <div class="flex items-center justify-between mt-auto">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-black text-slate-900 dark:text-white">$ 38.00</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase">en metro</span>
+                    </div>
+                    <button class="size-12 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center hover:bg-primary transition-all">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Novelty 3 -->
+        <div class="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
+            <div class="relative aspect-[4/5] overflow-hidden bg-slate-50">
+                <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuxf4u0q1A3S6uH58w56f2_t-qMv3E-5_vMvn0U_K6Z8RzP7Z6-iY6kY7qM_v1N3Z6kY7qM_v1N3Z6kY7qM_v1N3Z6kY7qM_v1N" alt="Product">
+                <div class="absolute top-4 left-4">
+                    <span class="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-wider shadow-lg">Nuevo</span>
+                </div>
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+                <span class="text-primary text-[10px] font-black uppercase tracking-widest mb-2 block">Professional Tools</span>
+                <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-primary transition-colors">Tijeras Damasco Pro</h4>
+                <div class="flex items-center justify-between mt-auto">
+                    <span class="text-2xl font-black text-slate-900 dark:text-white">$ 89.99</span>
+                    <button class="size-12 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center hover:bg-primary transition-all">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<footer class="bg-slate-900 text-slate-400 py-20 border-t border-slate-800">
+<div class="max-w-[1280px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 text-white">
+<div class="bg-primary p-2 rounded-lg">
+    <span class="material-symbols-outlined text-white">architecture</span>
+</div>
+<h2 class="text-2xl font-black tracking-tight uppercase">Stitch &amp; <span class="text-primary">Co</span></h2>
+</div>
+<p class="text-sm leading-relaxed">Definiendo el estándar premium de la costura en Venezuela. Materiales exclusivos para creadores excepcionales.</p>
+</div>
+<div>
+<h4 class="text-white font-black uppercase tracking-widest text-xs mb-8">Navegación</h4>
+<ul class="flex flex-col gap-4 text-sm">
+<li><a class="hover:text-primary transition-colors" href="home.html">Inicio</a></li>
+<li><a class="hover:text-primary transition-colors text-primary" href="#">Novedades</a></li>
+<li><a class="hover:text-primary transition-colors" href="category.html">Telas</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Insumos</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-black uppercase tracking-widest text-xs mb-8">Soporte</h4>
+<ul class="flex flex-col gap-4 text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Envíos a Venezuela</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Garantía Stitch &amp; Co</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-black uppercase tracking-widest text-xs mb-8">Newsletter</h4>
+<div class="flex p-1 bg-slate-800 rounded-2xl focus-within:ring-2 focus-within:ring-primary transition-all">
+<input class="bg-transparent border-none w-full text-sm py-3 px-4 focus:ring-0 placeholder:text-slate-500" placeholder="Email" type="email"/>
+<button class="bg-primary text-white p-3 rounded-xl hover:bg-primary-dark transition-all">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-[1280px] mx-auto px-10 mt-20 pt-8 border-t border-slate-800 text-center text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">
+© 2024 Stitch &amp; Co Venezuela. Excelencia en cada puntada.
+</div>
+</footer>
+</div>
+</body></html>

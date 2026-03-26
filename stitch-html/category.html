@@ -1,0 +1,395 @@
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b52ff",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#160f23",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Stitch &amp; Co - Hilos de Coser</title>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Header / Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 bg-white dark:bg-slate-900 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">architecture</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-[-0.015em]">Stitch &amp; Co</h2>
+</div>
+<nav class="hidden lg:flex items-center gap-9">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Telas</a>
+<a class="text-primary text-sm font-semibold leading-normal border-b-2 border-primary" href="#">Hilos</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Agujas</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Patrones</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Kits</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 flex border-none bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-400 px-4 rounded-l-none pl-2 text-base font-normal leading-normal" placeholder="Buscar hilos..." value=""/>
+</div>
+</label>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-all relative">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">2</span>
+</button>
+<div class="bg-primary/20 rounded-full size-10 flex items-center justify-center border-2 border-primary/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Female user profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxjUN0Rk0vJkqp3hO7WyD5olnCmGAQvEJMC1X9bnO8BG2v_0VgFHdftab48HwmEmuhDj8e2kN0nYQT9jj4P79ksCsA8lgi8R79hmXvz9TBtsayJrFCMpHkiumzXvztje-5lXDTq-pP2dLqRnohi0bsPNLLeFljsOXT0_lvZtrIJ8gGd8GmRk0r6Uh9eSf3CUHYw6YhdygldnVod41CM-_f4cC-eCZlDDVfW2EwcccXp_4KWUlweXpa3kFKtY89ce89YCdsq9oNJFt0"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center">
+<div class="w-full max-w-[1280px] px-10 py-8">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap items-center gap-2 mb-8">
+<a class="text-slate-400 dark:text-slate-500 hover:text-primary text-sm font-medium leading-normal flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm">home</span>
+                        Inicio
+                    </a>
+<span class="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
+<a class="text-slate-400 dark:text-slate-500 hover:text-primary text-sm font-medium leading-normal" href="#">Materiales</a>
+<span class="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
+<span class="text-primary text-sm font-semibold leading-normal">Hilos</span>
+</div>
+<!-- Page Header -->
+<div class="flex flex-col gap-4 mb-10">
+<h1 class="text-slate-900 dark:text-slate-100 text-5xl font-black leading-tight tracking-tight">Hilos de Coser</h1>
+<p class="text-slate-600 dark:text-slate-400 text-lg max-w-2xl leading-relaxed">
+                        Explora nuestra colección curada de hilos de alta calidad. Desde seda natural hasta poliéster resistente, tenemos el material perfecto para cada puntada de tu proyecto.
+                    </p>
+</div>
+<!-- Filters Bar -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 mb-8 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex flex-wrap gap-3">
+<button class="flex h-10 items-center justify-center gap-x-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 hover:border-primary transition-colors">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Precio</span>
+<span class="material-symbols-outlined text-slate-400">keyboard_arrow_down</span>
+</button>
+<button class="flex h-10 items-center justify-center gap-x-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 hover:border-primary transition-colors">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Marca</span>
+<span class="material-symbols-outlined text-slate-400">keyboard_arrow_down</span>
+</button>
+<button class="flex h-10 items-center justify-center gap-x-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 hover:border-primary transition-colors">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Color</span>
+<span class="material-symbols-outlined text-slate-400">palette</span>
+</button>
+<button class="flex h-10 items-center justify-center gap-x-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 hover:border-primary transition-colors">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Grosor</span>
+<span class="material-symbols-outlined text-slate-400">filter_list</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-slate-500 text-sm">Ordenar por:</span>
+<select class="bg-transparent border-none focus:ring-0 text-sm font-semibold text-slate-700 dark:text-slate-300">
+<option>Más Populares</option>
+<option>Menor Precio</option>
+<option>Mayor Precio</option>
+<option>Novedades</option>
+</select>
+</div>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+<!-- Product Card 1 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Spool of organic cotton thread in teal color" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVwyUfBOtJxbbcOUh884TeKij1BxxP_ZGtY04PoSqAQjlv1gRjmGwFvq-uPOETraysHsDDYhM5ZFHNbxGoYrGDmYkFIffmSh3183NX7okRtepIl32KYqXwbL0Brq-0ir089fxzVLT1Aoffv6zPi9GvnbIFSdm0DzWLi-2yHHL-tSc2Z3-nEhio67mWGLndXygztB4MlzHk6jcgdEFL0_btZxEW_zAf-SQHndc8H82nLio78w_mhBNbQtYvdMu4wqDvQGtuU43AlPgT"/>
+<div class="absolute top-3 right-3 flex flex-col gap-2">
+<button class="bg-white/90 dark:bg-slate-800/90 p-2 rounded-full text-slate-400 hover:text-red-500 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+</div>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Algodón Orgánico</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.9</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo Mara 120 - 100m</h3>
+<p class="text-slate-500 text-sm font-medium">Gütermann • Grosor 120</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">4,50€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Assortment of vibrant polyester threads" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQFlZsNpsa2YaZmhk4SdcD-MRYpDSxO1d3qntP2F8fbaM12dXDhPKSCENb-2wOe46QGBz2HQlJcuah4-CVI3-BElBIeYx1Z3z7hVMWP6YQniFglfZXCV9kXgXZzl9hUYzcEB7uGpilJJkn17w87tfBBWz_iLAgmxaQGHFBdaI56rdgKpWWQ6aQTel-4srwWxSlFsfMwzsP21TK-OW3_IrbZrkuQuWumBtdZc1jqFWPQu_vPvzfEN4tIAjPxaOeKd8uDLHJZeJopKlb"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Poliéster Todo Uso</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.8</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo Universal 200m</h3>
+<p class="text-slate-500 text-sm font-medium">Gütermann • Grosor 100</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">3,20€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Silk thread spool on vintage wood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZIsLXxdzPPk29aopQIjx1myEBp4A-o1x52yfaGZsIj3A5kmBf4qaNHeGlLVf7L9gaWyFt2GSdspMdR0CffEicey674arLXYrISHvkgeOZntrVVgCMCCZh9J5CX5GkdkXenPm0f9wtI0nD-cI7CUTShS-mjEj-XUYi65fHyqlqLRt-pfzfFTylkpGJ4o6PHyyyO7EtlluBJsRUgt-fKZWFzNMPpzvEjc4F8CfMk3k95Pij8fOtWErlIe1iKgCyG6q5T2s0VS8Ejjkg"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Seda Natural</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">5.0</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Seda Pura Premium 50m</h3>
+<p class="text-slate-500 text-sm font-medium">Coats • Grosor 100</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">8,90€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Heavy duty thread for denim" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvZQEKlMTlQXmmJywMgyf9tYwVicpa00uzYzIicPNP4KhJNa6oBN68E9B8wCjMdQ-0tSfFAw0BxTm2jDheZJHWL2doIHgm3x27QixVfoI1T7ZyaJtviQ2qLdZeIhxkWJ1CyOwa7knVI18lkAQKwF5_nT8hgh1JGNd3vKszbz12rzrcrq4KG-ecACeabI2BGYFEmAk64NFBi4VYnFZ-ALzddDOENW6nHQoB6XDnQrVfUzYdVyjwuk9O89AZG5pCQbB9vK1ehDB1vSuq"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Torzal Fuerte</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.7</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo Extra Fuerte 30m</h3>
+<p class="text-slate-500 text-sm font-medium">Gütermann • Grosor 30</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">3,75€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Metallic silver thread on spool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVjYa_JosGGezORPhSJ-BBPGNRkEBNzlIq-f4V8Ec79axN782IiUUGDUILGV0j17k7FA57suk2Kr3tw9NhWZTKDB2rwJGx9cqm53vMNWb7LAL6cfPgVYTGj2PIIPt2vEINyKIdqWTGCFvQIYAXhkvD5GvkxBegFVHAry667huv-fmxV6oyHOi1sClpnJEOG7CPkF08ESsYE0PqiSrCf8zuZ2o-SfAezw0HbEkoehzmFPIBEQvy89vd3bY4X1amzoZuQroapxx1DAGE"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Metalizado</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.6</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo Brillante Diamant 40m</h3>
+<p class="text-slate-500 text-sm font-medium">DMC • Efecto Joya</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">5,20€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Invisible elastic thread spool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA61YKc7NAFo2ctcXPJNczd_VbYvTcifAmrlFF2M2l7AH9T4RfgmsRa8cokglQ9mm4cpSxN1TKSElKrupxcfm4R0XzuhnNXB0hPnqAw7ZiUlT6Epm7brM7ZSlm4HGcEnnBBR8fe2wPUtDIARFCHZ_WuFb6AltjbdaIKIuk9g7Zobk6_pW4qyjPCyBoCXFftd4lPImSTWrsMoFZ082y4M0eEjvy_8o6HKPap-SyiX2hmEkTCNkGDp-nYOzJZob6cWgYxC-WdzjUfBH2s"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Especialidades</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.5</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo Elástico Transparente</h3>
+<p class="text-slate-500 text-sm font-medium">Prym • 25m • Invisible</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">4,10€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 7 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Rustic linen thread" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEu72j2SE_RPm0EswLwK0MUk3Qh6r-GDODNP3OforzWeJ-WT94A3M0_QooCu3789ONcHK-q4NQJm2kKwZqsWJiTA2am4hNNVN4yaBiqWS2V5yztS0q449f1YszDzQT5pS8GDgBKh1zb7751Hg_Npl72OHw5mXiRnIYxrX5lI2yIWWFyPZEfINoj7rluHM_zxq-Vph_J0YYJf_blXvrwntaZqHGTq7P7WSSfCcfq9kdspvNzrfWfKg-Dl_99TZcQLn19OE79Q0ZdEdP"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Lino Natural</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.8</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo de Lino Rústico 150m</h3>
+<p class="text-slate-500 text-sm font-medium">Coats • Alta Resistencia</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">6,30€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 8 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800">
+<div class="relative aspect-square overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Embroidery rayon thread skeins" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfNrRAsk1jq9HgTmc4rzLK2yh7iykT-EgygrtWORIzZRRVap9DNeQ7EQHjtTqNhc38UVCYDfjuEuAG9E7j62Iqr15obTEe8Mmnx4OJS80HSlZyyFPA_uAxvNN9FzQL9XX0MHOu8u-C6Gw3D99a-nItUqyE_vfstRoU8gM20K4KwzRKNDiqNqRvtYkVWgl1J3mTm_r-Jt6ar2gNNXWZnvUEObvhpF7P4qsC2gP9yXOyjAnQ81JRbe6FCK5k8OD4NS2tqF-PaQGhssb0"/>
+</div>
+<div class="p-5 flex flex-col gap-3">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">Bordado</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-slate-500 text-xs font-semibold">4.9</span>
+</div>
+</div>
+<h3 class="text-slate-900 dark:text-slate-100 font-bold text-lg leading-tight">Hilo Rayón Mouliné 8m</h3>
+<p class="text-slate-500 text-sm font-medium">DMC • 100% Viscosa</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-slate-900 dark:text-slate-100 text-xl font-extrabold">2,10€</span>
+<button class="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center gap-2 pb-20">
+<button class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary hover:border-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary text-white font-bold">1</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-primary hover:border-primary transition-all font-semibold">2</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-primary hover:border-primary transition-all font-semibold">3</button>
+<span class="text-slate-400 mx-1">...</span>
+<button class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-primary hover:border-primary transition-all font-semibold">12</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary hover:border-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-12">
+<div class="max-w-[1280px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-2xl">architecture</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Stitch &amp; Co</h2>
+</div>
+<p class="text-slate-500 text-sm leading-relaxed">Tu mercería creativa de confianza. Pasión por la costura, calidad en cada detalle.</p>
+<div class="flex gap-4 mt-2">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 font-bold mb-6">Categorías</h4>
+<ul class="flex flex-col gap-3 text-sm text-slate-500">
+<li><a class="hover:text-primary transition-colors" href="#">Telas Exclusivas</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Hilos de Costura</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Mercería Básica</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Kits de Inicio</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 font-bold mb-6">Ayuda</h4>
+<ul class="flex flex-col gap-3 text-sm text-slate-500">
+<li><a class="hover:text-primary transition-colors" href="#">Envíos y Devoluciones</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Seguimiento de Pedido</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Preguntas Frecuentes</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 font-bold mb-6">Boletín</h4>
+<p class="text-slate-500 text-sm mb-4">Suscríbete para recibir ofertas y tutoriales.</p>
+<div class="flex">
+<input class="bg-slate-50 dark:bg-slate-800 border-none rounded-l-lg w-full text-sm focus:ring-1 focus:ring-primary" placeholder="Email" type="email"/>
+<button class="bg-primary text-white px-4 rounded-r-lg hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-[1280px] mx-auto px-10 mt-12 pt-8 border-t border-slate-50 dark:border-slate-800 text-center text-slate-400 text-xs">
+                © 2024 Stitch &amp; Co. Todos los derechos reservados.
+            </div>
+</footer>
+</div>
+</div>
+
+```</body></html>

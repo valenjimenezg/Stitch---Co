@@ -1,0 +1,23 @@
+CREATE TABLE `ventas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `nombre_cliente` varchar(255) DEFAULT NULL,
+  `telefono` varchar(255) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `ciudad` varchar(255) DEFAULT NULL,
+  `total_venta` decimal(10,2) NOT NULL,
+  `metodo_pago` varchar(255) NOT NULL DEFAULT 'efectivo',
+  `tipo_envio` varchar(255) NOT NULL DEFAULT 'retiro_tienda',
+  `agencia_envio` varchar(255) DEFAULT NULL,
+  `costo_envio` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `estado` enum('pendiente','procesando','enviado','entregado','cancelado') NOT NULL DEFAULT 'pendiente',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `referencia_pago` varchar(255) DEFAULT NULL,
+  `banco_pago` varchar(255) DEFAULT NULL,
+  `telefono_pago` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ventas_user_id_foreign` (`user_id`),
+  CONSTRAINT `ventas_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci

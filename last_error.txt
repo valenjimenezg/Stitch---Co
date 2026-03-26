@@ -1,0 +1,11 @@
+base/Eloquent/Model->insertAndSetId(Object(Illuminate/Database/Eloquent/Builder), Array)
+#9 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1240): Illuminate/Database/Eloquent/Model->performInsert(Object(Illuminate/Database/Eloquent/Builder))
+#10 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(1219): Illuminate/Database/Eloquent/Model->save()
+#11 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Support/helpers.php(388): Illuminate/Database/Eloquent/Builder->Illuminate/Database/Eloquent/{closure}(Object(App/Models/Venta))
+#12 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(1218): tap(Object(App/Models/Venta), Object(Closure))
+#13 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php(23): Illuminate/Database/Eloquent/Builder->create(Array)
+#14 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2540): Illuminate/Database/Eloquent/Model->forwardCallTo(Object(Illuminate/Database/Eloquent/Builder), 'create', Array)
+#15 C:/xampp/htdocs/stitch-and-co/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2556): Illuminate/Database/Eloquent/Model->__call('create', Array)
+#16 C:/xampp/htdocs/stitch-and-co/test_invoice.php(13): Illuminate/Database/Eloquent/Model::__callStatic('create', Array)
+#17 {main}
+"} 

@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+@import './variables.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/admin/**/*.blade.php';
+@source '../js/admin.js';
+
+/* Estilos específicos del panel admin */
+.admin-sidebar {
+    background-color: var(--sc-bg-dark);
+    min-height: 100vh;
+}
+
+.admin-metric-card {
+    background: var(--sc-bg-card);
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-lg);
+    box-shadow: var(--sc-shadow);
+}

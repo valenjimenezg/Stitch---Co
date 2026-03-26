@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b52ff",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#160f23",
+                        "neutral-soft": "#edeaf1",
+                        "neutral-muted": "#6d5e8d",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="w-64 bg-white dark:bg-slate-900 border-r border-neutral-soft dark:border-slate-800 flex flex-col sticky top-0 h-screen">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">architecture</span>
+</div>
+<div>
+<h1 class="text-slate-900 dark:text-white font-bold text-lg leading-none">Stitch &amp; Co</h1>
+<p class="text-neutral-muted text-xs">Haberdashery Admin</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-muted hover:bg-neutral-soft dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-muted hover:bg-neutral-soft dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-sm font-medium">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-muted hover:bg-neutral-soft dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-muted hover:bg-neutral-soft dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-muted hover:bg-neutral-soft dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                View Store
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col">
+<!-- Header -->
+<header class="h-16 bg-white dark:bg-slate-900 border-b border-neutral-soft dark:border-slate-800 flex items-center justify-between px-8 sticky top-0 z-10">
+<div class="flex items-center gap-2 text-neutral-muted text-sm">
+<a class="hover:text-primary transition-colors" href="#">Inventory</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Products</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-white font-medium">Add Variant</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-muted text-xl">search</span>
+<input class="bg-background-light dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="Search orders, stock..." type="text"/>
+</div>
+<button class="text-neutral-muted hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary/20 overflow-hidden border border-primary/30">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="Portrait of a smiling female store manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5ke4zU-_-miZqj1amevilErucgjDkxt5QFE2trI1NeNWAZu-lU2_zlcwTOLoGCXusRM_2cR1psOehcxacXC9moko3WxQecyJ7Y-EVeH3fUERsLIlH6QHOv1RRf1wbQW-ENWL0YFWYK-V2hjsSNlcQypbtqZyx4_jZjDJ1_091OzS7eK1X6SPSqyHP4r5sFYi0WYTG_yI1Kyc3UvPXBDdxZ3C6M2xFkRWE-T5hvJHnBLjr50DxbL8nHd33ZlWyfKbrk0mFlEMVsgT2"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 max-w-5xl mx-auto w-full">
+<div class="mb-8">
+<h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Add Product Variant</h2>
+<p class="text-neutral-muted mt-1">Configure a new variation for the sewing thread or fabric parent product.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Form Fields -->
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-neutral-soft dark:border-slate-800">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">info</span>
+                            General Information
+                        </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-2">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Product Parent</label>
+<select class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20">
+<option>Gütermann Sew-All Thread</option>
+<option>DMC Embroidery Floss</option>
+<option>Coats Moon Thread</option>
+</select>
+</div>
+<div class="col-span-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Color / Tone</label>
+<div class="relative">
+<input class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20" type="text" value="Lavender Mist"/>
+<div class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary"></div>
+</div>
+</div>
+<div class="col-span-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Thickness (Tex)</label>
+<input class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20" placeholder="e.g. 100" type="text"/>
+</div>
+<div class="col-span-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Size (cm)</label>
+<input class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20" placeholder="100" type="number"/>
+</div>
+<div class="col-span-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Brand</label>
+<input class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20" type="text" value="Gütermann"/>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-neutral-soft dark:border-slate-800">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">monetization_on</span>
+                            Pricing &amp; Inventory
+                        </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Price (Bs.)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-muted text-sm">Bs.</span>
+<input class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg pl-12 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 font-medium" step="0.01" type="number" value="45.00"/>
+</div>
+</div>
+<div class="col-span-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Stock Quantity</label>
+<input class="w-full bg-background-light dark:bg-slate-800 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 font-medium" type="number" value="120"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Image Upload -->
+<div class="space-y-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-neutral-soft dark:border-slate-800">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">image</span>
+                            Variant Media
+                        </h3>
+<div class="border-2 border-dashed border-neutral-soft dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-primary transition-colors cursor-pointer group mb-4">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">upload_file</span>
+</div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">Click to upload or drag &amp; drop</p>
+<p class="text-xs text-neutral-muted mt-1">PNG, JPG or WEBP (Max. 2MB)</p>
+</div>
+<!-- Image Previews -->
+<div class="grid grid-cols-2 gap-3">
+<div class="relative group rounded-lg overflow-hidden border border-neutral-soft dark:border-slate-800 aspect-square">
+<img alt="Preview 1" class="w-full h-full object-cover" data-alt="Roll of lavender colored high quality sewing thread" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJnYPYHm9LH-pHs8XwujRp-KorgeKvftAQeSrRDNBxvVrXnQWG0w6I3-Sq4ijN-Qdj4LQx7Kj1jDLw66cVC9iFhGYpLFtmXXFDCLgHxwHE-pt6q7ZZsu4vMnkNnelrpLgM0JlZrxi74HeuiYGyaZic_bhp0atDgDo8y3TuijD_Sl5ieGXWsDpStDfJWXT_AY9RvS3ZlNbgmj2o50Q2XK3IbsND1Xr6_bLyEy1QEOVhxPZ5M3YGkSQSiLHz3S9MWntpQGiyCmlH1iPA"/>
+<button class="absolute top-1 right-1 bg-white/90 dark:bg-slate-900/90 p-1 rounded-md text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 bg-primary/80 text-white text-[10px] py-0.5 text-center font-bold">Main Variant</div>
+</div>
+<div class="relative group rounded-lg overflow-hidden border border-neutral-soft dark:border-slate-800 aspect-square bg-background-light dark:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-neutral-muted text-4xl">add</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-neutral-soft dark:border-slate-800">
+<div class="flex flex-col gap-3">
+<button class="w-full py-3 bg-primary text-white rounded-lg font-bold text-sm tracking-wide shadow-lg shadow-primary/30 hover:shadow-primary/40 active:scale-[0.98] transition-all">
+                                GUARDAR VARIANTE
+                            </button>
+<button class="w-full py-3 bg-neutral-soft dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-bold text-sm tracking-wide hover:bg-neutral-soft/80 dark:hover:bg-slate-700 transition-colors">
+                                CANCELAR
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Info -->
+<footer class="mt-auto p-8 text-center text-xs text-neutral-muted">
+<p>© 2024 Stitch &amp; Co Haberdashery Catalog Management System</p>
+</footer>
+</main>
+</div>
+</body></html>

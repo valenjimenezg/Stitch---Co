@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch &amp; Co | Haberdashery &amp; Sewing Supplies</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b52ff",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#160f23",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<!-- Top Utility Bar -->
+<div class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-[1280px] mx-auto px-6 py-2 flex justify-between items-center text-xs font-medium text-slate-600 dark:text-slate-400">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">phone</span> +591 700 00000</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">mail</span> contacto@stitchandco.com</span>
+</div>
+<div class="flex items-center gap-4">
+<a class="hover:text-primary" href="#"><span class="material-symbols-outlined text-lg">social_leaderboard</span></a>
+<a class="hover:text-primary" href="#"><span class="material-symbols-outlined text-lg">photo_camera</span></a>
+<a class="hover:text-primary" href="#"><span class="material-symbols-outlined text-lg">brand_awareness</span></a>
+<span class="border-l border-slate-300 h-3 mx-2"></span>
+<a class="hover:text-primary uppercase tracking-wider" href="#">Ayuda</a>
+<a class="hover:text-primary uppercase tracking-wider" href="#">Tiendas</a>
+</div>
+</div>
+</div>
+<!-- Main Header -->
+<header class="bg-white dark:bg-background-dark border-b border-slate-100 dark:border-slate-800 sticky top-0 z-50">
+<div class="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between gap-8">
+<!-- Logo -->
+<div class="flex items-center gap-3 shrink-0">
+<div class="size-10 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-2xl">architecture</span>
+</div>
+<h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Stitch <span class="text-primary">&amp;</span> Co</h1>
+</div>
+<!-- Search Bar -->
+<div class="flex-1 max-w-2xl">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all placeholder:text-slate-500 text-sm" placeholder="Buscar hilos, telas, agujas..." type="text"/>
+</div>
+</div>
+<!-- User Actions -->
+<div class="flex items-center gap-2">
+<button class="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative">
+<span class="material-symbols-outlined">person</span>
+</button>
+<button class="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative">
+<span class="material-symbols-outlined">favorite</span>
+<span class="absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white dark:border-background-dark">2</span>
+</button>
+<button class="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white dark:border-background-dark">5</span>
+</button>
+</div>
+</div>
+<!-- Navigation Menu -->
+<nav class="bg-primary text-white">
+<div class="max-w-[1280px] mx-auto px-6">
+<ul class="flex items-center gap-1 font-medium text-sm">
+<li>
+<button class="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 transition-colors uppercase tracking-wider text-xs font-bold">
+<span class="material-symbols-outlined text-lg">menu</span> Materiales
+                        </button>
+</li>
+<li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="#">Novedades</a></li>
+<li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="#">Tejido</a></li>
+<li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="#">Costura</a></li>
+<li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="#">Manualidades</a></li>
+<li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white text-yellow-300 font-bold italic" href="#">Ofertas %</a></li>
+<li class="ml-auto"><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors" href="#">Tutoriales</a></li>
+</ul>
+</div>
+</nav>
+</header>
+<main class="max-w-[1280px] mx-auto px-6 pb-20">
+<!-- Hero Carousel -->
+<section class="mt-8 relative overflow-hidden rounded-2xl h-[480px] group">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Soft aesthetic sewing station with pastel fabrics and threads" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCDGRVQl-RNh1s0RWs0t3a3-qpiSXkPaTxzMCMzrlyGKqg7cAI2JuJ9Qexu5fIkeTTgof_V4T9HENYZrVRZnulxmAWxwDOMwmvrQtIDPbxgOLbEGbt-fVyRXhO6sOFiZN7HXLynRP9ViRBiUqWODVVP6lg6IeG88XwLI8uWn9GU6UEDWtdyavQPm9maTYsqWdjvysYP23zZ_GlucviQM9AZ4Y2TGsTWlwyeKxuqHMF1km6zEY8taaGlctm8dkfcr8mUgTClG9ergFA3');">
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex flex-col justify-center px-20">
+<span class="text-primary bg-white/90 self-start px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">Nueva Colección</span>
+<h2 class="text-5xl font-black text-white max-w-xl leading-tight mb-6">Crea con Pasión, <br/>Cose con Amor</h2>
+<p class="text-white/80 text-lg max-w-md mb-8">Descubre las mejores texturas y colores para tus proyectos de esta temporada. Calidad premium importada.</p>
+<button class="bg-primary text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition-all self-start shadow-xl shadow-primary/30">Comprar Ahora</button>
+</div>
+</div>
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+<div class="size-2 rounded-full bg-white"></div>
+<div class="size-2 rounded-full bg-white/40"></div>
+<div class="size-2 rounded-full bg-white/40"></div>
+</div>
+</section>
+<!-- Categories Grid -->
+<section class="mt-16">
+<div class="flex items-end justify-between mb-8">
+<div>
+<h3 class="text-2xl font-bold text-slate-900 dark:text-white">Categorías Principales</h3>
+<p class="text-slate-500 text-sm">Todo lo que necesitas para tu próximo proyecto</p>
+</div>
+<a class="text-primary font-semibold text-sm hover:underline flex items-center gap-1" href="#">Ver todas <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+<div class="grid grid-cols-4 gap-6">
+<!-- Category Item -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Assorted colorful yarn wool balls" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOhHZ6wZRDMN0gYXTCeDZUQIkr2QxuiJnPGxtYnfNOahjljb9jZfGmzoYs87hI-xjrm5oCDT0JBQ28FVSZ8X1JycfdCqJMMnTpX0LVDvdZqX9FwFmpFcxyq2sJcP0JoWR51tnHI9qXPd8HbxdW0Oz7wOEsNughiMm6_59l5Dhcjy1zRMw12oJNqD-CUIWGFSwcKpx4x2hXKG-VW_Jo4DKfvnrFFxGUj5qiRR5XteZ1Oeu6CM8J_WYZ137n_vxYCetAS9QlQpP2FWXO"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<h4 class="text-center font-bold text-lg group-hover:text-primary transition-colors">Lanas</h4>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Stacked colorful textile fabric sheets" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmQ8hetkDBFWH-k18347gr2nJeXBIlvskXO3FJ7HGxr0uFlsQhLPKVW5KAf4vw-YlxsMbp4xhQof0dKxHGUECnyoxks8j9Ob8LHtVMd7hONk7OMVm9HbOteF9M6apRIe1Rp9Sv-uQn06krZdgLQM7ehlkXa83d2Q_IAN68Sd4kyeku-58mxLtmZV_ILxzgLdBcK8RTwixjTcF4QCF9PEh1CAA1WXu7Jxtcc-d-E3eZipIJrCJX-SyRZl_hEokPzHLdCTJWhAGeP0VP"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<h4 class="text-center font-bold text-lg group-hover:text-primary transition-colors">Telas</h4>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Close up of various vintage sewing buttons" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgWvTuC4r2ynDFQSFGRnBNTDSGybIozuThBm8rMD4CE1gASmv-ufBDnWTuW7fYaghyb0cT_Bm6Wsuwf2n-yuIqaS3_7LDIR37hN-91rk7uIrv9jIHGJLOitul7CyDwp_POzBDspPpW8Bdb99Vo5EYK_J4_yLiJI2FndYEqJguWcDngNkOern4J1yDbDCBc4qgbZizN4GKUsrD7GE3qABfC9FUmwkeNf45rrW1HcE_nbn_wM4NIZes_W7zW2KdLVm-y1opHcb9upY2c"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<h4 class="text-center font-bold text-lg group-hover:text-primary transition-colors">Botones</h4>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-2xl overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Vintage metal sewing scissors and accessories" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDuteQULBaKOTJDuHx4sH4TTStXOu9paM0YeYrYdUpWbq7LipnW7FcygBTXQk6OKOuFGxDsSQmYU31ATQ3sBRy_uMe0z105cKfWqTpgHALIBRQlDehsdWkg7jkAln97KF7F3YMLSG6KlyuryiiQTqxmlKnAsyA-va5irG8eDZaxjucZboTGTyF3T5zkanABBjQqPK8s49eC7axx7TlWzl2-MNh2dt1jhHNWjc8je5zZzvhrfiIJsrdvWy15NdOM9BccBX4Ikg4WN4M"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<h4 class="text-center font-bold text-lg group-hover:text-primary transition-colors">Accesorios</h4>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="mt-20">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-2xl font-bold text-slate-900 dark:text-white">Productos Destacados</h3>
+<div class="flex gap-2">
+<button class="size-10 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="size-10 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-8">
+<!-- Product Card -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 hover:shadow-2xl hover:shadow-primary/5 transition-all group relative">
+<button class="absolute top-6 right-6 z-10 size-9 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50 dark:bg-slate-800">
+<img class="w-full h-full object-cover" data-alt="High quality merino wool yarn skein in lavender" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDelbXK8a7fU9y5vIb9_GAr3wF1t0yG2LBgi08rqfPms0rtq5L08r_TvjhIXzZSzhv4YNSmrhE7pqsw44dmjFf8_p8ox_KkrhAEh4QnMZFX27PurefF7foSkX1oEtBGz1gd40IgBiNum0snQdJdHDw-dmLZGjWgvECvOt1CLqEKSdG2mCASzu8gEbJcT8Yd-9eDhq4mkkv5eG0NYh8rDEbX6nUXayndDcQ1OH7REU1jGdKnfrA6qGlVHDQWl5nCHoUvUVAisprOd03t"/>
+</div>
+<div>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Premium</p>
+<h5 class="font-bold text-slate-900 dark:text-white mb-2 leading-tight">Lana Merino Soft - Lavanda Imperial</h5>
+<div class="flex items-center gap-1 mb-3">
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm">star_half</span>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">(42)</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-xl font-black text-slate-900 dark:text-white">Bs. 85.00</span>
+<button class="size-10 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 hover:shadow-2xl hover:shadow-primary/5 transition-all group relative">
+<button class="absolute top-6 right-6 z-10 size-9 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50 dark:bg-slate-800">
+<img class="w-full h-full object-cover" data-alt="Floral print cotton fabric roll" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX_xdgyl91X6IWwaFddhI8YVRmaxv8QQ4DOkg6x0A9AvU3sBDZoHNYVgdbHXmGFbIq2GvjiJnAhxQ4v0XHB1eGV6qPQbKuJ84TWdJZFq6UA_ByNlv8vSn-xR7lkgtG-ivUyZ3rQYQD0CLIBS-j_McPt1c0gVlk98mtFL89yKeXm5HBNtBI5ZnM7N_SfdKC7qFaplyrIrXQlI_6aWy4bTce8Oj8f4gFX3i3KNkgS-3Jph7y58NrN9YGL81kcQvLi1nWFQsOe8C96SAf"/>
+</div>
+<div>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Importado</p>
+<h5 class="font-bold text-slate-900 dark:text-white mb-2 leading-tight">Tela Algodón Premium - Floral Vintage</h5>
+<div class="flex items-center gap-1 mb-3">
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">(18)</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-xl font-black text-slate-900 dark:text-white">Bs. 45.00 <span class="text-xs font-normal text-slate-400">/m</span></span>
+<button class="size-10 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 hover:shadow-2xl hover:shadow-primary/5 transition-all group relative">
+<button class="absolute top-6 right-6 z-10 size-9 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50 dark:bg-slate-800">
+<img class="w-full h-full object-cover" data-alt="Set of professional tailoring scissors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAez_Ys6lb9q72aGGTWGUcPHQJjCkt90_tRimWneCo1AWJ3ImTI06jlI5LzH2cNHSuXXd5YLj6gLJ9Y87T5vh91mlu8ZLAAFJ8szE_gXeCtbJXQ8uy3rhvoDvHvCVR9P8VvIrZVy9ae2VOXWW37QDh1EwB2_nHaCf8bc_b-qQpwl8RulealY0_2peggyUX47u3NxPcW8mpS114Q0fl8zLyOPCBh9GgYbZxfbWLyeNas1850_2nV2WrTxg3qmLt9Z-a8K0BtvgXUE97"/>
+</div>
+<div>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Profesional</p>
+<h5 class="font-bold text-slate-900 dark:text-white mb-2 leading-tight">Tijeras de Sastre Acero Inoxidable 9"</h5>
+<div class="flex items-center gap-1 mb-3">
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">(124)</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-xl font-black text-slate-900 dark:text-white">Bs. 120.00</span>
+<button class="size-10 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 hover:shadow-2xl hover:shadow-primary/5 transition-all group relative">
+<span class="absolute top-6 left-6 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded uppercase">Oferta</span>
+<button class="absolute top-6 right-6 z-10 size-9 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50 dark:bg-slate-800">
+<img class="w-full h-full object-cover" data-alt="Box of colorful sewing threads" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv4SQGiXNEDRycG_M1vEBdISRFwpAYV0vkU2icTclNAfXOsIVh5bC7-pBDtW83tYdu4RRrC2nzWvxvsDgROtIzbqhjSq1WsfX7JXpEj-4SjfeXLZdy5ntJHZUgIph6wRmyHEChh5GKhUFP4GdyvRY6PEeGW0mqj2pBCxx1T9-RPgCvJz0gTw0wcV-Lh4KyeDMzIdZx4YmoNzPD8yLi27FfutqJvH3oDcdet8A_TA2IitnENzRDTuffz4Cubum4IeVS3JJb7P9d3KwZ"/>
+</div>
+<div>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Set Ahorro</p>
+<h5 class="font-bold text-slate-900 dark:text-white mb-2 leading-tight">Pack 24 Hilos Poliéster - Arcoíris</h5>
+<div class="flex items-center gap-1 mb-3">
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm">star_outline</span>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">(56)</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div>
+<span class="text-xl font-black text-slate-900 dark:text-white">Bs. 65.00</span>
+<span class="block text-[10px] text-slate-400 line-through">Bs. 85.00</span>
+</div>
+<button class="size-10 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / Community Section -->
+<section class="mt-24 bg-primary/10 rounded-[2.5rem] p-12 flex items-center justify-between relative overflow-hidden">
+<div class="absolute -bottom-12 -right-12 size-64 bg-primary/20 rounded-full blur-3xl"></div>
+<div class="max-w-xl">
+<h3 class="text-4xl font-black text-slate-900 dark:text-white mb-4">Únete a nuestra comunidad de creadores</h3>
+<p class="text-slate-600 dark:text-slate-400 text-lg mb-8">Recibe tutoriales exclusivos, descuentos especiales y sé el primero en conocer nuestras nuevas colecciones.</p>
+<div class="flex gap-2">
+<input class="flex-1 bg-white dark:bg-slate-800 border-none rounded-xl px-6 py-4 text-sm focus:ring-2 focus:ring-primary shadow-sm" placeholder="Tu correo electrónico" type="email"/>
+<button class="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all">Suscribirme</button>
+</div>
+</div>
+<div class="hidden lg:block relative z-10">
+<div class="size-64 rounded-3xl bg-white p-4 shadow-2xl rotate-3">
+<img class="w-full h-full object-cover rounded-2xl" data-alt="Inspiration mood board for sewing projects" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRISK38Fz7vIPvxNNAKhuH7OWpjjYUEhT4GusVS3AfwIR6gQloa-l_9qUHJL61GyoG4eQ-vR0zMkBpJvzwckDXLNJuvlTEQ8lx8YIYqgc7gmw2Mo4igxsxXKdAai7fYPRK6-Oexuq6tlZT7n4W0eo3SAJlHw3a9R15nvj-QTl5P-EQGLKVqTgjJRo7k1FPfndaexFiCqNvydr4pdyRO7NxOb6pnwsgcPBiejtm58tREaPHRk6VTXWDP1wNoXgMVErgeSmk1txroenR"/>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-300 pt-16 pb-8">
+<div class="max-w-[1280px] mx-auto px-6 grid grid-cols-5 gap-12 mb-16">
+<div class="col-span-2">
+<div class="flex items-center gap-3 mb-6">
+<div class="size-8 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-white text-xl">architecture</span>
+</div>
+<span class="text-xl font-extrabold text-white">Stitch &amp; Co</span>
+</div>
+<p class="text-sm leading-relaxed mb-6 pr-12">Desde hace más de 15 años, somos el aliado perfecto para diseñadores, costureras y mentes creativas en Bolivia. Ofreciendo lo mejor en insumos de mercería y textiles.</p>
+<div class="flex gap-4">
+<a class="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined">brand_awareness</span></a>
+<a class="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined">camera</span></a>
+<a class="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined">chat</span></a>
+</div>
+</div>
+<div>
+<h6 class="text-white font-bold mb-6">Tienda</h6>
+<ul class="space-y-4 text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Lanas y Hilos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Telas y Retazos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Mercería y Botones</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Kits de Inicio</a></li>
+</ul>
+</div>
+<div>
+<h6 class="text-white font-bold mb-6">Compañía</h6>
+<ul class="space-y-4 text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Sobre Nosotros</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Preguntas Frecuentes</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Blog de Tutoriales</a></li>
+</ul>
+</div>
+<div>
+<h6 class="text-white font-bold mb-6">Legal</h6>
+<ul class="space-y-4 text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Términos de Uso</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Política de Privacidad</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Envíos y Devoluciones</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-[1280px] mx-auto px-6 pt-8 border-t border-white/5 flex items-center justify-between text-xs">
+<p>© 2024 Stitch &amp; Co Haberdashery. Todos los derechos reservados.</p>
+<div class="flex items-center gap-4">
+<span class="text-white/20">Pago seguro:</span>
+<span class="material-symbols-outlined">credit_card</span>
+<span class="material-symbols-outlined">account_balance</span>
+<span class="material-symbols-outlined">qr_code_2</span>
+</div>
+</div>
+</footer>
+</body></html>
