@@ -3,15 +3,35 @@
 @section('title', 'Recuperar contraseña')
 
 @section('content')
-<div class="w-full max-w-[400px] mx-auto bg-white shadow-2xl shadow-slate-200/50 overflow-hidden rounded-[1.75rem] border border-slate-100">
+<div class="w-full max-w-2xl mx-auto">
+    <!-- Header General -->
+    <div class="mb-4">
+        <h1 class="text-2xl font-bold text-primary">Cambia tu clave de internet</h1>
+    </div>
 
-    <div class="px-7 pt-10 pb-8">
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-6 md:p-8">
+        
+        <!-- Step Header -->
+        <div class="flex items-center gap-4 mb-4">
+            <div class="relative flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary text-primary font-bold text-sm bg-white z-10 shrink-0">
+                2 de 3
+                <!-- 2/3 Progress -->
+                <svg class="absolute inset-0 w-full h-full text-primary -rotate-90" viewBox="0 0 36 36">
+                    <path class="text-slate-200" stroke-width="2" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="text-primary" stroke-dasharray="66, 100" stroke-width="2" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-primary">Selecciona tu método de seguridad</h2>
+                <p class="text-sm font-medium text-slate-600">Siguiente paso: Verificar código temporal</p>
+            </div>
+        </div>
 
-        {{-- Encabezado --}}
-        <div class="text-center mb-10 px-2">
-            <h1 class="text-slate-900 text-[1.35rem] font-extrabold tracking-tight leading-snug">
-                ¿Dónde quieres recibir el código para<br>restablecer la contraseña?
-            </h1>
+        <div class="mb-8 pl-1">
+            <p class="text-slate-600 font-medium">
+                ¿Dónde quieres recibir tu clave temporal?
+            </p>
         </div>
 
         <form method="POST" action="{{ route('password.send_code') }}" id="recovery-form">
@@ -20,35 +40,13 @@
             @php
                 $options = [
                     [
-                        'id' => 'sms',
-                        'icon' => 'sms',
-                        'iconColor' => '#60A5FA', // Blue
-                        'label' => 'Enviar código por SMS',
-                        'value' => 'No registrado',
-                    ],
-                    [
                         'id' => 'email',
                         'icon' => 'mail_outline',
                         'iconColor' => '#F59E0B', // Amber
                         'label' => 'Enviar código por correo electrónico',
                         'value' => $maskedEmail ?? 'v*********@gmail.com',
                         'checked' => true,
-                    ],
-                    [
-                        'id' => 'call',
-                        'icon' => 'call',
-                        'iconColor' => '#94A3B8', // Slate
-                        'label' => 'Recibir código por llamada',
-                        'value' => 'No registrado',
-                    ],
-                    [
-                        'id' => 'whatsapp',
-                        'icon' => 'whatsapp',
-                        'iconColor' => '#25D366', // Emerald
-                        'label' => 'Enviar código por WhatsApp',
-                        'value' => 'No registrado',
-                        'is_svg' => true,
-                    ],
+                    ]
                 ];
             @endphp
 
@@ -56,15 +54,17 @@
                 @foreach($options as $opt)
                     @php
                         $isChecked = !empty($opt['checked']);
+                        $isDisabled = !empty($opt['disabled']);
                     @endphp
 
                     <label for="method_{{ $opt['id'] }}" 
                            class="method-option relative flex items-center gap-4 cursor-pointer p-4 rounded-2xl hover:bg-slate-50/80 transition-all duration-200
-                                  {{ $isChecked ? 'is-selected ring-1 ring-[#8b5cf6]/20 bg-slate-50/50' : '' }}">
+                                  {{ $isChecked ? 'is-selected ring-1 ring-[#8b5cf6]/20 bg-slate-50/50' : '' }}
+                                  {{ $isDisabled ? 'opacity-50 !cursor-not-allowed pointer-events-none grayscale-[50%]' : '' }}">
                         
                         {{-- Radio Input --}}
                         <input type="radio" name="method" id="method_{{ $opt['id'] }}" value="{{ $opt['id'] }}" 
-                               class="sr-only" {{ $isChecked ? 'checked' : '' }}>
+                               class="sr-only" {{ $isChecked ? 'checked' : '' }} {{ $isDisabled ? 'disabled' : '' }}>
                         
                         {{-- Círculo --}}
                         <div class="radio-outer flex-shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded-full border-[2px] transition-colors duration-200
