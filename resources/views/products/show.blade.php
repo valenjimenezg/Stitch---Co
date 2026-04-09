@@ -201,26 +201,68 @@
         @if($variante->producto->detalleProductos->count() > 1)
         <div class="mb-8">
             <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">
-                Variante: <span class="text-slate-500 font-normal">{{ $variante->talla ?? $variante->color ?? '—' }}</span>
+                Variante: <span class="text-slate-500 font-normal">{{ $variante->grosor ? $variante->grosor . ' | ' : '' }}{{ $variante->color ?? $variante->talla ?? '—' }}</span>
             </span>
-            <div class="flex gap-3 flex-wrap">
+            <div class="flex gap-4 flex-wrap">
                 @foreach($variante->producto->detalleProductos as $v)
-                    @php $isOutOfStock = $v->stock <= 0; @endphp
-                    <a href="{{ route('products.show', $v->id) }}"
-                       class="px-4 py-2 rounded-xl border-2 text-sm font-bold transition-all relative overflow-hidden flex items-center gap-2
-                              {{ $v->id === $variante->id ? 'border-primary bg-primary/5 text-primary shadow-inner' : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white shadow-sm' }}
-                              {{ $isOutOfStock ? 'opacity-60 bg-slate-50' : '' }}">
+                    @php 
+                        $isOutOfStock = $v->stock <= 0; 
+                        $isActive = $v->id === $variante->id;
+                    @endphp
+                    
+                    @if($v->color)
+                        @php
+                            $colorName = strtolower(trim($v->color));
+                            $colorMap = [
+                                'natural' => '#e8dcc7',
+                                'blanco' => '#ffffff',
+                                'beige' => '#f5f5dc',
+                                'negro' => '#1a1a1a',
+                                'rojo' => '#ef4444',
+                                'azul' => '#3b82f6',
+                                'verde' => '#22c55e',
+                                'amarillo' => '#eab308',
+                                'gris plomo' => '#475569',
+                                'gris perla' => '#cbd5e1',
+                                'plateado' => '#94a3b8',
+                                'dorado' => '#ca8a04',
+                                'crema' => '#fef3c7',
+                                'rosado' => '#f472b6',
+                                'rosa' => '#f472b6',
+                                'morado' => '#a855f7',
+                                'naranja' => '#f97316',
+                                'gris' => '#94a3b8',
+                            ];
+                            $hex = $colorMap[$colorName] ?? $colorName;
+                            
+                            // If it's an image variant (like the Sephora screenshot sometimes uses textures), 
+                            // we could use background-image, but for now we use the solid hex color.
+                        @endphp
                         
-                        @if($v->color)
-                            <div class="w-4 h-4 rounded-full border border-black/10 shadow-inner block" style="background-color: {{ strtolower($v->color) }};"></div>
-                        @endif
-                        
-                        <span>{{ $v->grosor ? $v->grosor . ' | ' : '' }}{{ $v->color ?? 'Variante ' . $loop->iteration }}</span>
-                        
-                        @if($isOutOfStock)
-                            <span class="absolute block w-full h-[1.5px] bg-slate-400 top-1/2 left-0 -translate-y-1/2 -rotate-12"></span>
-                        @endif
-                    </a>
+                        <a href="{{ route('products.show', $v->id) }}"
+                           title="{{ $v->grosor ? $v->grosor . ' | ' : '' }}{{ $v->color }}"
+                           class="relative block rounded-full transition-all duration-200 cursor-pointer
+                                  {{ $isActive ? 'ring-2 ring-black ring-offset-2 scale-110' : 'hover:scale-110 hover:ring-1 hover:ring-slate-300 hover:ring-offset-1' }}
+                                  {{ $isOutOfStock ? 'opacity-50' : '' }}"
+                           style="width: 36px; height: 36px; background-color: {{ $hex }}; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05);">
+                            
+                            @if($isOutOfStock)
+                                <span class="absolute block w-[110%] h-[1.5px] bg-slate-600 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-45 shadow-sm"></span>
+                            @endif
+                        </a>
+
+                    @else
+                        {{-- Fallback original para variantes sin color (ej: Tallas puras) --}}
+                        <a href="{{ route('products.show', $v->id) }}"
+                           class="px-4 py-2 rounded-xl border-2 text-sm font-bold transition-all relative overflow-hidden flex items-center gap-2
+                                  {{ $isActive ? 'border-primary bg-primary/5 text-primary shadow-inner' : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white shadow-sm' }}
+                                  {{ $isOutOfStock ? 'opacity-60 bg-slate-50' : '' }}">
+                            <span>{{ $v->grosor ? $v->grosor . ' | ' : '' }}{{ $v->talla ?? 'Variante ' . $loop->iteration }}</span>
+                            @if($isOutOfStock)
+                                <span class="absolute block w-full h-[1.5px] bg-slate-400 top-1/2 left-0 -translate-y-1/2 -rotate-12"></span>
+                            @endif
+                        </a>
+                    @endif
                 @endforeach
             </div>
         </div>

@@ -30,8 +30,10 @@ class CartController extends Controller
 
         $variante = DetalleProducto::findOrFail($request->variante_id);
 
-        if ($variante->stock < $request->cantidad) {
-            return back()->with('error', 'Stock insuficiente.');
+        $factorConversion = $variante->factor_conversion ?: 1;
+
+        if ($variante->stock < ($request->cantidad * $factorConversion)) {
+            return back()->with('error', 'No hay suficiente stock para completar esta unidad de presentación.');
         }
 
         $carrito = auth()->user()->carritoActivo()
@@ -41,8 +43,8 @@ class CartController extends Controller
 
         if ($item) {
             $nuevaCantidad = $item->cantidad + $request->cantidad;
-            if ($variante->stock < $nuevaCantidad) {
-                return back()->with('error', 'No hay suficiente stock.');
+            if ($variante->stock < ($nuevaCantidad * $factorConversion)) {
+                return back()->with('error', 'No hay suficiente stock para completar esta unidad de presentación.');
             }
             $item->update(['cantidad' => $nuevaCantidad]);
         } else {
@@ -65,9 +67,10 @@ class CartController extends Controller
 
         // Determinar paso fractal si es tela
         $step = in_array(strtolower($detalle->variante->unidad_medida), ['metro', 'centímetro', 'cm']) ? 0.5 : 1;
+        $factor = $detalle->variante->factor_conversion ?: 1;
 
         if ($accion === 'inc') {
-            if ($detalle->variante->stock >= ($detalle->cantidad + $step)) {
+            if ($detalle->variante->stock >= (($detalle->cantidad + $step) * $factor)) {
                 $detalle->increment('cantidad', $step);
             }
         } else {

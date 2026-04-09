@@ -34,15 +34,19 @@
 
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Producto Existente (opcional)</label>
-                        <select name="producto_id" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5">
-                            <option value="">— Crear nuevo producto —</option>
-                            @foreach($productos as $p)
-                                <option value="{{ $p->id }}" {{ old('producto_id') == $p->id ? 'selected' : '' }}>
-                                    {{ $p->nombre }} ({{ $p->categoria }})
-                                </option>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Categoría *</label>
+                        <select id="categoria-select" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
+                            <option value="">— Crear nueva categoría —</option>
+                            @foreach($productos->pluck('categoria')->unique()->sort() as $cat)
+                                @if(trim($cat) !== '')
+                                    <option value="{{ strtolower(trim($cat)) }}" {{ old('categoria') == strtolower(trim($cat)) ? 'selected' : '' }}>
+                                        {{ ucfirst(trim($cat)) }}
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
+                        <input name="categoria" id="categoria-input" type="text" value="{{ old('categoria') }}" placeholder="Escribe el nombre de la nueva categoría..."
+                               class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
 
                     <div id="nuevo-producto-fields">
@@ -59,9 +63,15 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Categoría *</label>
-                        <input name="categoria" type="text" value="{{ old('categoria') }}" placeholder="Ej: lanas, telas, merceria"
-                               class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Producto Existente (opcional)</label>
+                        <select name="producto_id" id="producto_id_select" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5">
+                            <option value="">— Crear nuevo producto —</option>
+                            @foreach($productos as $p)
+                                <option value="{{ $p->id }}" data-category="{{ strtolower(trim($p->categoria)) }}" {{ old('producto_id') == $p->id ? 'selected' : '' }}>
+                                    {{ $p->nombre }} ({{ $p->categoria }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>
@@ -89,25 +99,27 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Medida cm (opcional)</label>
-                        <input name="cm" type="number" step="0.1" value="{{ old('cm') }}" placeholder="100"
+                        <input name="cm" type="number" step="0.1" value="{{ old('cm') }}" placeholder="Ej: 50"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4"/>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida</label>
-                        <select name="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
+                        <select name="unidad_medida" id="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
                             <option value="Ninguna">Ninguna</option>
-                            <option value="Metros">Metros</option>
-                            <option value="Yardas">Yardas</option>
-                            <option value="Gramos">Gramos</option>
-                            <option value="Docena">Docena</option>
-                            <option value="Rollo">Rollo</option>
-                            <option value="Caja">Caja</option>
-                            <option value="Bulto">Bulto</option>
                         </select>
+                        <input type="hidden" name="unidad_nombre" id="unidad_nombre" value="Ninguna">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Base (Ref. USD) *</label>
-                        <input name="precio_usd" type="number" step="0.01" value="{{ old('precio_usd') }}" placeholder="0.00"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Factor de Conversión</label>
+                        <input name="factor_conversion" id="factor_conversion" type="number" step="1" value="{{ old('factor_conversion', 1) }}"
+                               class="w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary py-2.5 px-4 text-slate-500" readonly/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                            <span>Precio Base (Ref. USD) *</span>
+                            <span id="label-precio-calculado" class="text-primary font-black hidden"></span>
+                        </label>
+                        <input name="precio_usd" id="precio_usd" type="number" step="0.01" value="{{ old('precio_usd') }}" placeholder="0.00"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
                     <div>
@@ -179,8 +191,138 @@
     }
 
     // Show/hide new product fields based on selection
-    document.querySelector('[name="producto_id"]').addEventListener('change', function() {
-        document.getElementById('nuevo-producto-fields').style.display = this.value ? 'none' : 'block';
+    const productSelect = document.querySelector('[name="producto_id"]');
+    const newProductFields = document.getElementById('nuevo-producto-fields');
+    const catInput = document.getElementById('categoria-input');
+    
+    // Dynamic Units JS Map
+    const categoryUnits = {
+        'boton': { 'Unidad': 1, 'Docena': 12, 'Gruesa': 144 },
+        'tela': { 'Metro': 1, 'Yardas': 1, 'Rollo': 50 },
+        'aguja': { 'Sobre': 1, 'Blíster': 1, 'Paquete': 10 },
+        'hilo': { 'Rollo': 1, 'Tubino': 1, 'Bulto': 12 },
+        'lana': { 'Estambre': 1, 'Madeja': 10, 'Ovillo': 10 },
+        'alfiler': { 'Cajita': 1, 'Rueda': 1, 'Paquete': 12 },
+        'cierre': { 'Unidad': 1, 'Metro': 1, 'Docena': 12, 'Rollo': 50 },
+        'llave': { 'Unidad': 1, 'Bolsa': 100, 'Caja': 100 },
+        'herramienta': { 'Unidad': 1, 'Kit': 1 },
+        'default': { 'Ninguna': 1, 'Unidad': 1, 'Rollo': 1, 'Docena': 12, 'Caja': 24, 'Bulto': 100 }
+    };
+
+    const unidadSelect = document.getElementById('unidad_medida');
+    const factorInput = document.getElementById('factor_conversion');
+    const hiddenUnidadNombre = document.getElementById('unidad_nombre');
+    const precioBaseInput = document.getElementById('precio_usd');
+    const labelPrecioCalculado = document.getElementById('label-precio-calculado');
+
+    function updateCategoryUnits() {
+        let currentCategory = '';
+        if (productSelect.value) {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            currentCategory = selectedOption.getAttribute('data-category') || '';
+        } else {
+            currentCategory = catInput.value.toLowerCase().trim();
+        }
+
+        // Buscar coincidencia en el map o usar default
+        let unitsObj = categoryUnits['default'];
+        for (const [key, value] of Object.entries(categoryUnits)) {
+            if (currentCategory.includes(key)) {
+                unitsObj = value;
+                break;
+            }
+        }
+
+        // Vaciar Select
+        unidadSelect.innerHTML = '';
+        for (const [unitName, factorValue] of Object.entries(unitsObj)) {
+            const option = document.createElement('option');
+            option.value = factorValue; // Visualmente guardamos temporal el factor
+            option.text = unitName;
+            option.setAttribute('data-name', unitName);
+            unidadSelect.appendChild(option);
+        }
+        
+        updateFactorValue();
+    }
+
+    function updateFactorValue() {
+        if(unidadSelect.selectedIndex >= 0) {
+            const option = unidadSelect.options[unidadSelect.selectedIndex];
+            factorInput.value = option.value;
+            hiddenUnidadNombre.value = option.getAttribute('data-name');
+        }
+        calculatePrice();
+    }
+
+    function calculatePrice() {
+        let base = parseFloat(precioBaseInput.value) || 0;
+        let factor = parseInt(factorInput.value) || 1;
+        let unitName = hiddenUnidadNombre.value;
+        
+        let total = base * factor;
+        if(total > 0 && factor > 1) {
+            labelPrecioCalculado.textContent = `Total (Por ${unitName}): $${total.toFixed(2)}`;
+            labelPrecioCalculado.classList.remove('hidden');
+        } else {
+            labelPrecioCalculado.classList.add('hidden');
+        }
+    }
+
+    productSelect.addEventListener('change', function() {
+        newProductFields.style.display = this.value ? 'none' : 'block';
+        if (this.value) {
+            catInput.removeAttribute('required');
+            // Auto rellenar la categoría padre si se eligió un producto
+            const c = this.options[this.selectedIndex].getAttribute('data-category');
+            if(c) catInput.value = c;
+        } else {
+            catInput.setAttribute('required', 'required');
+        }
+        updateCategoryUnits();
     });
+
+    catInput.addEventListener('input', function() {
+        updateCategoryUnits();
+        
+        // Dynamic Filter: Ocultar/Mostrar productos existentes según la categoría tecleada
+        const typedCat = this.value.toLowerCase().trim();
+        const options = productSelect.options;
+        for(let i = 1; i < options.length; i++) {
+            const optCat = options[i].getAttribute('data-category');
+            if(!typedCat || optCat.includes(typedCat) || typedCat.includes(optCat)) {
+                options[i].style.display = '';
+            } else {
+                options[i].style.display = 'none';
+            }
+        }
+        // Deseleccionar si el producto elegido desapareció por filtro
+        if(productSelect.selectedIndex > 0 && options[productSelect.selectedIndex].style.display === 'none') {
+            productSelect.selectedIndex = 0;
+            productSelect.dispatchEvent(new Event('change'));
+        }
+    });
+
+    const catSelect = document.getElementById('categoria-select');
+    catSelect.addEventListener('change', function() {
+        if(this.value) {
+            catInput.value = this.value;
+            catInput.style.display = 'none';
+        } else {
+            catInput.value = '';
+            catInput.style.display = 'block';
+        }
+        catInput.dispatchEvent(new Event('input'));
+    });
+    
+    // Set initial state
+    if(catSelect.value) {
+        catInput.style.display = 'none';
+    }
+    unidadSelect.addEventListener('change', updateFactorValue);
+    precioBaseInput.addEventListener('input', calculatePrice);
+
+    // Initialize on load
+    updateCategoryUnits();
 </script>
 @endpush

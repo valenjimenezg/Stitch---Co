@@ -90,6 +90,8 @@ class ProductController extends Controller
             'marca'                => 'nullable|string|max:100',
             'cm'                   => 'nullable|numeric|min:0',
             'unidad_medida'        => 'nullable|string|max:50',
+            'factor_conversion'    => 'nullable|integer|min:1',
+            'unidad_nombre'        => 'nullable|string|max:100',
             'precio_usd'           => 'required|numeric|min:0',
             'en_oferta'            => 'nullable|boolean',
             'descuento_porcentaje' => 'nullable|integer|min:0|max:100',
@@ -126,6 +128,8 @@ class ProductController extends Controller
                 'marca'                => $request->marca,
                 'cm'                   => $request->cm,
                 'unidad_medida'        => $request->unidad_medida ?? 'Ninguna',
+                'factor_conversion'    => $request->factor_conversion ?? 1,
+                'unidad_nombre'        => $request->unidad_nombre ?? $request->unidad_medida,
                 'precio_usd'           => $request->precio_usd,
                 'precio'               => round($request->precio_usd * $bcvRate, 2),
                 'stock'                => $request->stock,
@@ -160,6 +164,8 @@ class ProductController extends Controller
             'marca'                => 'nullable|string|max:100',
             'cm'                   => 'nullable|numeric|min:0',
             'unidad_medida'        => 'nullable|string|max:50',
+            'factor_conversion'    => 'nullable|integer|min:1',
+            'unidad_nombre'        => 'nullable|string|max:100',
             'precio'               => 'required|numeric|min:0',
             'en_oferta'            => 'nullable|boolean',
             'descuento_porcentaje' => 'nullable|integer|min:0|max:100',
@@ -170,7 +176,14 @@ class ProductController extends Controller
         $bcvRate = \Illuminate\Support\Facades\Cache::get('bcv_rate', 1);
         $bcvRate = max($bcvRate, 1);
 
-        $data = $request->only('grosor', 'color', 'marca', 'cm', 'unidad_medida', 'precio', 'stock');
+        $data = $request->only('grosor', 'color', 'marca', 'cm', 'unidad_medida', 'factor_conversion', 'unidad_nombre', 'precio', 'stock');
+        if (!isset($data['factor_conversion']) || empty($data['factor_conversion'])) {
+            $data['factor_conversion'] = 1;
+        }
+        if (!isset($data['unidad_nombre']) || empty($data['unidad_nombre'])) {
+            $data['unidad_nombre'] = $data['unidad_medida'] ?? null;
+        }
+        
         $data['precio_usd']           = round($request->precio / $bcvRate, 2);
         $data['en_oferta']            = $request->boolean('en_oferta');
         $data['descuento_porcentaje'] = $request->descuento_porcentaje ?? 0;

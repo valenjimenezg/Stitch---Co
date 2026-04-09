@@ -50,27 +50,29 @@
                         <input name="marca" id="marca_select" type="text" value="{{ old('marca', $variante->marca) }}" placeholder="Ej: Coats, Lion Brand..." class="w-full">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Medida cm</label>
-                        <input name="cm" type="number" step="0.1" value="{{ old('cm', $variante->cm) }}"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Medida cm (opcional)</label>
+                        <input name="cm" type="number" step="0.1" value="{{ old('cm', $variante->cm) }}" placeholder="Ej: 50"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4"/>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida</label>
-                        <select name="unidad_medida" id="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
-                            <option value="">Ninguna</option>
-                            <option value="Unidad" {{ old('unidad_medida', $variante->unidad_medida) == 'Unidad' ? 'selected' : '' }}>Unidad</option>
-                            <option value="Docena" {{ old('unidad_medida', $variante->unidad_medida) == 'Docena' ? 'selected' : '' }}>Docena</option>
-                            <option value="Caja" {{ old('unidad_medida', $variante->unidad_medida) == 'Caja' ? 'selected' : '' }}>Caja</option>
-                            <option value="Metro" {{ old('unidad_medida', $variante->unidad_medida) == 'Metro' ? 'selected' : '' }}>Metro</option>
-                            <option value="Bulto" {{ old('unidad_medida', $variante->unidad_medida) == 'Bulto' ? 'selected' : '' }}>Bulto</option>
-                            <option value="Rollo" {{ old('unidad_medida', $variante->unidad_medida) == 'Rollo' ? 'selected' : '' }}>Rollo</option>
-                            <option value="cm" {{ old('unidad_medida', $variante->unidad_medida) == 'cm' ? 'selected' : '' }}>Centímetro (cm)</option>
-                            <option value="Medida" {{ old('unidad_medida', $variante->unidad_medida) == 'Medida' ? 'selected' : '' }}>Medida</option>
+                        <select name="unidad_medida" id="unidad_medida" data-legacy="{{ $variante->unidad_medida }}" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
+                            <option value="{{ $variante->factor_conversion ?? 1 }}">{{ $variante->unidad_nombre ?? $variante->unidad_medida ?? 'Ninguna' }}</option>
                         </select>
+                        <input type="hidden" name="unidad_nombre" id="unidad_nombre" value="{{ $variante->unidad_nombre ?? $variante->unidad_medida ?? 'Ninguna' }}">
                     </div>
                     <div>
-                        <label id="lbl_precio" class="block text-sm font-semibold text-slate-700 mb-2">Precio Base (Ref. USD) *</label>
-                        <input name="precio" type="number" step="0.01" value="{{ old('precio', $variante->precio) }}" placeholder="0.00"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Factor de Conversión</label>
+                        <input name="factor_conversion" id="factor_conversion" type="number" step="1" value="{{ old('factor_conversion', $variante->factor_conversion ?? 1) }}"
+                               class="w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary py-2.5 px-4 text-slate-500" readonly/>
+                    </div>
+                    <div id="hidden-category-data" data-category="{{ strtolower(trim($variante->producto->categoria)) }}"></div>
+                    <div>
+                        <label id="lbl_precio" class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                            <span>Precio Base (Ref. USD) *</span>
+                            <span id="label-precio-calculado" class="text-primary font-black hidden"></span>
+                        </label>
+                        <input name="precio" id="precio_usd" type="number" step="0.01" value="{{ old('precio', $variante->precio_usd ?? $variante->precio) }}" placeholder="0.00"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
                     <div>
@@ -170,29 +172,92 @@
             choices: dbMarcas.map(m => ({value: m, label: m}))
         });
 
-        // Dinamismo Mercería Labels
+        const categoryUnits = {
+            'boton': { 'Unidad': 1, 'Docena': 12, 'Gruesa': 144 },
+            'tela': { 'Metro': 1, 'Yardas': 1, 'Rollo': 50 },
+            'aguja': { 'Sobre': 1, 'Blíster': 1, 'Paquete': 10 },
+            'hilo': { 'Rollo': 1, 'Tubino': 1, 'Bulto': 12 },
+            'lana': { 'Estambre': 1, 'Madeja': 10, 'Ovillo': 10 },
+            'alfiler': { 'Cajita': 1, 'Rueda': 1, 'Paquete': 12 },
+            'cierre': { 'Unidad': 1, 'Metro': 1, 'Docena': 12, 'Rollo': 50 },
+            'llave': { 'Unidad': 1, 'Bolsa': 100, 'Caja': 100 },
+            'herramienta': { 'Unidad': 1, 'Kit': 1 },
+            'default': { 'Ninguna': 1, 'Unidad': 1, 'Rollo': 1, 'Docena': 12, 'Caja': 24, 'Bulto': 100 }
+        };
+
         const selUnidad = document.getElementById('unidad_medida');
-        const lblPrecio = document.getElementById('lbl_precio');
-        const lblStock = document.getElementById('lbl_stock');
-        
-        function updateLabels() {
-            let u = selUnidad.value.toLowerCase();
-            if(!u || u === 'ninguna') {
-                lblPrecio.innerText = 'Precio Base (Ref. USD) *';
-                lblStock.innerText = 'Unidades en Stock *';
-                return;
+        const factorInput = document.getElementById('factor_conversion');
+        const hiddenUnidadNombre = document.getElementById('unidad_nombre');
+        const precioBaseInput = document.getElementById('precio_usd');
+        const labelPrecioCalculado = document.getElementById('label-precio-calculado');
+        const categoryData = document.getElementById('hidden-category-data').getAttribute('data-category') || '';
+        const legacyUnitData = "<?php echo ($variante->unidad_nombre ?? $variante->unidad_medida ?? 'Ninguna') ?>";
+        const legacyFactorData = "<?php echo ($variante->factor_conversion ?? 1) ?>";
+
+        function updateCategoryUnits() {
+            let unitsObj = categoryUnits['default'];
+            for (const [key, value] of Object.entries(categoryUnits)) {
+                if (categoryData.includes(key)) {
+                    unitsObj = value;
+                    break;
+                }
             }
-            lblPrecio.innerText = 'Precio por ' + u.charAt(0).toUpperCase() + u.slice(1) + ' (Ref. USD) *';
+
+            selUnidad.innerHTML = '';
+            let injectedLegacy = false;
+
+            for (const [unitName, factorValue] of Object.entries(unitsObj)) {
+                const option = document.createElement('option');
+                option.value = factorValue;
+                option.text = unitName;
+                option.setAttribute('data-name', unitName);
+                if(unitName.toLowerCase() === legacyUnitData.toLowerCase() || (factorValue == legacyFactorData && legacyUnitData == unitName)){
+                    option.selected = true;
+                    injectedLegacy = true;
+                }
+                selUnidad.appendChild(option);
+            }
+
+            if(!injectedLegacy) {
+                 const option = document.createElement('option');
+                 option.value = legacyFactorData;
+                 option.text = legacyUnitData;
+                 option.selected = true;
+                 option.setAttribute('data-name', legacyUnitData);
+                 selUnidad.appendChild(option);
+            }
             
-            if(['metro', 'centímetro', 'cm'].includes(u)) {
-                lblStock.innerText = u.charAt(0).toUpperCase() + u.slice(1) + 's en Stock * (Admite decimales)';
+            updateFactorValue();
+        }
+
+        function updateFactorValue() {
+            if(selUnidad.selectedIndex >= 0) {
+                const option = selUnidad.options[selUnidad.selectedIndex];
+                factorInput.value = option.value;
+                hiddenUnidadNombre.value = option.getAttribute('data-name');
+            }
+            calculatePrice();
+        }
+
+        function calculatePrice() {
+            let base = parseFloat(precioBaseInput.value) || 0;
+            let factor = parseInt(factorInput.value) || 1;
+            let unitName = hiddenUnidadNombre.value;
+            
+            let total = base * factor;
+            if(total > 0 && factor > 1) {
+                labelPrecioCalculado.textContent = `Total (Por ${unitName}): $${total.toFixed(2)}`;
+                labelPrecioCalculado.classList.remove('hidden');
             } else {
-                lblStock.innerText = u.charAt(0).toUpperCase() + u.slice(1) + 's en Stock *';
+                labelPrecioCalculado.classList.add('hidden');
             }
         }
+
+        selUnidad.addEventListener('change', updateFactorValue);
+        precioBaseInput.addEventListener('input', calculatePrice);
         
-        selUnidad.addEventListener('change', updateLabels);
-        updateLabels(); // run on start
+        // initialize
+        updateCategoryUnits();
     });
 
     function previewImage(input) {

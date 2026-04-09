@@ -126,14 +126,18 @@
                         {{-- Product Info --}}
                         <div class="flex-1 flex flex-col sm:flex-row gap-5 w-full">
                             @if($firstItem && $firstItem->variante && $firstItem->variante->producto)
-                                <a href="{{ route('products.show', $firstItem->variante->id) }}" class="size-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm hover:border-primary/50 transition-colors group/img" title="Ver producto de nuevo">
-                                    <span class="material-symbols-outlined text-4xl text-slate-400 group-hover/img:text-primary transition-colors">
-                                        {{ $venta->estado === 'procesando' ? 'inventory_2' : ($venta->estado === 'enviado' || $venta->estado === 'entregado' ? 'mark_email_read' : 'shopping_basket') }}
-                                    </span>
+                                <a href="{{ route('products.show', $firstItem->variante->id) }}" class="size-16 rounded-xl bg-slate-50 border border-slate-200 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-sm hover:border-primary/50 transition-colors group/img" title="Ver producto de nuevo">
+                                    @if($firstItem->variante->imagen)
+                                        <img src="{{ asset($firstItem->variante->imagen) }}" alt="{{ $firstItem->variante->producto->nombre }}" class="w-full h-full object-cover rounded-lg">
+                                    @else
+                                        <span class="material-symbols-outlined text-3xl text-slate-400 group-hover/img:text-primary transition-colors">
+                                            {{ $venta->estado === 'procesando' ? 'inventory_2' : ($venta->estado === 'enviado' || $venta->estado === 'entregado' ? 'mark_email_read' : 'shopping_basket') }}
+                                        </span>
+                                    @endif
                                 </a>
                             @else
-                                <div class="size-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:border-{{ $badgeColor }}-400/30 transition-colors">
-                                    <span class="material-symbols-outlined text-4xl text-slate-400 group-hover:text-{{ $badgeColor }}-500 transition-colors">
+                                <div class="size-16 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:border-{{ $badgeColor }}-400/30 transition-colors">
+                                    <span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-{{ $badgeColor }}-500 transition-colors">
                                         {{ $venta->estado === 'procesando' ? 'inventory_2' : ($venta->estado === 'enviado' || $venta->estado === 'entregado' ? 'mark_email_read' : 'shopping_basket') }}
                                     </span>
                                 </div>

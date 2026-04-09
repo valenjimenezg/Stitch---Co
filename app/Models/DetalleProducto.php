@@ -10,6 +10,7 @@ class DetalleProducto extends Model
 
     protected $fillable = [
         'producto_id', 'color', 'grosor', 'cm', 'marca', 'unidad_medida',
+        'factor_conversion', 'unidad_nombre',
         'precio_usd', 'precio', 'stock', 'imagen', 'en_oferta', 'descuento_porcentaje',
     ];
 
@@ -38,5 +39,11 @@ class DetalleProducto extends Model
     public function getEnStockAttribute(): bool
     {
         return $this->stock > 0;
+    }
+
+    public function getPrecioTotalPresentacionAttribute(): float
+    {
+        $factor = $this->factor_conversion ?: 1;
+        return (float) ($this->precio * $factor);
     }
 }

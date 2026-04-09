@@ -106,15 +106,18 @@ class CheckoutController extends Controller
                     'subtotal'       => $subtotal,
                 ]);
 
-                // Modificar Stock Real (Safe Assignment)
-                $variante->stock = $variante->stock - $item['cantidad'];
+                // Modificar Stock Real (Safe Assignment) con Factor de Conversión
+                $factorConversion = $variante->factor_conversion ?: 1;
+                $cantidadAfectada = $item['cantidad'] * $factorConversion;
+                
+                $variante->stock = $variante->stock - $cantidadAfectada;
                 $variante->save();
 
                 // Generar Kardex / Auditoría de Salida
                 \App\Models\MovimientoInventario::create([
                     'variante_id' => $variante->id,
                     'venta_id'    => $venta->id,
-                    'cantidad'    => -$item['cantidad'],
+                    'cantidad'    => -$cantidadAfectada,
                     'tipo'        => 'salida',
                     'motivo'      => 'Venta Web #' . $venta->id,
                 ]);
