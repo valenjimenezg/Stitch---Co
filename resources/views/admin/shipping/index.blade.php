@@ -54,7 +54,11 @@
                         @if($envio->estado == 'procesando')
                             <span class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">Empaquetando</span>
                         @else
-                            <span class="px-2.5 py-1 bg-purple-100 text-purple-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">En Ruta</span>
+                            @if($envio->tipo_envio == 'retiro_tienda')
+                                <span class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">Listo p/ Retiro</span>
+                            @else
+                                <span class="px-2.5 py-1 bg-purple-100 text-purple-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">En Ruta</span>
+                            @endif
                         @endif
                     </td>
                     <td class="px-6 py-5 text-right flex items-center justify-end gap-2">
@@ -65,8 +69,8 @@
                         <form action="{{ route('admin.orders.status', $envio->id) }}" method="POST">
                             @csrf @method('PATCH')
                             <input type="hidden" name="estado" value="enviado">
-                            <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white hover:bg-primary rounded-lg text-xs font-bold transition-colors shadow-sm">
-                                Marcar Enviado
+                            <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white hover:bg-primary rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">
+                                {{ $envio->tipo_envio == 'retiro_tienda' ? 'Listo p/ Retirar' : 'Marcar Enviado' }}
                             </button>
                         </form>
                         @endif

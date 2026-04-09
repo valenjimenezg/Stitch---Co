@@ -9,6 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
+    <style>
+        .bg-primary { background-color: #9333ea !important; }
+        .text-primary { color: #9333ea !important; }
+        .border-primary { border-color: #9333ea !important; }
+        .hover\:bg-primary-dark:hover { background-color: #7e22ce !important; }
+        .hover\:text-primary:hover { color: #9333ea !important; }
+        .bg-primary\/5 { background-color: rgba(147, 51, 234, 0.05) !important; }
+        .bg-primary\/10 { background-color: rgba(147, 51, 234, 0.1) !important; }
+        .bg-primary\/15 { background-color: rgba(147, 51, 234, 0.15) !important; }
+        .bg-primary\/20 { background-color: rgba(147, 51, 234, 0.2) !important; }
+        .hover\:bg-primary\/5:hover { background-color: rgba(147, 51, 234, 0.05) !important; }
+        .shadow-primary\/20 { box-shadow: 0 10px 15px -3px rgba(147, 51, 234, 0.2) !important; }
+        .focus\:ring-primary:focus, .focus\:border-primary:focus {
+            border-color: #9333ea !important;
+            box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2) !important;
+        }
+    </style>
     @stack('styles')
 </head>
 <body class="bg-background-light font-sans text-slate-900 min-h-screen">
@@ -18,7 +35,7 @@
     {{-- Sidebar --}}
     <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 border-r border-slate-800">
         <div class="p-6 flex items-center gap-3">
-            <x-stitch-logo size="w-6 h-8" textSize="text-lg" subTextSize="text-[8px]" />
+            <x-stitch-logo size="w-6 h-8" :iconOnly="true" />
             <div>
                 <h1 class="text-lg font-bold leading-tight">Stitch &amp; Co</h1>
                 <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Admin Panel</p>
@@ -139,6 +156,38 @@
 
 {{-- Fallback CDN Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{-- Lógica de Búsqueda Instantánea para Panel Admin --}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const buscadores = document.querySelectorAll('input[placeholder*="Buscar"]');
+        
+        buscadores.forEach(buscador => {
+            // Evitamos que recargue la página si el viejo código tenía 'onchange'
+            if(buscador.hasAttribute('onchange')) {
+                buscador.removeAttribute('onchange');
+            }
+
+            buscador.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase().trim();
+                const filasTabla = document.querySelectorAll('table tbody tr');
+                
+                filasTabla.forEach(fila => {
+                    // Ignorar fila de "Sin resultados" que usa colspan
+                    if(fila.querySelector('td[colspan]')) return;
+                    
+                    const textoFila = fila.textContent.toLowerCase();
+                    if(textoFila.includes(term)) {
+                        fila.style.display = '';
+                        fila.classList.add('animate-fade-in'); // pequeño destello de aparición
+                    } else {
+                        fila.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 @stack('scripts')
 </body>

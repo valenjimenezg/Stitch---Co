@@ -7,7 +7,7 @@
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-black text-slate-900">Validar Pago</h1>
-            <p class="text-slate-500">Orden #{{ str_pad($venta->id, 6, '0', STR_PAD_LEFT) }} por Bs. {{ number_format($venta->total_venta, 2) }}</p>
+            <p class="text-slate-500">Orden #{{ str_pad($venta->id, 6, '0', STR_PAD_LEFT) }} por {{ bs($venta->total_venta, false, $venta->tasa_bcv_aplicada) }} (Ref: ${{ number_format((float)$venta->total_venta, 2) }})</p>
         </div>
         <a href="{{ route('profile.orders') }}" class="text-sm font-bold text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
             <span class="material-symbols-outlined text-[16px]">arrow_back</span> Volver

@@ -48,14 +48,16 @@
 
         {{-- Image --}}
         <div class="relative aspect-square w-full overflow-hidden bg-slate-100">
+            <a href="{{ route('products.show', $variante->id) }}" class="block h-full w-full group/link">
             @if($variante->imagen)
-                <img src="{{ asset('storage/' . $variante->imagen) }}" alt="{{ $variante->producto->nombre ?? '' }}"
-                     class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"/>
+                <img src="{{ asset($variante->imagen) }}" alt="{{ $variante->producto->nombre ?? '' }}"
+                     class="h-full w-full object-cover transition-transform duration-300 group-hover/link:scale-105"/>
             @else
                 <div class="h-full w-full flex items-center justify-center bg-primary/5">
                     <span class="material-symbols-outlined text-5xl text-primary/20">straighten</span>
                 </div>
             @endif
+            </a>
 
             {{-- Remove from wishlist --}}
             <form method="POST" action="{{ route('wishlist.toggle') }}" class="absolute right-3 top-3" onsubmit="confirmDeletion(event, '¿Quitar de la lista?', 'El producto será eliminado de tus deseos.')">
@@ -72,14 +74,21 @@
             <div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">
                 {{ $variante->producto->categoria ?? '—' }}
             </div>
-            <h3 class="text-base font-bold text-slate-900">{{ $variante->producto->nombre ?? '—' }}</h3>
+            <h3 class="text-base font-bold text-slate-900">
+                <a href="{{ route('products.show', $variante->id) }}" class="hover:text-primary hover:underline transition-colors">
+                    {{ $variante->producto->nombre ?? '—' }}
+                </a>
+            </h3>
             <p class="mt-1 text-sm text-slate-500">
                 {{ $variante->color ? 'Color: ' . $variante->color : '' }}
                 {{ $variante->grosor ? ' • Grosor: ' . $variante->grosor : '' }}
             </p>
             <div class="mt-auto pt-4">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-lg font-black text-slate-900">Bs. {{ number_format($variante->precio_con_descuento, 2) }}</span>
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex flex-col">
+                        <span class="text-lg font-black text-slate-900 leading-none">{{ bs($variante->precio_con_descuento) }}</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Ref: ${{ number_format($variante->precio_con_descuento, 2) }}</span>
+                    </div>
                     @if($variante->en_stock)
                         <span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">EN STOCK</span>
                     @elseif($variante->stock > 0)

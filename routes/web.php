@@ -15,6 +15,9 @@ Route::get('/sobre-nosotros', function() { return view('pages.about'); })->name(
 Route::get('/preguntas-frecuentes', function() { return view('pages.faq'); })->name('pages.faq');
 Route::post('/contacto', [\App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
 Route::get('/api/search', [\App\Http\Controllers\SearchController::class, 'query'])->name('search.query');
+Route::get('/buscar', [\App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
+Route::get('/factura/{id}', [\App\Http\Controllers\InvoiceController::class, 'descargarFacturaPublica'])->name('invoice.public');
+Route::get('/test-factura/{id}', [\App\Http\Controllers\InvoiceController::class, 'previewFacturaHTML'])->name('invoice.preview');
 Route::post('/newsletter/subscribe', [\App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::post('/producto/notificacion-stock', [\App\Http\Controllers\StockNotificationController::class, 'store'])->name('stock-notification.store');
 Route::post('/carrito/agregar', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
@@ -27,7 +30,8 @@ Route::post('/lista-deseos/toggle', [\App\Http\Controllers\WishlistController::c
 Route::middleware('guest')->group(function () {
     Route::get('/acceso', [LoginController::class, 'showForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-    Route::post('/registro', [RegisterController::class, 'register'])->name('register');
+    Route::post('/registro', [RegisterController::class, 'store'])->name('register');
+    Route::post('/api/auth/check-document', [RegisterController::class, 'checkDocument'])->name('api.check-document');
 
     // Recuperación de Contraseña
     Route::get('/password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showRequestForm'])->name('password.request');
@@ -47,6 +51,10 @@ Route::get('/checkout/invitado', function() {
         ->with('info', 'Crea una cuenta rápida para finalizar tu compra')
         ->withInput(['_tab' => 'registro']);
 })->name('checkout.guest');
+
+Route::get('/checkout/init', function() {
+    return auth()->check() ? redirect()->route('checkout.index') : redirect()->route('checkout.guest');
+})->name('checkout.init');
 
 // --- Protegidas (auth) ---
 Route::middleware('auth')->group(function () {
@@ -68,7 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/mis-pedidos/{id}/continuar', [\App\Http\Controllers\ProfileController::class, 'resumeOrder'])->name('profile.orders.resume');
     Route::post('/mis-pedidos/{id}/continuar', [\App\Http\Controllers\ProfileController::class, 'storeReference'])->name('profile.orders.store_reference');
     Route::post('/mis-pedidos/{id}/cancelar', [\App\Http\Controllers\ProfileController::class, 'cancelOrder'])->name('profile.orders.cancel');
-    Route::get('/mis-pedidos/{id}/factura', [\App\Http\Controllers\ProfileController::class, 'factura'])->name('profile.orders.invoice');
+    Route::get('/mis-pedidos/{id}/factura', [\App\Http\Controllers\InvoiceController::class, 'descargarFactura'])->name('profile.orders.invoice');
 });
 
 // --- Admin ---
@@ -90,8 +98,15 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::get('/pedidos', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/pedidos/exportar', [\App\Http\Controllers\Admin\OrderController::class, 'export'])->name('admin.orders.export');
     Route::get('/pedidos/{id}', [\App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
-    Route::get('/pedidos/{id}/factura', [\App\Http\Controllers\Admin\OrderController::class, 'factura'])->name('admin.orders.invoice');
+    Route::get('/pedidos/{id}/factura', [\App\Http\Controllers\InvoiceController::class, 'descargarFactura'])->name('admin.orders.invoice');
     Route::patch('/pedidos/{id}/estado', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.status');
+    Route::post('/pedidos/{id}/entregar', [\App\Http\Controllers\Admin\OrderController::class, 'marcarEntregado'])->name('admin.orders.deliver');
+    Route::post('/pedidos/{id}/aprobar', [\App\Http\Controllers\Admin\OrderController::class, 'approvePayment'])->name('admin.orders.approve');
+    Route::delete('/pedidos/limpiar-cancelados', [\App\Http\Controllers\Admin\OrderController::class, 'destroyCancelled'])->name('admin.orders.destroy_cancelled');
+    Route::get('/pedidos/{order}/generar-factura', [\App\Http\Controllers\Admin\OrderController::class, 'generateInvoice'])->name('admin.orders.generate_invoice');
+    Route::post('/pedidos/{order}/pickup', [\App\Http\Controllers\Admin\OrderController::class, 'markAsPickedUp'])->name('admin.orders.picked_up');
+    Route::post('/pedidos/{order}/local-delivery', [\App\Http\Controllers\Admin\OrderController::class, 'markAsDeliveredLocally'])->name('admin.orders.delivered_locally');
+    Route::delete('/pedidos/{id}', [\App\Http\Controllers\Admin\OrderController::class, 'destroy'])->name('admin.orders.destroy');
     
     Route::get('/pagos', [\App\Http\Controllers\Admin\OrderController::class, 'payments'])->name('admin.payments');
     Route::get('/envios', [\App\Http\Controllers\Admin\OrderController::class, 'shipping'])->name('admin.shipping');
@@ -102,7 +117,9 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::get('/comunidad/exportar', [\App\Http\Controllers\Admin\DashboardController::class, 'exportNewsletters'])->name('admin.comunidad.export');
     Route::get('/notificaciones-stock', [\App\Http\Controllers\Admin\DashboardController::class, 'stockNotifications'])->name('admin.stock-notifications');
     Route::patch('/notificaciones-stock/{id}', [\App\Http\Controllers\Admin\DashboardController::class, 'updateStockNotification'])->name('admin.stock-notifications.update');
-    Route::post('/bcv/update', [\App\Http\Controllers\Admin\DashboardController::class, 'updateBcv'])->name('admin.bcv.update');
+
+    Route::get('/configuracion-bcv', [\App\Http\Controllers\Admin\SettingsController::class, 'bcvIndex'])->name('admin.settings.bcv');
+    Route::post('/configuracion-bcv', [\App\Http\Controllers\Admin\SettingsController::class, 'bcvUpdate'])->name('admin.settings.bcv.update');
 
     // API Charts
     Route::get('/api/ventas-mensuales', [\App\Http\Controllers\Admin\DashboardController::class, 'ventasMensuales'])->name('admin.api.ventas-mensuales');

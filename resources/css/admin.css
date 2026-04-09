@@ -4,7 +4,16 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../views/admin/**/*.blade.php';
+@source '../views/layouts/admin.blade.php';
 @source '../js/admin.js';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --color-primary:          #8b52ff;
+    --color-primary-dark:     #6d3de0;
+    --color-background-light: #f6f5f8;
+    --color-background-dark:  #160f23;
+}
 
 /* Estilos específicos del panel admin */
 .admin-sidebar {

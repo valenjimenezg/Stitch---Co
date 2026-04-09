@@ -69,7 +69,7 @@
                         <td class="px-6 py-4 flex items-center gap-3">
                             <div class="size-10 rounded shadow-sm bg-white border border-slate-200 overflow-hidden flex items-center justify-center">
                                 @if($v->imagen)
-                                    <img src="{{ asset('storage/' . $v->imagen) }}" class="w-full h-full object-cover"/>
+                                    <img src="{{ asset($v->imagen) }}" class="w-full h-full object-cover"/>
                                 @else
                                     <span class="material-symbols-outlined text-slate-300">image</span>
                                 @endif
@@ -81,7 +81,7 @@
                             <div class="text-xs text-slate-500">{{ $v->color ?? '' }} {{ $v->grosor ? '('.$v->grosor.')' : '' }}</div>
                         </td>
                         <td class="px-6 py-4 font-mono font-medium text-slate-600">
-                            Bs. {{ number_format($v->precio, 2) }}
+                            Ref: ${{ number_format($v->precio, 2) }} <br><span class="text-xs text-slate-400 font-bold uppercase">{{ bs($v->precio) }}</span>
                         </td>
                         <td class="px-6 py-4">
                             @if($v->en_oferta)

@@ -16,13 +16,10 @@
             @endif
         </div>
         <div class="flex gap-3">
-            <form action="{{ route('admin.bcv.update') }}" method="POST">
-                @csrf
-                <button type="submit" class="px-4 py-2 text-sm font-bold bg-primary text-white hover:bg-primary-dark rounded-lg shadow-sm flex items-center gap-2 transition-colors" title="Forzar actualización ahora">
-                    <span class="material-symbols-outlined text-lg">currency_exchange</span>
-                    Actualizar Precios
-                </button>
-            </form>
+            <a href="{{ route('admin.settings.bcv') }}" class="px-4 py-2 text-sm font-bold bg-primary text-white hover:bg-primary-dark rounded-lg shadow-sm flex items-center gap-2 transition-colors" title="Configurar Tasa BCV Oficial/Manual">
+                <span class="material-symbols-outlined text-lg">currency_exchange</span>
+                Configurar Tasa
+            </a>
         </div>
     </div>
 
@@ -120,7 +117,9 @@
                             <span class="font-semibold">{{ $item->variante?->producto?->nombre ?? '—' }}</span>
                         </td>
                         <td class="px-6 py-4 text-slate-500">{{ $item->variante?->producto?->categoria ?? '—' }}</td>
-                        <td class="px-6 py-4 font-medium">Bs. {{ number_format($item->variante?->precio ?? 0, 2) }}</td>
+                        <td class="px-6 py-4 font-medium text-[11px]">
+                            Ref: ${{ number_format($item->variante?->precio ?? 0, 2) }} <br><span class="font-bold uppercase">{{ bs($item->variante?->precio ?? 0) }}</span>
+                        </td>
                         <td class="px-6 py-4 font-medium">{{ $item->total_pedidos }}</td>
                         <td class="px-6 py-4 text-right">
                             @if(($item->variante?->stock ?? 0) > 5)

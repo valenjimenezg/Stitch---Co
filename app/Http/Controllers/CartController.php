@@ -25,7 +25,7 @@ class CartController extends Controller
 
         $request->validate([
             'variante_id' => 'required|exists:detalle_productos,id',
-            'cantidad'    => 'required|integer|min:1',
+            'cantidad'    => 'required|numeric|min:0.1',
         ]);
 
         $variante = DetalleProducto::findOrFail($request->variante_id);
@@ -63,13 +63,16 @@ class CartController extends Controller
 
         $accion = $request->input('accion', 'inc');
 
+        // Determinar paso fractal si es tela
+        $step = in_array(strtolower($detalle->variante->unidad_medida), ['metro', 'centímetro', 'cm']) ? 0.5 : 1;
+
         if ($accion === 'inc') {
-            if ($detalle->variante->stock > $detalle->cantidad) {
-                $detalle->increment('cantidad');
+            if ($detalle->variante->stock >= ($detalle->cantidad + $step)) {
+                $detalle->increment('cantidad', $step);
             }
         } else {
-            if ($detalle->cantidad > 1) {
-                $detalle->decrement('cantidad');
+            if ($detalle->cantidad > $step) {
+                $detalle->decrement('cantidad', $step);
             } else {
                 $detalle->delete();
             }

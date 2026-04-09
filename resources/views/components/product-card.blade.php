@@ -23,14 +23,14 @@
 
     {{-- Badge oferta --}}
     @if($variante->stock > 0 && $variante->en_oferta)
-        <span class="absolute top-6 left-6 z-40 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded uppercase shadow-lg shadow-red-500/40 animate-pulse">¡OFERTA!</span>
+        <span class="absolute top-6 left-6 z-40 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded uppercase">¡OFERTA!</span>
     @endif
 
     {{-- Imagen --}}
     <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-slate-50 relative qv-hover-wrapper">
         @if($variante->imagen)
             <img class="w-full h-full object-cover text-slate-300"
-                 src="{{ Storage::url($variante->imagen) }}"
+                 src="{{ asset($variante->imagen) }}"
                  alt="{{ $variante->producto->nombre }}"
                  style="transition: transform 0.5s ease;"
                  onmouseover="this.style.transform='scale(1.05)'" 
@@ -80,10 +80,11 @@
         @endif
 
         <div class="flex items-center justify-between mt-auto">
-            <div>
-                <span class="text-xl font-black text-slate-900">Bs. {{ number_format($variante->precio_con_descuento, 2) }}</span>
+            <div class="flex flex-col">
+                <span class="text-xl font-black text-slate-900 leading-none">{{ bs($variante->precio_con_descuento) }}</span>
+                <span class="text-[11px] font-bold text-slate-400 uppercase mt-1">Ref: ${{ number_format($variante->precio_con_descuento, 2) }}</span>
                 @if($variante->en_oferta)
-                    <span class="block text-[10px] text-slate-400 line-through">Bs. {{ number_format($variante->precio, 2) }}</span>
+                    <span class="block text-[10px] text-slate-400 line-through mt-1">{{ bs($variante->precio) }}</span>
                 @endif
             </div>
             @if($variante->stock > 0)

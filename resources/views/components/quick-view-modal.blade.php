@@ -93,6 +93,7 @@
 
 <script>
     let qvCurrentItem = null;
+    const qvBcvRate = {{ bcv_rate() }};
 
     function openQuickView(id) {
         const modal = document.getElementById('quick-view-modal');
@@ -221,6 +222,29 @@
 
         // Full Link
         document.getElementById('qv-full-link').href = `/producto/${data.id}`;
+        
+        // Carga inicial de precios
+        qvUpdateTotal();
+    }
+
+    function qvUpdateTotal() {
+        if (!qvCurrentItem) return;
+        
+        const qty = parseInt(document.getElementById('qv-qty-input').value) || 1;
+        
+        const priceEl = document.getElementById('qv-price');
+        const refPriceEl = document.getElementById('qv-ref-price');
+        const oldPriceEl = document.getElementById('qv-old-price');
+        
+        const currentUsd = Number(qvCurrentItem.precio_con_descuento || qvCurrentItem.precio) * qty;
+        const oldUsd = Number(qvCurrentItem.precio) * qty;
+
+        priceEl.textContent = `Bs. ${(currentUsd * qvBcvRate).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        refPriceEl.textContent = `Ref: $${currentUsd.toFixed(2)}`;
+        
+        if (qvCurrentItem.en_oferta) {
+            oldPriceEl.textContent = `Bs. ${(oldUsd * qvBcvRate).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
     }
 
     function qvUpdateQty(change) {
@@ -232,6 +256,7 @@
         const newVal = current + change;
         if (newVal >= 1 && newVal <= max) {
             input.value = newVal;
+            qvUpdateTotal();
         }
     }
 

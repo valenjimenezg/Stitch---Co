@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $totalVentas  = Venta::sum('total_venta');
         $pedidosMes   = Venta::whereMonth('created_at', now()->month)->count();
         $stockTotal   = DetalleProducto::sum('stock');
-        $stockBajo    = DetalleProducto::where('stock', '<=', 5)->where('stock', '>', 0)->count();
+        $stockBajo    = DetalleProducto::where('stock', '<=', 5)->count();
         $topProductos = DetalleVenta::with('variante.producto')
             ->selectRaw('variante_id, COUNT(*) as total_pedidos')
             ->groupBy('variante_id')
@@ -42,7 +42,8 @@ class DashboardController extends Controller
             $file = fopen('php://output', 'w');
             fputcsv($file, ['ID', 'Nombre', 'Apellido', 'CI', 'Email', 'Telefono', 'Registrado']);
             foreach ($clientes as $c) {
-                fputcsv($file, [$c->id, $c->nombre, $c->apellido, $c->cedula_identidad, $c->email, $c->telefono, $c->created_at->format('Y-m-d')]);
+                $doc = $c->document_type . $c->document_number;
+                fputcsv($file, [$c->id, $c->nombre, $c->apellido, $doc, $c->email, $c->telefono, $c->created_at->format('Y-m-d')]);
             }
             fclose($file);
         };

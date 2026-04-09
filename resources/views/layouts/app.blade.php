@@ -88,18 +88,20 @@
 
             {{-- Search Bar --}}
             <div class="flex-1 max-w-2xl relative">
-                <div class="relative group z-40">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary">
+                <form action="{{ route('search.index') }}" method="GET" class="relative group z-40">
+                    <button type="submit" class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 group-focus-within:text-primary hover:text-primary transition-colors cursor-pointer outline-none border-none bg-transparent">
                         <span class="material-symbols-outlined">search</span>
-                    </div>
+                    </button>
                     <input
+                        name="q"
+                        value="{{ request('q') }}"
                         class="block w-full pl-12 pr-4 py-2.5 bg-slate-100 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all placeholder:text-slate-500 text-sm"
                         placeholder="Buscar hilos, telas, agujas..."
-                        type="text"
+                        type="search"
                         id="search-input"
                         autocomplete="off"
                     />
-                </div>
+                </form>
                 
                 {{-- Dropdown de resultados (Live Search) --}}
                 <div id="search-results-container" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden hidden z-50 max-h-[400px] overflow-y-auto">
@@ -151,7 +153,19 @@
 
                 <a href="{{ route('cart.index') }}" class="p-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors relative">
                     <span class="material-symbols-outlined">shopping_bag</span>
-                    <span class="cart-badge absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[10px] font-bold items-center justify-center rounded-full border-2 border-white hidden">0</span>
+                    @php
+                        $displayCount = $globalCartCount > 99 ? '99+' : $globalCartCount;
+                        $badgeClasses = $globalCartCount > 9 ? 'min-w-[20px] px-1 h-4 text-[9px]' : 'size-4 text-[10px]';
+                    @endphp
+                    @if($globalCartCount > 0)
+                        <span class="cart-badge absolute top-1.5 right-0.5 {!! $badgeClasses !!} bg-primary text-white font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200">
+                            {{ $displayCount }}
+                        </span>
+                    @else
+                        <span class="cart-badge absolute top-1.5 right-0.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200 hidden">
+                            0
+                        </span>
+                    @endif
                 </a>
             </div>
         </div>
@@ -159,13 +173,7 @@
         {{-- Navigation Menu --}}
         <nav class="bg-primary text-white">
             <div class="max-w-[1280px] mx-auto px-6">
-                <ul class="flex items-center gap-1 font-medium text-sm">
-                    <li>
-                        <button class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white">
-                            Materiales
-                        </button>
-                    </li>
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('home') }}">Novedades</a></li>
+                <ul class="flex items-center justify-center gap-2 font-medium text-sm">
                     <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'tejido') }}">Tejido</a></li>
                     <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'costura') }}">Costura</a></li>
                     <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'manualidades') }}">Manualidades</a></li>
@@ -240,7 +248,10 @@
     </footer>
 
     @stack('scripts')
-    <script src="{{ asset('js/cart.js') }}?v=1.0"></script>
+    <script>
+        window.bcvRate = {{ function_exists('bcv_rate') ? bcv_rate() : 1 }};
+    </script>
+    <script src="{{ asset('js/cart.js') }}?v=1.2"></script>
     
     @if(session('clear_cart'))
     <script>
@@ -293,14 +304,18 @@
                                     li.innerHTML = `
                                         <a href="${item.url}" class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors group">
                                             <div class="flex items-center gap-4">
-                                                <div class="size-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                                                    <span class="material-symbols-outlined text-[1.2rem]">inventory_2</span>
+                                                <div class="size-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-primary/5 transition-colors overflow-hidden border border-slate-100 shrink-0">
+                                                    ${item.miniatura 
+                                                        ? `<img src="${item.miniatura}" alt="${item.nombre}" class="w-full h-full object-cover">`
+                                                        : `<span class="material-symbols-outlined text-[1.4rem]">inventory_2</span>`
+                                                    }
                                                 </div>
-                                                <div>
-                                                    <h4 class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">${item.nombre}</h4>
+                                                <div class="flex flex-col">
+                                                    <h4 class="text-[13px] font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight line-clamp-2">${item.nombre}</h4>
+                                                    <span class="text-[11px] text-slate-400 font-medium tracking-wide mt-1 uppercase">Ref: $${item.precio_usd}</span>
                                                 </div>
                                             </div>
-                                            <span class="text-sm font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md">${item.precio}</span>
+                                            <span class="text-sm font-black text-slate-900 bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 ml-4 shrink-0">${item.precio}</span>
                                         </a>
                                     `;
                                     resultsList.appendChild(li);
@@ -311,7 +326,7 @@
                             loadingState.classList.add('hidden');
                             console.error('Error en el buscador en vivo:', err);
                         });
-                }, 350);
+                }, 300);
             });
 
             // Cerrar el dropdown al hacer click fuera del contenedor

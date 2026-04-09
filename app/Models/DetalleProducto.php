@@ -9,7 +9,7 @@ class DetalleProducto extends Model
     protected $table = 'detalle_productos';
 
     protected $fillable = [
-        'producto_id', 'color', 'grosor', 'cm', 'marca',
+        'producto_id', 'color', 'grosor', 'cm', 'marca', 'unidad_medida',
         'precio_usd', 'precio', 'stock', 'imagen', 'en_oferta', 'descuento_porcentaje',
     ];
 

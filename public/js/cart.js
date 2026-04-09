@@ -17,7 +17,7 @@ const Cart = {
         return fetch(`${baseUrl}/api/producto/${variantId}`)
             .then(res => res.json())
             .then(product => {
-                const qty = parseInt(rawQty);
+                const qty = parseFloat(rawQty);
                 if (product.stock < qty) {
                     alert('Stock insuficiente.');
                     return false;
@@ -55,41 +55,53 @@ const Cart = {
         const subtotal = this.getTotal();
         const price = product.en_oferta ? product.precio_con_descuento : product.precio;
         
-        // Formateador de moneda
-        const formatMoney = (amount) => {
-            return 'Bs. ' + Number(amount).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const bcvRate = window.bcvRate || 1;
+        
+        // Formateadores de moneda
+        const formatMoneyBs = (amountUsd) => {
+            return 'Bs. ' + Number(amountUsd * bcvRate).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        };
+        const formatMoneyRef = (amountUsd) => {
+            return 'Ref: $' + Number(amountUsd).toFixed(2);
         };
 
         const imgHtml = product.imagen 
-            ? `<img src="${product.imagen}" alt="${product.nombre}" class="w-full h-full object-cover">`
-            : `<div class="w-full h-full flex items-center justify-center bg-primary/10 text-primary"><span class="material-symbols-outlined text-4xl">inventory_2</span></div>`;
+            ? `<img src="${product.imagen}" alt="${product.nombre}" style="width: 100%; height: 100%; object-fit: cover;">`
+            : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: #f1f5f9; color: #6366f1;"><span class="material-symbols-outlined text-4xl">inventory_2</span></div>`;
 
         const details = [];
         if (product.color) details.push(`${product.color}`);
         if (product.talla) details.push(`Talla: ${product.talla}`);
         if (product.grosor) details.push(`Grosor: ${product.grosor}`);
         if (product.cm) details.push(`Medida: ${product.cm}`);
+        if (product.unidad_medida) details.push(`Venta por: ${product.unidad_medida}`);
         const detailsStr = details.length > 0 ? details.join(' &bull; ') + '<br>' : '';
 
         const html = `
             <div class="flex flex-col sm:flex-row gap-5 text-left w-full mt-2">
-                <div class="w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-slate-100 bg-slate-50">
+                <a href="/producto/${product.id}" class="block" style="width: 80px; height: 80px; flex-shrink: 0; border-radius: 0.5rem; overflow: hidden; border: 1px solid #f1f5f9; background-color: #f8fafc;" title="Ver producto">
                     ${imgHtml}
-                </div>
+                </a>
                 <div class="flex-1 flex flex-col justify-center">
-                    <p class="font-bold text-slate-900 text-sm leading-tight">${product.nombre}</p>
-                    <p class="text-xs text-slate-500 mt-1.5">${detailsStr}Cantidad: ${addedQty}</p>
-                    <p class="font-bold text-primary mt-1.5">${formatMoney(price)}</p>
+                    <a href="/producto/${product.id}" class="font-bold text-slate-900 text-sm leading-tight hover:text-primary transition-colors" title="Ver producto">${product.nombre}</a>
+                    <p class="text-xs text-slate-500 mt-1.5">${detailsStr}Cantidad añadida: ${addedQty}</p>
+                    <div class="mt-1.5 leading-tight">
+                        <span class="font-black text-primary text-base">${formatMoneyBs(price * addedQty)}</span>
+                        <span class="text-xs font-bold text-slate-400 pl-1">${formatMoneyRef(price * addedQty)}</span>
+                    </div>
                 </div>
             </div>
             
             <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                 <p class="text-sm font-semibold text-slate-900">Subtotal <span class="text-slate-500 font-normal">(${totalItems})</span></p>
-                <p class="font-black text-lg text-slate-900">${formatMoney(subtotal)}</p>
+                <div class="text-right leading-none">
+                    <p class="font-black text-lg text-slate-900 inline-block">${formatMoneyBs(subtotal)}</p>
+                    <span class="text-xs font-bold text-slate-400 block mt-1">${formatMoneyRef(subtotal)}</span>
+                </div>
             </div>
             
             <div class="mt-6 flex flex-col gap-2.5">
-                <a href="/checkout" onclick="Swal.close()" class="w-full text-center bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 transition-all text-sm">
+                <a href="/checkout/init" onclick="Swal.close()" class="w-full text-center bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 transition-all text-sm">
                     Proceder al Pago
                 </a>
                 <a href="/carrito" onclick="Swal.close()" class="w-full text-center bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-bold py-3 rounded-xl transition-all text-sm">
@@ -117,7 +129,10 @@ const Cart = {
         let items = this.getItems();
         let item = items.find(i => parseInt(i.id) === parseInt(variantId));
         if (item) {
-            let newVal = item.cantidad + parseInt(delta);
+            let newVal = parseFloat(item.cantidad) + parseFloat(delta);
+            // Avoid extreme precision bugs:
+            newVal = Math.round(newVal * 100) / 100;
+            
             if (newVal > item.stock) {
                 alert('No hay suficiente stock.');
                 return;
@@ -203,14 +218,28 @@ const Cart = {
     },
     updateBadge: function() {
         const items = this.getItems();
-        const totalItems = items.reduce((acc, current) => acc + current.cantidad, 0);
+        // Count unique rows (artículos únicos) NOT the sum of quantities
+        const totalItems = items.length;
+        
         const badges = document.querySelectorAll('.cart-badge');
         badges.forEach(badge => {
             if (totalItems > 0) {
-                badge.textContent = totalItems;
-                badge.style.display = 'flex';
+                // Formatting for 99+
+                const displayCount = totalItems > 99 ? '99+' : totalItems;
+                badge.textContent = displayCount;
+                
+                // Apply pill classes dynamically
+                if (totalItems > 9) {
+                    badge.classList.remove('size-4', 'text-[10px]');
+                    badge.classList.add('min-w-[20px]', 'px-1', 'h-4', 'text-[9px]');
+                } else {
+                    badge.classList.remove('min-w-[20px]', 'px-1', 'h-4', 'text-[9px]');
+                    badge.classList.add('size-4', 'text-[10px]');
+                }
+                
+                badge.classList.remove('hidden');
             } else {
-                badge.style.display = 'none';
+                badge.classList.add('hidden');
             }
         });
     },

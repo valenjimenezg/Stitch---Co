@@ -66,6 +66,28 @@
                 <div class="text-sm text-slate-600"><strong>Referencia:</strong> <span class="font-mono bg-slate-100 px-1 py-0.5 rounded">{{ $venta->referencia_pago }}</span></div>
             @endif
         </div>
+
+        {{-- Tarjeta Envío --}}
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">local_shipping</span> Detalles de Entrega
+            </h3>
+            @if($venta->tipo_envio === 'retiro_tienda')
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-lg text-sm font-black mb-2 border border-amber-200">
+                    <span class="material-symbols-outlined text-[18px]">storefront</span> Retiro en Tienda
+                </span>
+                <p class="text-xs text-slate-500 mt-2 font-medium">El cliente pasará a retirar el pedido por el local.</p>
+            @else
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-black mb-3 border border-indigo-200">
+                    <span class="material-symbols-outlined text-[18px]">two_wheeler</span> Delivery
+                </span>
+                <div class="text-sm text-slate-700 mb-1"><strong>Ciudad:</strong> {{ $venta->ciudad_envio }}, {{ $venta->estado_envio }}</div>
+                <div class="text-sm text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2">
+                    <strong>Dirección:</strong> <br>
+                    {{ $venta->calle_envio }}
+                </div>
+            @endif
+        </div>
         
     </div>
 
@@ -81,7 +103,7 @@
                     <div class="p-6 flex items-center gap-4">
                         <div class="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
                             @if($item->variante && $item->variante->imagen)
-                                <img src="{{ Storage::url($item->variante->imagen) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset($item->variante->imagen) }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-slate-300">
                                     <span class="material-symbols-outlined">image</span>
@@ -91,15 +113,21 @@
                         
                         <div class="flex-1">
                             <h4 class="font-bold text-slate-900 text-sm">
-                                {{ $item->variante->producto->nombre ?? 'Producto Eliminado' }}
+                                @if($item->variante && $item->variante->producto)
+                                <a href="{{ route('products.show', $item->variante->id) }}" class="hover:text-primary hover:underline transition-colors" target="_blank">
+                                    {{ $item->variante->producto->nombre }}
+                                </a>
+                                @else
+                                    Producto Eliminado
+                                @endif
                                 @if($item->variante && $item->variante->color) <span class="text-slate-400 font-normal">- {{ $item->variante->color }}</span> @endif
                             </h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Precio Unitario: Bs. {{ number_format($item->precio_unitario, 2) }}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Precio Unitario: {{ bs($item->precio_unitario, false, $venta->tasa_bcv_aplicada) }}</p>
                         </div>
                         
                         <div class="text-right">
                             <p class="font-bold text-slate-900">x{{ $item->cantidad }}</p>
-                            <p class="text-primary font-black mt-1">Bs. {{ number_format($item->subtotal, 2) }}</p>
+                            <p class="text-primary font-black mt-1">{{ bs($item->subtotal, false, $venta->tasa_bcv_aplicada) }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -107,17 +135,58 @@
 
             <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
                 <span class="text-slate-500 font-medium">Total de la Orden</span>
-                <span class="text-2xl font-black text-primary">Bs. {{ number_format((float) $venta->total_venta, 2) }}</span>
+                <span class="text-2xl font-black text-primary">{{ bs($venta->total_venta, false, $venta->tasa_bcv_aplicada) }} (Ref: ${{ number_format((float) $venta->total_venta, 2) }})</span>
             </div>
             
         </div>
         
         {{-- Panel de Acciones Finales --}}
-        <div class="mt-6 flex justify-end gap-3">
-            @if($venta->factura)
-                <a href="{{ route('admin.orders.invoice', $venta->id) }}" target="_blank" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">receipt_long</span> Factura #{{ $venta->factura->id }}
-                </a>
+        <div class="mt-6 flex flex-col md:flex-row justify-end items-center gap-3">
+            @if($venta->estado === 'pendiente')
+                <form action="{{ route('admin.orders.approve', $venta->id) }}" method="POST" onsubmit="return confirm('¿Confirmas que verificaste el abono de este pago en las cuentas de la empresa?')">
+                    @csrf
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">price_check</span> Verificar Pago
+                    </button>
+                </form>
+            @endif
+
+            @if(!in_array($venta->estado, ['completado', 'entregado', 'cancelado', 'pendiente']))
+                <form action="{{ route('admin.orders.deliver', $venta->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span> Marcar como Entregado
+                    </button>
+                </form>
+            @endif
+
+            @if(!in_array($venta->estado, ['cancelado']))
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.orders.invoice', $venta->id) }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">print</span> Imprimir / Descargar PDF
+                    </a>
+                    
+                    @php
+                        // Número fijado para la demostración en clase
+                        $phone = '584245659154';
+
+                        // Generación de URL Firmada
+                        $invoiceUrl = \Illuminate\Support\Facades\URL::signedRoute('invoice.public', ['id' => $venta->id]);
+                        // Magia para la presentación: Reemplaza localhost automático por la IP de la red WiFi en la que estés
+                        $invoiceUrl = str_replace(['localhost', '127.0.0.1'], getHostByName(getHostName()), $invoiceUrl);
+                        
+                        $nombreCliente = $venta->user->nombre ?? 'Cliente';
+                        $message = "¡Hola {$nombreCliente}! Confirmamos tu pago en Stitch & Co. Ya estamos preparando tu pedido. Puedes descargar tu factura oficial directamente en este enlace: " . $invoiceUrl;
+                        $whatsappUrl = "https://wa.me/{$phone}?text=" . urlencode($message);
+                    @endphp
+                    <a href="{{ $whatsappUrl }}" target="_blank" style="background-color: #22c55e;" class="text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm hover:opacity-90">
+                        <span class="material-symbols-outlined text-[18px]">chat</span> Enviar por WhatsApp
+                    </a>
+                </div>
+            @else
+                <button disabled class="bg-slate-100 text-slate-400 px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 cursor-not-allowed border border-slate-200">
+                    <span class="material-symbols-outlined text-[18px]">hourglass_empty</span> Pedido Cancelado (Sin Factura)
+                </button>
             @endif
         </div>
     </div>

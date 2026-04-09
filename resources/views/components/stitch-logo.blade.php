@@ -1,17 +1,26 @@
-<div class="inline-flex items-center gap-3 sm:gap-4 rounded-full border-2 border-primary bg-white px-5 sm:px-7 py-2 sm:py-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 shrink-0 {{ $attributes->get('class') ?? '' }}">
+@props([
+    'textSize' => 'text-2xl sm:text-[32px]',
+    'subTextSize' => 'text-[10px] sm:text-[11px]',
+    'size' => 'w-8 h-12 sm:w-10 sm:h-14',
+    'iconOnly' => false
+])
+
+<div class="inline-flex items-center {{ $iconOnly ? '' : 'gap-3 sm:gap-4 rounded-full border-2 border-primary bg-white px-5 sm:px-7 py-2 sm:py-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5' }} shrink-0 {{ $attributes->get('class') ?? '' }}">
     
+    @if(!$iconOnly)
     <!-- Text Section -->
     <div class="flex flex-col items-start justify-center">
-        <span class="text-primary font-black leading-none tracking-tight {{ $textSize ?? 'text-2xl sm:text-[32px]' }}" style="font-family: 'Nunito', 'Segoe UI', sans-serif;">
+        <span class="text-primary font-black leading-none tracking-tight {{ $textSize }}" style="font-family: 'Nunito', 'Segoe UI', sans-serif;">
             Stitch <span class="text-primary/80">&amp;</span> Co
         </span>
-        <span class="text-primary/70 font-bold tracking-[0.15em] mt-1 {{ $subTextSize ?? 'text-[10px] sm:text-[11px]' }} uppercase">
+        <span class="text-primary/70 font-bold tracking-[0.15em] mt-1 {{ $subTextSize }} uppercase">
             Mercería Online
         </span>
     </div>
+    @endif
 
     <!-- Needle Section -->
-    <div class="relative {{ $size ?? 'w-8 h-12 sm:w-10 sm:h-14' }} shrink-0">
+    <div class="relative {{ $size }} shrink-0">
         <svg viewBox="0 0 100 120" class="w-full h-full overflow-visible drop-shadow-sm">
             <!-- Thread (Yellow S-Shape) -->
             <path d="M 5,90 C -15,70 40,40 50,65 C 60,90 105,70 85,30" fill="none" stroke="#eab308" stroke-width="8" stroke-linecap="round" />

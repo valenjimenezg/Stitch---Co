@@ -34,9 +34,10 @@ class ProductController extends Controller
             'color' => $variante->color,
             'grosor' => $variante->grosor,
             'cm' => $variante->cm,
+            'unidad_medida' => $variante->unidad_medida,
             'talla' => $variante->talla,
             'descripcion' => $variante->producto->descripcion,
-            'imagen' => $variante->imagen ? asset('storage/' . $variante->imagen) : null,
+            'imagen' => $variante->imagen ? asset($variante->imagen) : null,
             'stock' => $variante->stock
         ]);
     }

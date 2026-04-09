@@ -35,12 +35,22 @@ class WishlistController extends Controller
         if ($existe) {
             $existe->delete();
             $msg = 'Producto eliminado de la lista de deseos.';
+            $inWishlist = false;
         } else {
             ListaDeseo::create([
                 'user_id'     => auth()->id(),
                 'variante_id' => $request->variante_id,
             ]);
             $msg = 'Producto guardado en tu lista de deseos.';
+            $inWishlist = true;
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'in_wishlist' => $inWishlist,
+                'message' => $msg
+            ]);
         }
 
         return back()->with('success', $msg);

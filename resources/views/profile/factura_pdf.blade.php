@@ -107,11 +107,11 @@
         <table class="totals-table">
             <tr>
                 <td class="label">Subtotal</td>
-                <td class="value">Bs. {{ number_format((float)($venta->total_venta ?? 0), 2) }}</td>
+                <td class="value">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
             </tr>
             <tr class="total-row">
                 <td class="label" style="font-size: 18px; color:#1e293b;">TOTAL</td>
-                <td class="value total-value">Bs. {{ number_format((float)($venta->total_venta ?? 0), 2) }}</td>
+                <td class="value total-value">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
             </tr>
         </table>
     </div>

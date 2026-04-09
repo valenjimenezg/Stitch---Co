@@ -6,10 +6,21 @@
 
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-900">Gestión de Pedidos</h2>
-    <a href="{{ route('admin.orders.export') }}" class="bg-white text-slate-700 px-4 py-2 rounded-xl text-sm font-bold border border-slate-200 hover:bg-slate-50 hover:text-primary transition-all flex items-center gap-2 shadow-sm">
-        <span class="material-symbols-outlined text-lg">download</span>
-        Exportar CSV
-    </a>
+    <div class="flex items-center gap-3">
+        @if(\App\Models\Venta::where('estado', 'cancelado')->count() > 0)
+        <form method="POST" action="{{ route('admin.orders.destroy_cancelled') }}" class="m-0" onsubmit="return confirm('¿Estás SEGURO de que deseas eliminar TODOS los pedidos cancelados? Esta acción masiva ocultará los registros del panel definitivamente.');">
+            @csrf @method('DELETE')
+            <button type="submit" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-bold border border-red-200 hover:bg-red-100 hover:text-red-700 transition-all flex items-center gap-2 shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+                Limpiar Cancelados
+            </button>
+        </form>
+        @endif
+        <a href="{{ route('admin.orders.export') }}" class="bg-white text-slate-700 px-4 py-2 rounded-xl text-sm font-bold border border-slate-200 hover:bg-slate-50 hover:text-primary transition-all flex items-center gap-2 shadow-sm">
+            <span class="material-symbols-outlined text-lg">download</span>
+            Exportar CSV
+        </a>
+    </div>
 </div>
 
 @if(session('success'))
@@ -41,7 +52,10 @@
                         <div class="text-xs text-slate-400">{{ $venta->user->email ?? '' }}</div>
                     </td>
                     <td class="px-6 py-4 text-slate-500">{{ $venta->created_at->format('d/m/Y H:i') }}</td>
-                    <td class="px-6 py-4 font-semibold">Bs. {{ number_format($venta->total_venta, 2) }}</td>
+                    <td class="px-6 py-4 font-semibold whitespace-nowrap">
+                        <span class="block">{{ bs($venta->total_venta, false, $venta->tasa_bcv_aplicada) }}</span>
+                        <span class="text-[10px] text-slate-400 font-bold block mt-0.5 uppercase">Ref: ${{ number_format($venta->total_venta, 2) }}</span>
+                    </td>
                     <td class="px-6 py-4">
                         <div class="font-bold text-xs uppercase text-slate-600">{{ str_replace('_', ' ', $venta->metodo_pago) }}</div>
                         @if($venta->referencia_pago)
@@ -74,19 +88,53 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <form method="POST" action="{{ route('admin.orders.status', $venta->id) }}" class="flex items-center justify-end gap-2">
-                            @csrf @method('PATCH')
-                            <select name="estado" onchange="this.form.submit()" class="border-slate-200 rounded-lg text-xs py-1.5 pr-8 focus:ring-primary focus:border-primary cursor-pointer bg-slate-50 hover:bg-white transition-colors">
-                                @foreach(['pendiente', 'procesando', 'enviado', 'entregado', 'cancelado'] as $estado)
-                                    <option value="{{ $estado }}" {{ $venta->estado === $estado ? 'selected' : '' }}>
-                                        {{ ucfirst($estado) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <a href="{{ route('admin.orders.show', $venta->id) }}" class="text-slate-500 hover:text-primary p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors bg-white shadow-sm flex items-center justify-center max-h-[34px]" title="Inspeccionar Orden">
+                        <div class="flex items-center justify-end gap-2">
+                            <form method="POST" action="{{ route('admin.orders.status', $venta->id) }}" class="flex items-center gap-2 m-0">
+                                @csrf @method('PATCH')
+                                <select name="estado" onchange="this.form.submit()" class="border-slate-200 rounded-lg text-xs py-1.5 pr-8 focus:ring-primary focus:border-primary cursor-pointer bg-slate-50 hover:bg-white transition-colors">
+                                    @foreach(['pendiente', 'procesando', 'enviado', 'entregado', 'cancelado'] as $estado)
+                                        <option value="{{ $estado }}" {{ $venta->estado === $estado ? 'selected' : '' }}>
+                                            {{ ucfirst($estado) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                            <a href="{{ route('admin.orders.show', $venta->id) }}" class="text-slate-500 hover:text-primary p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors bg-white shadow-sm flex items-center justify-center h-[34px] w-[34px]" title="Inspeccionar Orden">
                                 <span class="material-symbols-outlined text-[18px]">visibility</span>
                             </a>
-                        </form>
+
+                            {{-- Botones de Entrega y Facturación (Módulo Nuevo) --}}
+                            @if($venta->estado !== 'entregado' && $venta->estado !== 'cancelado')
+                                @if($venta->delivery_method === 'store_pickup')
+                                    <form method="POST" action="{{ route('admin.orders.picked_up', $venta->id) }}" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="bg-emerald-600 text-white hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+                                            Entregar en Tienda
+                                        </button>
+                                    </form>
+                                @elseif($venta->delivery_method === 'local_delivery')
+                                    <form method="POST" action="{{ route('admin.orders.delivered_locally', $venta->id) }}" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+                                            Confirmar Entrega (Motorizado)
+                                        </button>
+                                    </form>
+                                @endif
+                            @endif
+                            
+                            <a href="{{ route('admin.orders.generate_invoice', $venta->id) }}" target="_blank" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[16px]">receipt_long</span> Imprimir Factura
+                            </a>
+                            
+                            @if($venta->estado === 'cancelado' || ($venta->estado === 'pendiente' && $venta->created_at->diffInHours(now()) > 48))
+                                <form method="POST" action="{{ route('admin.orders.destroy', $venta->id) }}" class="m-0" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este pedido abandonado del registro?');">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-white hover:bg-red-500 p-1.5 rounded-lg border border-red-200 transition-colors bg-red-50 shadow-sm flex items-center justify-center h-[34px] w-[34px]" title="Eliminar Registro">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty

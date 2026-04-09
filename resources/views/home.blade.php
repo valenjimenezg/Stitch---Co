@@ -71,8 +71,8 @@
     <div class="text-center mb-10">
         <h3 class="text-3xl font-bold text-slate-900">Productos Destacados</h3>
     </div>
-    <div class="grid grid-cols-4 gap-8">
-        @forelse($destacados ?? [] as $variante)
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        @forelse($destacados as $variante)
             <x-product-card :variante="$variante"/>
         @empty
             <div class="col-span-4 text-center text-slate-400 py-12">
@@ -87,30 +87,80 @@
 <section class="mt-24 bg-primary/10 rounded-[2.5rem] p-12 flex items-center justify-between relative overflow-hidden">
     <div class="absolute -bottom-12 -right-12 size-64 bg-primary/20 rounded-full blur-3xl"></div>
     <div class="max-w-xl">
-        <h3 class="text-4xl font-black text-slate-900 mb-4">Únete a nuestra comunidad de creadores</h3>
-        <p class="text-slate-600 text-lg mb-8">Recibe descuentos exclusivos y sé el primero en conocer nuestras nuevas colecciones.</p>
+        <h3 class="text-4xl font-black text-slate-900 mb-4">¡Que no te falte el hilo! Únete a Stitch & Co</h3>
+        <p class="text-slate-600 text-lg mb-8">Suscríbete para recibir alertas cuando lleguen nuevos hilos, cintas, botones y herramientas, además de cupones de descuento exclusivos para tus proyectos de costura.</p>
         
-        @if(session('success'))
-            <div class="bg-emerald-100 text-emerald-800 p-4 rounded-xl mb-6 font-medium flex items-center gap-3">
-                <span class="material-symbols-outlined">check_circle</span>
-                {{ session('success') }}
+        <div id="newsletter-success" class="bg-emerald-100 text-emerald-800 p-4 rounded-xl mb-6 font-medium flex items-center gap-3 hidden transition-opacity duration-500 opacity-0">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>¡Listo! Ya eres parte de Stitch & Co.</span>
+        </div>
+
+        <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)" class="flex flex-col gap-2 relative z-10 transition-opacity duration-500">
+            @csrf
+            <div class="flex gap-2 w-full">
+                <input name="email" id="newsletter-email" class="flex-1 bg-white border-none rounded-xl px-6 py-4 text-sm focus:ring-2 focus:ring-primary shadow-sm"
+                       placeholder="Tu correo electrónico" type="email" required/>
+                <button type="submit" id="newsletter-submit-btn" class="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all shrink-0">
+                    Suscribirme
+                </button>
             </div>
-        @else
-            <form method="POST" action="{{ route('newsletter.subscribe') }}" class="flex flex-col gap-2 relative z-10">
-                @csrf
-                <div class="flex gap-2 w-full">
-                    <input name="email" class="flex-1 bg-white border-none rounded-xl px-6 py-4 text-sm focus:ring-2 focus:ring-primary shadow-sm"
-                           placeholder="Tu correo electrónico" type="email" required/>
-                    <button type="submit" class="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all shrink-0">
-                        Suscribirme
-                    </button>
-                </div>
-                @error('email')
-                    <p class="text-red-500 text-sm mt-1 ml-2 font-medium">{{ $message }}</p>
-                @enderror
-            </form>
-        @endif
+            <p id="newsletter-error" class="hidden text-rose-500 text-sm mt-1 mx-2 font-medium flex items-center gap-1"></p>
+        </form>
     </div>
 </section>
+
+@push('scripts')
+<script>
+    function handleNewsletterSubmit(e) {
+        e.preventDefault();
+        const form = document.getElementById('newsletter-form');
+        const emailInput = document.getElementById('newsletter-email');
+        const submitBtn = document.getElementById('newsletter-submit-btn');
+        const errorEl = document.getElementById('newsletter-error');
+        const successEl = document.getElementById('newsletter-success');
+
+        submitBtn.disabled = true;
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Enviando...';
+        submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+        errorEl.classList.add('hidden');
+        errorEl.innerHTML = '';
+
+        fetch('{{ route('newsletter.subscribe') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ email: emailInput.value })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                form.style.opacity = '0';
+                setTimeout(() => {
+                    form.classList.add('hidden');
+                    successEl.classList.remove('hidden');
+                    successEl.classList.add('flex');
+                    setTimeout(() => successEl.style.opacity = '1', 50);
+                }, 500);
+            } else if (data.errors && data.errors.email) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Suscribirme';
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                errorEl.innerHTML = '<span class="material-symbols-outlined text-[14px]">error</span> ' + data.errors.email[0];
+                errorEl.classList.remove('hidden');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Suscribirme';
+            submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+        });
+    }
+</script>
+@endpush
 
 @endsection

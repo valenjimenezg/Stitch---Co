@@ -24,6 +24,28 @@
     </div>
 @endif
 
+@php
+    $lowStockCount = \App\Models\DetalleProducto::where('stock', '<=', 5)->count();
+@endphp
+@if($lowStockCount > 0)
+    <div class="mb-6 bg-rose-50 border border-rose-200 rounded-xl p-5 flex items-start gap-4 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div class="absolute -right-6 -top-6 text-rose-100 opacity-50 transform rotate-12 transition-transform group-hover:rotate-6 pointer-events-none">
+            <span class="material-symbols-outlined" style="font-size: 150px; font-variation-settings: 'FILL' 1;">warning</span>
+        </div>
+        <div class="bg-rose-100 text-rose-600 rounded-full size-12 flex items-center justify-center shrink-0 relative z-10">
+            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">error</span>
+        </div>
+        <div class="flex-1 relative z-10">
+            <h3 class="text-rose-800 font-black text-lg mb-1 tracking-tight">¡Alerta Crítica de Inventario!</h3>
+            <p class="text-rose-700 text-sm mb-4 leading-relaxed font-medium">Actualmente mantienes <strong>{{ $lowStockCount }} variante(s)</strong> con nivel de stock bajísimo (5 unidades o menos). Te recomendamos hacer pedido a proveedores urgemente para no comprometer ventas.</p>
+            <a href="{{ route('admin.products.restock') }}" target="_blank" class="inline-flex items-center gap-2 bg-rose-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-rose-700 transition-all shadow-md shadow-rose-600/20 active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">print</span> 
+                Generar Planilla de Reposición
+            </a>
+        </div>
+    </div>
+@endif
+
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
@@ -43,7 +65,7 @@
                     <td class="px-6 py-4 flex items-center gap-3">
                         <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
                             @if($variante->imagen)
-                                <img src="{{ asset('storage/' . $variante->imagen) }}" class="w-full h-full object-cover"/>
+                                <img src="{{ asset($variante->imagen) }}" class="w-full h-full object-cover"/>
                             @else
                                 <span class="material-symbols-outlined text-primary text-lg">straighten</span>
                             @endif
@@ -56,7 +78,10 @@
                         @if(!$variante->grosor && !$variante->color) — @endif
                     </td>
                     <td class="px-6 py-4 font-medium">
-                        Bs. {{ number_format($variante->precio, 2) }}
+                        Ref: ${{ number_format($variante->precio, 2) }} <br><span class="text-xs text-slate-400 font-bold uppercase">{{ bs($variante->precio) }}</span>
+                        @if($variante->unidad_medida)
+                            <span class="text-xs text-slate-400 font-normal">/ {{ strtolower($variante->unidad_medida) }}</span>
+                        @endif
                         @if($variante->en_oferta && $variante->descuento_porcentaje > 0)
                             <span class="ml-1 bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded">-{{ $variante->descuento_porcentaje }}%</span>
                         @endif

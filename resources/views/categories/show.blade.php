@@ -17,7 +17,7 @@
 <div class="flex flex-col gap-4 mb-10">
     <h1 class="text-5xl font-black text-slate-900 leading-tight tracking-tight">{{ ucfirst($slug) }}</h1>
     <p class="text-slate-600 text-lg max-w-2xl leading-relaxed">
-        Explora nuestra colección curada de {{ strtolower($slug) }} de alta calidad para cada puntada de tu proyecto.
+        Encuentra todos los materiales e insumos de {{ strtolower($slug) }} de alta calidad que necesitas para cada puntada de tu proyecto.
     </p>
 </div>
 

@@ -19,11 +19,21 @@ class CheckoutController extends Controller
     public function process(Request $request)
     {
         $request->validate([
-            'calle'   => 'required|string|max:255',
-            'ciudad'  => 'required|string|max:100',
-            'metodo'  => 'required|in:efectivo,transferencia,pago_movil,transferencia_p2p,debito_inmediato,tarjeta,paypal',
+            'tipo_envio' => 'required|in:delivery,retiro_tienda',
+            'calle'   => 'required_if:tipo_envio,delivery|nullable|string|max:255',
+            'ciudad'  => 'nullable|string|max:100',
+            'metodo'  => 'required|in:efectivo,transferencia,pago_movil,transferencia_p2p,tarjeta,paypal',
+            'comprobante' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'cart_payload' => 'required|string',
         ]);
+
+
+        if (empty(auth()->user()->document_number)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Es obligatorio proporcionar un Documento de Identidad válido para facturación.',
+            ], 422);
+        }
 
         try {
             DB::beginTransaction();
@@ -38,9 +48,15 @@ class CheckoutController extends Controller
             if (in_array($request->metodo, ['transferencia', 'transferencia_p2p'])) {
                 $banco = $request->input('banco_pago_transf', $request->banco_pago);
                 $referencia = $request->input('referencia_pago_transf', $request->referencia_pago);
-            } elseif ($request->metodo === 'debito_inmediato') {
-                $banco = $request->input('banco_pago_debito', $request->banco_pago);
-                $referencia = $request->input('referencia_pago_debito', $request->referencia_pago);
+            }
+
+            if (in_array($request->metodo, ['pago_movil', 'transferencia', 'transferencia_p2p'])) {
+                if (!$request->hasFile('comprobante')) {
+                    return response()->json(['success' => false, 'message' => 'El comprobante de pago es obligatorio.'], 422);
+                }
+                if (\App\Models\Pago::where('bank_name', $banco)->where('reference_number', $referencia)->exists()) {
+                    return response()->json(['success' => false, 'message' => "La referencia {$referencia} del banco {$banco} ya ha sido registrada previamente. No se permite duplicar pagos."], 422);
+                }
             }
 
             // Crear la venta en borrador antes del bucle de validación
@@ -49,19 +65,22 @@ class CheckoutController extends Controller
                 'total_venta'         => 0, // Se actualizará luego
                 'metodo_pago'         => $request->metodo,
                 'banco_pago'          => $banco,
-                'telefono_pago'       => $request->telefono_pago,
+                'telefono_pago'       => $request->celular_c2p ?? $request->telefono_pago,
                 'referencia_pago'     => $referencia,
                 'estado'              => 'pendiente',
-                'calle_envio'         => $request->calle,
-                'ciudad_envio'        => $request->ciudad,
-                'estado_envio'        => $request->estado_provincia,
-                'codigo_postal_envio' => $request->codigo_postal,
+                'tipo_envio'          => $request->tipo_envio,
+                'calle_envio'         => $request->tipo_envio === 'retiro_tienda' ? 'Retiro en Tienda' : $request->calle,
+                'ciudad_envio'        => $request->tipo_envio === 'retiro_tienda' ? 'Guanare' : 'Guanare',
+                'estado_envio'        => 'Portuguesa',
+                'tasa_bcv_aplicada'   => bcv_rate(),
+                'delivery_method'     => $request->tipo_envio,
             ]);
 
-            $totalVentaCalculado = 0;
+            $subtotalVentaCalculado = 0;
 
             foreach ($cartData as $item) {
                 // Validación Estricta Pessimistic Locking
+                /** @var \App\Models\DetalleProducto|null $variante */
                 $variante = DetalleProducto::with('producto')->where('id', $item['id'])->lockForUpdate()->first();
 
                 if (!$variante) {
@@ -76,7 +95,7 @@ class CheckoutController extends Controller
                 // Fijar el Precio Únicamente desde PHP/MySQL (Prevención Hacking Frontend)
                 $precioGuardar = $variante->en_oferta ? $variante->precio_con_descuento : $variante->precio;
                 $subtotal = $precioGuardar * $item['cantidad'];
-                $totalVentaCalculado += $subtotal;
+                $subtotalVentaCalculado += $subtotal;
 
                 // Crear el Detalle
                 DetalleVenta::create([
@@ -101,8 +120,32 @@ class CheckoutController extends Controller
                 ]);
             }
 
+            // Calculations based on requested spec
+            $iva = round($subtotalVentaCalculado * 0.16, 2);
+            $deliveryFee = ($request->tipo_envio === 'delivery') ? 1.00 : 0.00;
+            $totalAmountCalculado = $subtotalVentaCalculado + $iva + $deliveryFee;
+
+            // Handle unique Payment Record & Image Upload
+            if (in_array($request->metodo, ['pago_movil', 'transferencia', 'transferencia_p2p'])) {
+                $path = $request->file('comprobante')->store('receipts', 'public');
+                \App\Models\Pago::create([
+                    'venta_id'         => $venta->id,
+                    'payment_method'   => $request->metodo,
+                    'bank_name'        => $banco,
+                    'reference_number' => $referencia,
+                    'receipt_path'     => $path,
+                    'amount'           => $totalAmountCalculado
+                ]);
+            }
+
             // Actualizar el total oficial de la Factura y Confirmar ACID.
-            $venta->update(['total_venta' => $totalVentaCalculado]);
+            $venta->update([
+                'subtotal'     => $subtotalVentaCalculado,
+                'iva_amount'   => $iva,
+                'delivery_fee' => $deliveryFee,
+                'total_amount' => $totalAmountCalculado,
+                'total_venta'  => $totalAmountCalculado // Legacy overwrite for old views
+            ]);
 
             DB::commit();
             session()->flash('success', '¡Pedido realizado con éxito! Pronto nos comunicaremos contigo.');

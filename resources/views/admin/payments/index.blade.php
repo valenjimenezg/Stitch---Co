@@ -20,8 +20,8 @@
                 <span class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">
                     Por Verificar
                 </span>
-                <h3 class="font-bold text-slate-900 text-lg">Bs. {{ number_format($pago->total_venta, 2) }}</h3>
-                <p class="text-xs text-slate-500">Orden #{{ str_pad($pago->id, 5, '0', STR_PAD_LEFT) }}</p>
+                <h3 class="font-bold text-slate-900 text-lg">${{ number_format($pago->total_amount, 2) }} <span class="text-xs font-normal text-slate-500">/ Bs {{ number_format($pago->total_amount * $pago->tasa_bcv_aplicada, 2) }}</span></h3>
+                <p class="text-xs text-slate-500 mt-1">Orden #{{ str_pad($pago->id, 5, '0', STR_PAD_LEFT) }}</p>
             </div>
             <div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <span class="material-symbols-outlined">
@@ -30,8 +30,23 @@
             </div>
         </div>
 
+        {{-- Desglose Financiero --}}
+        <div class="px-5 border-b border-slate-100 pb-3 pt-3 bg-white">
+            <div class="flex justify-between text-xs text-slate-600 mb-1">
+                <span>Subtotal:</span> <span>${{ number_format($pago->subtotal, 2) }}</span>
+            </div>
+            <div class="flex justify-between text-xs text-slate-600 mb-1">
+                <span>IVA (16%):</span> <span>${{ number_format($pago->iva_amount, 2) }}</span>
+            </div>
+            @if($pago->delivery_fee > 0)
+            <div class="flex justify-between text-xs text-slate-600 mb-1">
+                <span>Delivery:</span> <span class="text-emerald-600 font-bold">+${{ number_format($pago->delivery_fee, 2) }}</span>
+            </div>
+            @endif
+        </div>
+
         {{-- Datos Bancarios --}}
-        <div class="p-5 flex-1 space-y-4">
+        <div class="p-5 flex-1 space-y-4 pt-4">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Referencia Bancaria</p>
                 <div class="bg-slate-100 rounded-lg px-3 py-2 font-mono text-lg font-bold text-slate-800 flex items-center justify-between group cursor-copy" title="Copiar al portapapeles" onclick="navigator.clipboard.writeText('{{ $pago->referencia_pago }}'); alert('Referencia copiada.')">
@@ -57,11 +72,20 @@
                     <span class="material-symbols-outlined text-slate-400 text-sm">person</span>
                     <span class="text-sm text-slate-700">{{ $pago->user->nombre ?? 'Invitado' }} {{ $pago->user->apellido ?? '' }}</span>
                 </div>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
-                    <span class="text-xs text-slate-500">{{ $pago->created_at->diffForHumans() }}</span>
+                <div class="flex flex-col gap-1 w-full mt-1">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
+                        <span class="text-xs text-slate-500">{{ $pago->created_at->diffForHumans() }}</span>
+                    </div>
                 </div>
             </div>
+            @if($pago->pago && $pago->pago->receipt_path)
+            <div class="pt-3 text-center">
+                <a href="{{ Storage::url($pago->pago->receipt_path) }}" target="_blank" class="inline-flex items-center justify-center gap-2 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 w-full rounded-lg text-sm font-bold transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">receipt_long</span> Ver Comprobante
+                </a>
+            </div>
+            @endif
         </div>
 
         {{-- Acciones Finales --}}
@@ -69,12 +93,20 @@
             <a href="{{ route('admin.orders.show', $pago->id) }}" class="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
                 <span class="material-symbols-outlined text-[18px]">visibility</span> Ver
             </a>
+            <form action="{{ route('admin.orders.status', $pago->id) }}" method="POST" class="flex-1">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="estado" value="cancelado">
+                <button type="submit" class="w-full flex justify-center items-center gap-1.5 px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-sm font-bold transition-colors" onclick="return confirm('¿Rechazar este pago e invalidar orden?')">
+                    <span class="material-symbols-outlined text-[18px]">cancel</span> Rechazar
+                </button>
+            </form>
             
             <form action="{{ route('admin.orders.status', $pago->id) }}" method="POST" class="flex-1">
                 @csrf
                 @method('PATCH')
                 <input type="hidden" name="estado" value="procesando">
-                <button type="submit" class="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors shadow-sm shadow-emerald-500/20" onclick="return confirm('¿Confirmas que el dinero está en la cuenta del negocio?')">
+                <button type="submit" class="w-full flex justify-center items-center gap-1.5 px-3 py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors shadow-sm shadow-emerald-500/20" onclick="return confirm('¿Confirmas que el dinero está en la cuenta?')">
                     <span class="material-symbols-outlined text-[18px]">check_circle</span> Aprobar
                 </button>
             </form>

@@ -10,7 +10,13 @@ if (! function_exists('bcv_rate')) {
      */
     function bcv_rate()
     {
-        return Cache::remember('bcv_rate', 3600, function () {
+        $config = \App\Models\Configuracion::firstOrCreate(['clave' => 'general']);
+        if ($config->usar_tasa_manual && $config->tasa_bcv_manual > 0) {
+            return (float) $config->tasa_bcv_manual;
+        }
+
+        // Caché de 5 minutos en lugar de 1 hora para mayor fidelidad a cambios diarios del Banco.
+        return Cache::remember('bcv_rate', 300, function () {
             try {
                 $response = Http::timeout(5)->get('https://pydolarvenezuela-api.vercel.app/api/v1/dollar?page=bcv');
                 if ($response->successful()) {
@@ -28,10 +34,11 @@ if (! function_exists('bs')) {
     /**
      * Convierte el precio base en dolares a Bolívares (Bs) a la tasa del día.
      */
-    function bs($usd, $raw = false)
+    function bs($usd, $raw = false, $tasaManual = null)
     {
         $usd = (float) $usd;
-        $val = $usd * bcv_rate();
+        $tasa = $tasaManual ?? bcv_rate();
+        $val = $usd * $tasa;
 
         return $raw ? $val : 'Bs. '.number_format($val, 2, ',', '.');
     }

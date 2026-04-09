@@ -32,8 +32,8 @@
                         </div>
                         <div>
                             <div class="font-semibold">{{ $cliente->nombre }} {{ $cliente->apellido }}</div>
-                            @if($cliente->cedula_identidad)
-                                <div class="text-xs text-slate-400">CI: {{ $cliente->cedula_identidad }}</div>
+                            @if($cliente->document_number)
+                                <div class="text-xs text-slate-400">CI: {{ $cliente->document_type }}{{ $cliente->document_number }}</div>
                             @endif
                         </div>
                     </td>

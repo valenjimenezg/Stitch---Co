@@ -71,19 +71,19 @@
                             <span style="color: #64748b; font-size: 12px;">{{ $detalle->variante->color ?? '' }} {{ $detalle->variante->talla ?? '' }}</span>
                         </td>
                         <td class="text-right">{{ $detalle->cantidad }}</td>
-                        <td class="text-right">{{ bs($detalle->precio_unitario) }}</td>
-                        <td class="text-right">{{ bs($detalle->subtotal) }}</td>
+                        <td class="text-right">{{ bs($detalle->precio_unitario, false, $venta->tasa_bcv_aplicada) }}</td>
+                        <td class="text-right">{{ bs($detalle->subtotal, false, $venta->tasa_bcv_aplicada) }}</td>
                     </tr>
                     @endforeach
                     @if($venta->costo_envio > 0)
                     <tr>
                         <td colspan="3" class="text-right" style="padding-right: 15px; color: #64748b;">Delivery Local (Guanare)</td>
-                        <td class="text-right">{{ bs($venta->costo_envio) }}</td>
+                        <td class="text-right">{{ bs($venta->costo_envio ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
                     </tr>
                     @endif
                     <tr class="total-row">
                         <td colspan="3" class="text-right" style="padding-right: 15px;">TOTAL A PAGAR</td>
-                        <td class="text-right" style="color: #0F172A; font-weight: bold;">{{ bs($venta->total_venta) }}</td>
+                        <td class="text-right" style="color: #0F172A; font-weight: bold;">{{ bs($venta->total_venta, false, $venta->tasa_bcv_aplicada) }}</td>
                     </tr>
                 </tbody>
             </table>

@@ -77,11 +77,11 @@
             <div class="w-64">
                 <div class="flex justify-between py-2 border-b border-slate-100">
                     <span class="text-slate-500 font-bold">Subtotal</span>
-                    <span class="text-slate-800 font-bold">Bs. {{ number_format((float)($venta->total_venta ?? 0), 2) }}</span>
+                    <span class="text-slate-800 font-bold">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</span>
                 </div>
                 <div class="flex justify-between py-3">
                     <span class="text-slate-800 font-black text-xl">TOTAL</span>
-                    <span class="text-purple-600 font-black text-xl">Bs. {{ number_format((float)($venta->total_venta ?? 0), 2) }}</span>
+                    <span class="text-purple-600 font-black text-xl">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</span>
                 </div>
             </div>
         </div>

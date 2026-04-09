@@ -125,15 +125,29 @@
                         
                         {{-- Product Info --}}
                         <div class="flex-1 flex flex-col sm:flex-row gap-5 w-full">
-                            <div class="size-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:border-{{ $badgeColor }}-400/30 transition-colors">
-                                <span class="material-symbols-outlined text-4xl text-slate-400 group-hover:text-{{ $badgeColor }}-500 transition-colors">
-                                    {{ $venta->estado === 'procesando' ? 'inventory_2' : ($venta->estado === 'enviado' || $venta->estado === 'entregado' ? 'mark_email_read' : 'shopping_basket') }}
-                                </span>
-                            </div>
+                            @if($firstItem && $firstItem->variante && $firstItem->variante->producto)
+                                <a href="{{ route('products.show', $firstItem->variante->id) }}" class="size-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm hover:border-primary/50 transition-colors group/img" title="Ver producto de nuevo">
+                                    <span class="material-symbols-outlined text-4xl text-slate-400 group-hover/img:text-primary transition-colors">
+                                        {{ $venta->estado === 'procesando' ? 'inventory_2' : ($venta->estado === 'enviado' || $venta->estado === 'entregado' ? 'mark_email_read' : 'shopping_basket') }}
+                                    </span>
+                                </a>
+                            @else
+                                <div class="size-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:border-{{ $badgeColor }}-400/30 transition-colors">
+                                    <span class="material-symbols-outlined text-4xl text-slate-400 group-hover:text-{{ $badgeColor }}-500 transition-colors">
+                                        {{ $venta->estado === 'procesando' ? 'inventory_2' : ($venta->estado === 'enviado' || $venta->estado === 'entregado' ? 'mark_email_read' : 'shopping_basket') }}
+                                    </span>
+                                </div>
+                            @endif
                             <div class="flex-1">
                                 <h3 class="text-xl font-black text-slate-900 leading-tight mb-1">
-                                    {{ $firstItem->variante->producto->nombre ?? 'Pedido' }}
-                                    @if($venta->detalles->count() > 1) y más... @endif
+                                    @if($firstItem && $firstItem->variante && $firstItem->variante->producto)
+                                        <a href="{{ route('products.show', $firstItem->variante->id) }}" class="hover:text-primary hover:underline transition-colors cursor-pointer" title="Ver producto de nuevo">
+                                            {{ $firstItem->variante->producto->nombre }}
+                                        </a>
+                                    @else
+                                        Pedido
+                                    @endif
+                                    @if($venta->detalles->count() > 1) <span class="text-sm font-bold text-slate-400">y más...</span> @endif
                                 </h3>
                                 <p class="text-sm text-slate-500 font-medium mb-4 line-clamp-1">
                                     {{ $venta->detalles->sum('cantidad') }} Artículo(s) {{ $isPendiente ? 'esperando confirmación.' : 'en esta compra.' }}
@@ -170,7 +184,10 @@
                         <div class="shrink-0 flex flex-col items-start xl:items-end w-full xl:w-auto border-t xl:border-t-0 border-slate-100 pt-6 xl:pt-0">
                             <div class="mb-5 xl:text-right flex flex-col items-start xl:items-end gap-1">
                                 <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">{{ $isPendiente ? 'Saldo Pendiente' : 'Total Cancelado' }}</p>
-                                <p class="text-3xl font-black {{ $isPendiente ? 'text-slate-900' : 'text-primary' }} tracking-tighter">Bs. {{ number_format((float)($venta->total_venta ?? 0), 2) }}</p>
+                                <p class="text-3xl font-black {{ $isPendiente ? 'text-slate-900' : 'text-primary' }} tracking-tighter">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</p>
+                                <p class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 mt-1 inline-flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[12px]">payments</span> Ref: ${{ number_format((float)($venta->total_venta ?? 0), 2) }}
+                                </p>
                                 @if($venta->referencia_pago)
                                     <div class="mt-2 text-right">
                                         <p class="text-[9px] font-black tracking-widest uppercase text-slate-400 mb-0.5">{{ str_replace('_', ' ', $venta->metodo_pago) }}</p>
@@ -191,23 +208,30 @@
                                             Continuar Compra
                                         </button>
                                     </form>
-                                    <form action="{{ route('profile.orders.cancel', $venta->id) }}" method="POST" class="w-full xl:w-auto" onsubmit="return confirm('¿Deseas cancelar orden? Se notificará a soporte y se liberará el stock asignado permanentemente.')">
+                                @endif
+
+                                @if(in_array($venta->estado, ['pendiente', 'pending']) && empty($venta->referencia_pago))
+                                    <form action="{{ route('profile.orders.cancel', $venta->id) }}" method="POST" class="w-full xl:w-auto" onsubmit="return confirm('¿Deseas cancelar orden? Se liberará el stock asignado permanentemente.')">
                                         @csrf
                                         <button type="submit" class="w-full xl:w-auto bg-white border border-red-200 text-red-500 hover:bg-red-50 font-black text-xs px-8 py-4 rounded-xl uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2 group/btn">
                                             <span class="material-symbols-outlined text-lg group-hover/btn:rotate-12 transition-transform">delete_forever</span>
                                             Cancelar Pedido
                                         </button>
                                     </form>
-                                @elseif($isPaid)
-                                    <a href="{{ route('profile.orders.invoice', $venta->id) }}" target="_blank"
-                                            class="w-full xl:w-auto bg-primary hover:bg-primary/90 text-white font-black text-xs px-8 py-4 rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group/btn border border-primary">
-                                        <span class="material-symbols-outlined text-emerald-400 text-lg group-hover/btn:-translate-y-1 transition-transform">check_circle</span>
-                                        Descargar Factura PDF
-                                    </a>
+                                @endif
+
+                                @if(!in_array($venta->estado, ['cancelado']))
+                                        <div class="w-full xl:w-80">
+                                            <a href="{{ route('profile.orders.invoice', $venta->id) }}" target="_blank"
+                                                    class="w-full bg-primary hover:bg-primary/90 text-white font-black text-[11px] sm:text-xs px-6 py-4 rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group/btn border border-primary">
+                                                <span class="material-symbols-outlined text-emerald-400 text-[18px] group-hover/btn:-translate-y-1 transition-transform">print</span>
+                                                Imprimir / PDF
+                                            </a>
+                                        </div>
                                 @else
                                     <div class="w-full xl:w-auto bg-slate-50 text-slate-400 font-black text-[10px] px-6 py-4 rounded-xl uppercase tracking-widest flex items-center justify-center gap-2 border border-slate-200 cursor-not-allowed">
                                         <span class="material-symbols-outlined text-slate-400 text-lg">hourglass_empty</span>
-                                        Pago pendiente, factura no disponible
+                                        Orden Cancelada
                                     </div>
                                 @endif
                             </div>

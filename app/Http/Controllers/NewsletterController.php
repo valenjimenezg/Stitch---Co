@@ -2,30 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SubscriptionConfirmed;
-use App\Models\NewsletterSubscriber;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Models\Subscriber;
+use Illuminate\Support\Facades\Validator;
 
 class NewsletterController extends Controller
 {
     public function subscribe(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|unique:newsletter_subscribers,email',
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:subscribers,email',
         ], [
             'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'Por favor, introduce una dirección de correo válida.',
-            'email.unique' => 'Este correo ya está suscrito a nuestro boletín.',
+            'email.email' => 'El formato del correo electrónico no es válido.',
+            'email.unique' => 'Este correo ya está suscrito a nuestras novedades.',
         ]);
 
-        $subscriber = NewsletterSubscriber::create([
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        Subscriber::create([
             'email' => $request->email,
+            'is_active' => true,
         ]);
 
-        // Enviar correo de confirmación
-        Mail::to($subscriber->email)->send(new SubscriptionConfirmed($subscriber));
-
-        return back()->with('success', '¡Gracias por suscribirte! Revisa tu correo para más información.');
+        return response()->json([
+            'success' => true,
+            'message' => '¡Listo! Ya eres parte de Stitch & Co.'
+        ]);
     }
 }

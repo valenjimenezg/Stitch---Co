@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
@@ -20,10 +23,13 @@ class ProfileController extends Controller
             'nombre'   => 'required|string|max:100',
             'apellido' => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
+            'telefono' => 'nullable|string|max:20',
+            'document_type' => 'required|in:V,E,J,G',
+            'document_number' => 'required|string|max:20|unique:users,document_number,' . $user->id,
+            'password' => ['nullable', 'confirmed', Password::min(6)],
         ]);
 
-        $data = $request->only('nombre', 'apellido', 'email', 'telefono', 'cedula_identidad');
+        $data = $request->only('nombre', 'apellido', 'email', 'telefono', 'document_type', 'document_number');
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -89,11 +95,35 @@ class ProfileController extends Controller
 
     public function cancelOrder($id)
     {
-        $venta = auth()->user()->ventas()->findOrFail($id);
-        if (in_array($venta->estado, ['pendiente', 'pending'])) {
-            $venta->update(['estado' => 'cancelado']);
+        $venta = auth()->user()->ventas()->with('detalles.variante')->findOrFail($id);
+        
+        if (!in_array($venta->estado, ['pendiente', 'pending'])) {
+            abort(403, 'No puedes cancelar un pedido que ya ha sido procesado o pagado.');
         }
-        return back()->with('success', 'Pedido cancelado permanentemente.');
+
+        if (!empty($venta->referencia_pago)) {
+            abort(403, 'No puedes cancelar un pedido para el cual ya has registrado un pago. Por favor contacta a soporte.');
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($venta) {
+            $venta->update(['estado' => 'cancelado']);
+
+            foreach ($venta->detalles as $detalle) {
+                if ($detalle->variante) {
+                    $detalle->variante->increment('stock', $detalle->cantidad);
+                    
+                    \App\Models\MovimientoInventario::create([
+                        'variante_id' => $detalle->variante->id,
+                        'venta_id'    => $venta->id,
+                        'cantidad'    => $detalle->cantidad,
+                        'tipo'        => 'entrada',
+                        'motivo'      => 'Devolución: Autocancelación por Cliente',
+                    ]);
+                }
+            }
+        });
+
+        return back()->with('success', 'Tu pedido ha sido cancelado y los productos han sido devueltos al inventario.');
     }
 
     public function factura($id)

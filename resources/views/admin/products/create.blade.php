@@ -93,7 +93,20 @@
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4"/>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Base ($ USD) *</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida</label>
+                        <select name="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
+                            <option value="Ninguna">Ninguna</option>
+                            <option value="Metros">Metros</option>
+                            <option value="Yardas">Yardas</option>
+                            <option value="Gramos">Gramos</option>
+                            <option value="Docena">Docena</option>
+                            <option value="Rollo">Rollo</option>
+                            <option value="Caja">Caja</option>
+                            <option value="Bulto">Bulto</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Base (Ref. USD) *</label>
                         <input name="precio_usd" type="number" step="0.01" value="{{ old('precio_usd') }}" placeholder="0.00"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>

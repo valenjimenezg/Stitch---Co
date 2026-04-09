@@ -15,15 +15,123 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
-    {{-- Image Gallery --}}
-    <div class="space-y-6">
-        <div id="image-zoom-container" class="aspect-square w-full rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm relative group cursor-zoom-in">
-            @if($variante->imagen)
-                <img id="product-image" src="{{ asset('storage/' . $variante->imagen) }}" alt="{{ $variante->producto->nombre ?? '' }}" class="w-full h-full object-cover transition-transform duration-100 ease-out origin-center"/>
-            @else
-                <div id="product-image" class="w-full h-full flex items-center justify-center bg-primary/5 transition-transform duration-100 ease-out origin-center">
-                    <span class="material-symbols-outlined text-6xl text-primary/30">straighten</span>
+    {{-- Image Gallery Custom Built --}}
+    <style>
+        .custom-gallery-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .main-image-wrapper {
+            width: 100%;
+            height: clamp(350px, 60vh, 600px);
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            cursor: zoom-in;
+            display: flex;
+            align-items: center;
+            justify-center: center;
+        }
+        .main-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.1s ease-out;
+            transform-origin: center center;
+        }
+        .main-image-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+        .thumbnails-wrapper {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+        .thumbnail-item {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            background-color: #f8fafc;
+            position: relative;
+        }
+        .thumbnail-item.active {
+            border-color: #0f172a;
+        }
+        .thumbnail-item img, .thumbnail-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .thumbnail-item.video-thumb::after {
+            content: "▶";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+    </style>
+
+    <div class="custom-gallery-container w-full">
+        {{-- Visualizador Principal --}}
+        <div class="main-image-wrapper" id="custom-main-wrapper">
+            @php $imagenPrincipal = $variante->imagen ?? $variante->producto->imagen; @endphp
+            
+            <img id="custom-main-image" 
+                 src="{{ $imagenPrincipal ? asset($imagenPrincipal) : '' }}" 
+                 alt="{{ $variante->producto->nombre ?? '' }}" 
+                 style="display: {{ $imagenPrincipal ? 'block' : 'none' }};" />
+                 
+            <video id="custom-main-video" controls style="display: none;"></video>
+
+            @if(!$imagenPrincipal && empty($variante->producto->galeria))
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8fafc; color: #cbd5e1;">
+                <span class="material-symbols-outlined text-6xl">straighten</span>
+            </div>
+            @endif
+        </div>
+
+        {{-- Miniaturas (Abajo) --}}
+        <div class="thumbnails-wrapper">
+            @if($imagenPrincipal)
+                <div class="thumbnail-item active" onclick="updateMainMedia('{{ asset($imagenPrincipal) }}', 'image', this)">
+                    <img src="{{ asset($imagenPrincipal) }}" />
                 </div>
+            @endif
+
+            @php $galeria = $variante->producto->galeria ?? []; @endphp
+            @if(is_array($galeria))
+                @foreach($galeria as $media)
+                    @php 
+                        $is_video = \Illuminate\Support\Str::endsWith(strtolower($media), ['.mp4', '.mov', '.webm', '.ogg']);
+                        $media_url = asset($media);
+                    @endphp
+                    <div class="thumbnail-item {{ $is_video ? 'video-thumb' : '' }}" onclick="updateMainMedia('{{ $media_url }}', '{{ $is_video ? 'video' : 'image' }}', this)">
+                        @if($is_video)
+                            <video src="{{ $media_url }}#t=0.1" muted preload="metadata"></video>
+                        @else
+                            <img src="{{ $media_url }}" />
+                        @endif
+                    </div>
+                @endforeach
             @endif
         </div>
     </div>
@@ -38,12 +146,16 @@
             @php
                 $cat = strtolower(trim($variante->producto->categoria ?? ''));
                 $unidad = '';
-                if (in_array($cat, ['telas', 'tela'])) {
-                    $unidad = '';
-                } elseif (in_array($cat, ['hilos', 'hilo', 'lanas', 'lana', 'estambres'])) {
-                    $unidad = $variante->grosor ? 'Grosor: ' . $variante->grosor : ($variante->cm ? $variante->cm . 'cm' : 'Se vende por unidad');
-                } elseif (in_array($cat, ['kits', 'kit'])) {
-                    $unidad = 'Kit Set Completo';
+                if (!empty($variante->unidad_medida)) {
+                    $unidad = 'Se vende por: ' . $variante->unidad_medida;
+                } else {
+                    if (in_array($cat, ['telas', 'tela'])) {
+                        $unidad = '';
+                    } elseif (in_array($cat, ['hilos', 'hilo', 'lanas', 'lana', 'estambres'])) {
+                        $unidad = $variante->grosor ? 'Grosor: ' . $variante->grosor : ($variante->cm ? $variante->cm . 'cm' : 'Se vende por unidad');
+                    } elseif (in_array($cat, ['kits', 'kit'])) {
+                        $unidad = 'Kit Set Completo';
+                    }
                 }
             @endphp
             
@@ -56,14 +168,19 @@
 
         <h2 class="text-4xl font-black text-slate-900 mb-3 leading-tight">{{ $variante->producto->nombre ?? '—' }}</h2>
 
-        <div class="flex items-baseline gap-4 mb-8">
-            @if($variante->en_oferta && $variante->descuento_porcentaje > 0)
-                <span class="text-3xl font-black text-primary">Bs. {{ number_format($variante->precio_con_descuento, 2) }}</span>
-                <span class="text-xl text-slate-400 line-through">Bs. {{ number_format($variante->precio, 2) }}</span>
-                <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">-{{ $variante->descuento_porcentaje }}%</span>
-            @else
-                <span class="text-3xl font-black text-primary">Bs. {{ number_format($variante->precio, 2) }}</span>
-            @endif
+        <div class="flex items-start gap-4 mb-8">
+            <div class="flex flex-col">
+                <div class="flex items-baseline gap-4">
+                    @if($variante->en_oferta && $variante->descuento_porcentaje > 0)
+                        <span id="product-price-display" class="text-4xl font-black text-primary">{{ bs($variante->precio_con_descuento) }}{{ $variante->unidad_medida && strtolower($variante->unidad_medida) !== 'ninguna' ? ' / ' . strtolower($variante->unidad_medida) : '' }}</span>
+                        <span id="product-old-price-display" class="text-xl text-slate-400 line-through">{{ bs($variante->precio) }}</span>
+                        <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full relative -top-1">-{{ $variante->descuento_porcentaje }}%</span>
+                    @else
+                        <span id="product-price-display" class="text-4xl font-black text-primary">{{ bs($variante->precio) }}{{ $variante->unidad_medida && strtolower($variante->unidad_medida) !== 'ninguna' ? ' / ' . strtolower($variante->unidad_medida) : '' }}</span>
+                    @endif
+                </div>
+                <span class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1 block">Ref: ${{ number_format($variante->en_oferta && $variante->descuento_porcentaje > 0 ? $variante->precio_con_descuento : $variante->precio, 2) }}</span>
+            </div>
 
             @if($variante->stock > 0)
                 <span class="text-emerald-500 flex items-center gap-1 text-sm font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
@@ -90,14 +207,18 @@
                 @foreach($variante->producto->detalleProductos as $v)
                     @php $isOutOfStock = $v->stock <= 0; @endphp
                     <a href="{{ route('products.show', $v->id) }}"
-                       class="px-4 py-2 rounded-lg border-2 text-sm font-semibold transition-all relative overflow-hidden
-                              {{ $v->id === $variante->id ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 hover:border-slate-300 text-slate-700' }}
-                              {{ $isOutOfStock ? 'opacity-60 bg-slate-50' : 'bg-white' }}">
+                       class="px-4 py-2 rounded-xl border-2 text-sm font-bold transition-all relative overflow-hidden flex items-center gap-2
+                              {{ $v->id === $variante->id ? 'border-primary bg-primary/5 text-primary shadow-inner' : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white shadow-sm' }}
+                              {{ $isOutOfStock ? 'opacity-60 bg-slate-50' : '' }}">
                         
-                        {{ $v->talla ?? $v->color ?? 'Variante ' . $loop->iteration }}
+                        @if($v->color)
+                            <div class="w-4 h-4 rounded-full border border-black/10 shadow-inner block" style="background-color: {{ strtolower($v->color) }};"></div>
+                        @endif
+                        
+                        <span>{{ $v->grosor ? $v->grosor . ' | ' : '' }}{{ $v->color ?? 'Variante ' . $loop->iteration }}</span>
                         
                         @if($isOutOfStock)
-                            <span class="absolute block w-full h-[2px] bg-slate-400 top-1/2 left-0 -translate-y-1/2 -rotate-12"></span>
+                            <span class="absolute block w-full h-[1.5px] bg-slate-400 top-1/2 left-0 -translate-y-1/2 -rotate-12"></span>
                         @endif
                     </a>
                 @endforeach
@@ -112,19 +233,27 @@
             <input type="hidden" name="variante_id" value="{{ $variante->id }}">
 
             <div class="mb-6">
-                <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">Cantidad</span>
+                @php
+                    $u = strtolower($variante->unidad_medida ?? '');
+                    $isFractional = in_array($u, ['metro', 'centímetro', 'cm']);
+                    $step = $isFractional ? '0.5' : '1';
+                    $min = $isFractional ? '0.5' : '1';
+                @endphp
+                <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">
+                    Cantidad {{ $variante->unidad_medida && $u !== 'ninguna' ? '(' . $u . 's)' : '' }}
+                </span>
                 <div class="flex items-center gap-6">
                     <div class="flex items-center bg-white rounded-xl p-1.5 border border-slate-200 shadow-sm">
-                        <button type="button" onclick="changeQty(-1)" class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
+                        <button type="button" onclick="changeQty(-{{ $step }})" class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
                             <span class="material-symbols-outlined">remove</span>
                         </button>
-                        <input type="number" name="cantidad" id="cantidad" value="1" min="1" max="{{ $variante->stock }}"
-                               class="w-14 text-center font-bold text-lg border-none focus:ring-0 bg-transparent">
-                        <button type="button" onclick="changeQty(1)" class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
+                        <input type="number" name="cantidad" id="cantidad" value="{{ $min }}" min="{{ $min }}" max="{{ $variante->stock }}" step="{{ $step }}"
+                               class="w-16 text-center font-bold text-lg border-none focus:ring-0 bg-transparent">
+                        <button type="button" onclick="changeQty({{ $step }})" class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
                             <span class="material-symbols-outlined">add</span>
                         </button>
                     </div>
-                    <span class="text-slate-400 text-sm italic font-medium">{{ $variante->stock }} unidades disponibles</span>
+                    <span class="text-slate-400 text-sm italic font-medium">Quedan {{ $variante->stock }} {{ $isFractional ? $u.'s' : 'unidades' }}</span>
                 </div>
             </div>
 
@@ -135,13 +264,14 @@
                 </button>
 
                 @php $enWishlist = auth()->check() ? auth()->user()->listaDeseos()->where('variante_id', $variante->id)->exists() : false; @endphp
-                <form action="{{ route('wishlist.toggle') }}" method="POST" {!! $enWishlist ? 'onsubmit="confirmDeletion(event, \'¿Quitar de la lista?\', \'El producto será eliminado de tus deseos.\')"' : '' !!}>
-                    @csrf
-                    <input type="hidden" name="variante_id" value="{{ $variante->id }}">
-                    <button type="submit" class="px-6 border-2 rounded-2xl transition-all h-full {{ $enWishlist ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100' : 'border-slate-100 hover:border-primary/20 hover:bg-primary/5 text-slate-400 hover:text-primary' }}">
-                        <span class="material-symbols-outlined text-3xl" {!! $enWishlist ? 'style="font-variation-settings:\'FILL\' 1"' : '' !!}>favorite</span>
-                    </button>
-                </form>
+                
+                <button type="button" id="wishlist-btn" 
+                        data-url="{{ route('wishlist.toggle') }}" 
+                        data-id="{{ $variante->id }}"
+                        class="px-6 border-2 rounded-2xl transition-all h-full {{ $enWishlist ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100' : 'border-slate-100 hover:border-primary/20 hover:bg-primary/5 text-slate-400 hover:text-primary' }}" 
+                        title="{{ $enWishlist ? 'Quitar de lista de deseos' : 'Añadir a lista de deseos' }}">
+                    <span id="wishlist-icon" class="material-symbols-outlined text-3xl" {!! $enWishlist ? 'style="font-variation-settings:\'FILL\' 1"' : '' !!}>favorite</span>
+                </button>
             </div>
         </form>
         @else
@@ -185,49 +315,75 @@
             <h3 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary">description</span> Ficha Técnica
             </h3>
+            @php
+                $catLower = strtolower(trim($variante->producto->categoria ?? ''));
+                $esTela = str_contains($catLower, 'tela') || str_contains($catLower, 'retazo') || str_contains($catLower, 'cinta') || str_contains($catLower, 'encaje');
+                $esBoton = str_contains($catLower, 'boton') || str_contains($catLower, 'botón') || str_contains($catLower, 'cierre') || str_contains($catLower, 'broche');
+                $esLana = str_contains($catLower, 'hilo') || str_contains($catLower, 'lana') || str_contains($catLower, 'estambre');
+                $esElastico = str_contains($catLower, 'elastico') || str_contains($catLower, 'elástico') || str_contains($catLower, 'vivo');
+                $esHerramienta = str_contains($catLower, 'herramienta') || str_contains($catLower, 'accesorio') || str_contains($catLower, 'aguja');
+            @endphp
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                @if($variante->grosor && !in_array(strtolower(trim($variante->producto->categoria ?? '')), ['kits', 'kit', 'telas', 'tela']))
+
+                {{-- 1. GROSOR / ESPESOR --}}
+                @if($variante->grosor)
                 <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex items-center gap-3 text-primary mb-3">
                         <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">straighten</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Grosor</span>
+                        <span class="font-black uppercase text-xs tracking-widest">
+                            {{ $esBoton || $esHerramienta ? 'Grosor / Espesor' : ($esTela ? 'Peso / Textura' : 'Grosor') }}
+                        </span>
                     </div>
                     <p class="text-lg font-semibold text-slate-900">{{ $variante->grosor }}</p>
                 </div>
                 @endif
+
+                {{-- 2. COLOR / DISEÑO --}}
                 @if($variante->color)
                 <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex items-center gap-3 text-primary mb-3">
                         <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">palette</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Color</span>
+                        <span class="font-black uppercase text-xs tracking-widest">
+                            {{ $esHerramienta ? 'Color / Acabado' : 'Color / Tono' }}
+                        </span>
                     </div>
                     <p class="text-lg font-semibold text-slate-900">{{ $variante->color }}</p>
                 </div>
                 @endif
+
+                {{-- 3. MEDIDO / CM --}}
                 @if($variante->cm)
                 <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex items-center gap-3 text-primary mb-3">
                         <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">architecture</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Medida / Largo</span>
+                        <span class="font-black uppercase text-xs tracking-widest">
+                            @if($esBoton) Diámetro / Tamaño
+                            @elseif($esTela || $esLana || $esElastico) Rendimiento / Largo
+                            @elseif($esHerramienta) Dimensiones
+                            @else Medida
+                            @endif
+                        </span>
                     </div>
                     @php
                         $medida = floatval($variante->cm);
                         $textoMedida = $medida . ' cm';
-                        if (in_array(strtolower(trim($variante->producto->categoria ?? '')), ['telas', 'tela'])) {
-                            if ($medida >= 100) {
-                                $metros = $medida / 100;
-                                $textoMedida = $metros . ' ' . ($metros == 1 ? 'Metro' : 'Metros');
-                            }
+                        if (($esTela || $esLana || $esElastico) && $medida >= 100) {
+                            $metros = $medida / 100;
+                            $textoMedida = $metros . ' ' . ($metros == 1 ? 'Metro' : 'Metros');
+                        } elseif ($esBoton && $medida < 2) {
+                             $textoMedida = ($medida * 10) . ' mm';
                         }
                     @endphp
                     <p class="text-lg font-semibold text-slate-900">{{ $textoMedida }}</p>
                 </div>
                 @endif
+
+                {{-- 4. MARCA --}}
                 @if($variante->marca)
                 <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex items-center gap-3 text-primary mb-3">
                         <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">sell</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Marca</span>
+                        <span class="font-black uppercase text-xs tracking-widest">Marca / Etiqueta</span>
                     </div>
                     <p class="text-lg font-semibold text-slate-900">{{ $variante->marca }}</p>
                 </div>
@@ -235,7 +391,7 @@
                 <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex items-center gap-3 text-primary mb-3">
                         <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">category</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Categoría</span>
+                        <span class="font-black uppercase text-xs tracking-widest">Familia</span>
                     </div>
                     <p class="text-lg font-semibold text-slate-900">{{ $variante->producto->categoria ?? '—' }}</p>
                 </div>
@@ -265,52 +421,205 @@
 <script>
     function changeQty(delta) {
         const input = document.getElementById('cantidad');
-        const max = parseInt(input.max);
-        const newVal = parseInt(input.value) + delta;
-        if (newVal >= 1 && newVal <= max) {
+        const max = parseFloat(input.max);
+        const min = parseFloat(input.min) || 1;
+        let newVal = parseFloat(input.value) + parseFloat(delta);
+        
+        // Fix JS floating precision
+        newVal = Math.round(newVal * 100) / 100;
+        
+        if (newVal >= min && newVal <= max) {
             input.value = newVal;
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Sephora-style Image Zoom
-        const container = document.getElementById('image-zoom-container');
-        const img = document.getElementById('product-image');
+    // --- VISUALIZADOR DE IMAGEN Y ZOOM ROBUSTO FRONTEND ---
+    const mainWrapper = document.getElementById('custom-main-wrapper');
+    const mainImage = document.getElementById('custom-main-image');
+    const mainVideo = document.getElementById('custom-main-video');
+    let isVideoPlaying = false;
 
-        if (container && img) {
-            const handleZoom = function(clientX, clientY) {
-                const rect = container.getBoundingClientRect();
-                const x = clientX - rect.left;
-                const y = clientY - rect.top;
+    // Efecto Zoom estilo lupa (Vanilla JS)
+    function setupZoom() {
+        if (!mainWrapper || !mainImage) return;
 
+        mainWrapper.addEventListener('mousemove', function(e) {
+            if (isVideoPlaying || mainImage.style.display === 'none') return;
+            
+            const rect = mainWrapper.getBoundingClientRect();
+            
+            // Posición exacta del mouse relativa al contenedor
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Calculamos porcentajes (0 a 100%)
+            const xPercent = (x / rect.width) * 100;
+            const yPercent = (y / rect.height) * 100;
+
+            mainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            mainImage.style.transform = 'scale(2.5)'; // Nivel de zoom
+        });
+
+        mainWrapper.addEventListener('mouseleave', function() {
+            mainImage.style.transformOrigin = 'center center';
+            mainImage.style.transform = 'scale(1)';
+        });
+        
+        mainWrapper.addEventListener('touchmove', function(e) {
+            if (isVideoPlaying || mainImage.style.display === 'none') return;
+            if (e.touches.length > 0) {
+                e.preventDefault(); // Evitamos scroll web si el usuario hace swipe sobre la foto
+                
+                const rect = mainWrapper.getBoundingClientRect();
+                const x = e.touches[0].clientX - rect.left;
+                const y = e.touches[0].clientY - rect.top;
+                
                 const xPercent = (x / rect.width) * 100;
                 const yPercent = (y / rect.height) * 100;
 
-                img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-                img.style.transform = 'scale(2.5)';
-            };
+                mainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                mainImage.style.transform = 'scale(2.5)';
+            }
+        }, { passive: false });
+        
+        mainWrapper.addEventListener('touchend', function() {
+            mainImage.style.transformOrigin = 'center center';
+            mainImage.style.transform = 'scale(1)';
+        });
+    }
 
-            const resetZoom = function() {
-                img.style.transformOrigin = 'center center';
-                img.style.transform = 'scale(1)';
-            };
+    // Cambiar Imagen Principal por Miniatura
+    window.updateMainMedia = function(url, type, element) {
+        // Pausar si había video
+        if (mainVideo) mainVideo.pause();
 
-            // Desktop
-            container.addEventListener('mousemove', function(e) {
-                handleZoom(e.clientX, e.clientY);
-            });
-            container.addEventListener('mouseleave', resetZoom);
-
-            // Mobile
-            container.addEventListener('touchmove', function(e) {
-                if(e.touches.length > 0) {
-                    // Prevent page scroll when zooming on mobile
-                    e.preventDefault();
-                    handleZoom(e.touches[0].clientX, e.touches[0].clientY);
-                }
-            }, { passive: false });
-            container.addEventListener('touchend', resetZoom);
+        if (type === 'video') {
+            mainImage.style.display = 'none';
+            mainVideo.src = url;
+            mainVideo.style.display = 'block';
+            mainVideo.play();
+            isVideoPlaying = true;
+            mainWrapper.style.cursor = 'default';
+            
+            // Limpiar zoom de la foto
+            mainImage.style.transform = 'scale(1)';
+        } else {
+            mainVideo.style.display = 'none';
+            mainImage.src = url;
+            mainImage.style.display = 'block';
+            isVideoPlaying = false;
+            mainWrapper.style.cursor = 'zoom-in';
         }
-    });
+
+        // Remarcar miniatura activa
+        document.querySelectorAll('.thumbnail-item').forEach(el => el.classList.remove('active'));
+        if (element) {
+            element.classList.add('active');
+        }
+    };
+
+    // Auto-Inicializar zoom
+    setupZoom();
+
+    // Toggle de Wishlist Async
+    const wishlistBtn = document.getElementById('wishlist-btn');
+    if (wishlistBtn) {
+        wishlistBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            @auth
+            const url = wishlistBtn.getAttribute('data-url');
+            const varianteId = wishlistBtn.getAttribute('data-id');
+            const icon = document.getElementById('wishlist-icon');
+            const isRed = wishlistBtn.classList.contains('text-red-500');
+
+            function toggleWishlistRequest() {
+                wishlistBtn.classList.add('opacity-50', 'pointer-events-none');
+                
+                // Construct form data to send
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('variante_id', varianteId);
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                }).then(res => res.json()).then(data => {
+                    wishlistBtn.classList.remove('opacity-50', 'pointer-events-none');
+                    if(data.success) {
+                        if(data.in_wishlist) {
+                            // Se agregó a deseos (Corazón Rojo)
+                            wishlistBtn.className = "px-6 border-2 rounded-2xl transition-all h-full border-red-200 bg-red-50 text-red-500 hover:bg-red-100";
+                            icon.style.fontVariationSettings = "'FILL' 1";
+                            wishlistBtn.title = "Quitar de lista de deseos";
+                            
+                            Swal.fire({
+                                toast: true,
+                                position: 'bottom-end',
+                                showConfirmButton: false,
+                                timer: 4000,
+                                timerProgressBar: true,
+                                icon: 'success',
+                                title: data.message
+                            });
+                        } else {
+                            // Se quitó de deseos (Corazón Blanco)
+                            wishlistBtn.className = "px-6 border-2 rounded-2xl transition-all h-full border-slate-100 hover:border-primary/20 hover:bg-primary/5 text-slate-400 hover:text-primary";
+                            icon.style.fontVariationSettings = "normal";
+                            wishlistBtn.title = "Añadir a lista de deseos";
+                            
+                            Swal.fire({
+                                toast: true,
+                                position: 'bottom-end',
+                                showConfirmButton: false,
+                                timer: 4000,
+                                timerProgressBar: true,
+                                icon: 'info',
+                                title: data.message
+                            });
+                        }
+                    }
+                }).catch(err => {
+                    wishlistBtn.classList.remove('opacity-50', 'pointer-events-none');
+                    console.error('Error toggling wishlist:', err);
+                });
+            }
+
+            if (isRed) {
+                // Confirmación para QUITAR de la lista de deseos
+                Swal.fire({
+                    title: '¿Deseas quitar este producto?',
+                    text: 'Se eliminará de tu lista de deseos, pero podrás volver a agregarlo en cualquier momento.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#94a3b8',
+                    confirmButtonText: 'Sí, quitar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        title: 'text-xl font-bold text-slate-800',
+                        popup: 'rounded-2xl',
+                        confirmButton: 'rounded-lg font-bold px-6 outline-none',
+                        cancelButton: 'rounded-lg font-bold px-6 outline-none'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        toggleWishlistRequest();
+                    }
+                });
+            } else {
+                // Lo añade de una vez sin preguntar
+                toggleWishlistRequest();
+            }
+            @else
+            // Si el usuario es invitado, redirige al login
+            window.location.href = "{{ route('login') }}?_tab=registro";
+            @endauth
+        });
+    }
 </script>
 @endpush
