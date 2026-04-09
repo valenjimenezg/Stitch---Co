@@ -8,7 +8,10 @@
 <div class="mb-8 rounded-2xl overflow-hidden relative h-[260px] flex items-center bg-primary/10">
     <div class="relative z-10 px-12 max-w-2xl">
         <span class="bg-amber-400 text-slate-900 font-bold px-3 py-1 rounded text-xs uppercase tracking-widest mb-4 inline-block">Solo por tiempo limitado</span>
-        <h2 class="text-5xl font-extrabold text-slate-900 mb-4">Ofertas Especiales</h2>
+        <h2 class="text-5xl font-extrabold text-slate-900 mb-4 flex items-center gap-3">
+            Ofertas Especiales
+            <span class="material-symbols-outlined text-4xl text-black bg-amber-400 rounded-lg p-2" style="font-variation-settings: 'FILL' 1, 'wght' 700;">percent</span>
+        </h2>
         <p class="text-lg text-slate-700 mb-6">Hasta 50% de descuento en hilos, kits de costura y telas importadas.</p>
     </div>
 </div>

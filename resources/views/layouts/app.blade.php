@@ -174,10 +174,11 @@
         <nav class="bg-primary text-white">
             <div class="max-w-[1280px] mx-auto px-6">
                 <ul class="flex items-center justify-center gap-2 font-medium text-sm">
+                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'telas') }}">Telas</a></li>
                     <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'tejido') }}">Tejido</a></li>
                     <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'costura') }}">Costura</a></li>
                     <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'manualidades') }}">Manualidades</a></li>
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white text-yellow-300 font-bold italic" href="{{ route('offers.index') }}">Ofertas %</a></li>
+                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white text-yellow-300 font-bold italic" href="{{ route('offers.index') }}">Ofertas</a></li>
                 </ul>
             </div>
         </nav>

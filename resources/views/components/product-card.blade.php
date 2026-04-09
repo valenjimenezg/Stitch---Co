@@ -21,9 +21,14 @@
     </div>
     @endif
 
-    {{-- Badge oferta --}}
+    {{-- Badge oferta (Ribbon 3D) --}}
     @if($variante->stock > 0 && $variante->en_oferta)
-        <span class="absolute top-6 left-6 z-40 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded uppercase">¡OFERTA!</span>
+        <div class="absolute top-6 -left-2 z-40">
+            <div class="bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-r uppercase shadow-md relative z-10">
+                ¡OFERTA!
+            </div>
+            <div class="absolute top-full left-0 border-t-[6px] border-t-red-800 border-l-[8px] border-l-transparent z-0"></div>
+        </div>
     @endif
 
     {{-- Imagen --}}
