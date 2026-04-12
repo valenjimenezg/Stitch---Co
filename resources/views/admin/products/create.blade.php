@@ -37,16 +37,16 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Categoría *</label>
                         <select id="categoria-select" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
                             <option value="">— Crear nueva categoría —</option>
-                            @foreach($productos->pluck('categoria')->unique()->sort() as $cat)
-                                @if(trim($cat) !== '')
-                                    <option value="{{ strtolower(trim($cat)) }}" {{ old('categoria') == strtolower(trim($cat)) ? 'selected' : '' }}>
-                                        {{ ucfirst(trim($cat)) }}
+                            @foreach(\App\Models\Categoria::orderBy('nombre')->get() as $cat)
+                                @if(trim($cat->nombre) !== '')
+                                    <option value="{{ strtolower(trim($cat->nombre)) }}" {{ old('categoria') == strtolower(trim($cat->nombre)) ? 'selected' : '' }}>
+                                        {{ ucfirst(trim($cat->nombre)) }}
                                     </option>
                                 @endif
                             @endforeach
                         </select>
                         <input name="categoria" id="categoria-input" type="text" value="{{ old('categoria') }}" placeholder="Escribe el nombre de la nueva categoría..."
-                               class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
+                               class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 {{ old('categoria') ? 'hidden' : '' }}" {{ old('categoria') ? 'style="display:none;"' : '' }} required/>
                     </div>
 
                     <div id="nuevo-producto-fields">
@@ -67,8 +67,8 @@
                         <select name="producto_id" id="producto_id_select" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5">
                             <option value="">— Crear nuevo producto —</option>
                             @foreach($productos as $p)
-                                <option value="{{ $p->id }}" data-category="{{ strtolower(trim($p->categoria)) }}" {{ old('producto_id') == $p->id ? 'selected' : '' }}>
-                                    {{ $p->nombre }} ({{ $p->categoria }})
+                                <option value="{{ $p->id }}" data-category="{{ strtolower(trim($p->categoria->nombre ?? '')) }}" {{ old('producto_id') == $p->id ? 'selected' : '' }}>
+                                    {{ $p->nombre }} ({{ $p->categoria->nombre ?? 'Sin Categoría' }})
                                 </option>
                             @endforeach
                         </select>
@@ -103,28 +103,47 @@
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4"/>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida</label>
-                        <select name="unidad_medida" id="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
-                            <option value="Ninguna">Ninguna</option>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida *</label>
+                        <select name="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required>
+                            <option value="Unidad" {{ old('unidad_medida') == 'Unidad' ? 'selected' : '' }}>Unidad (Botones, Cierres, Agujas...)</option>
+                            <option value="Metro" {{ old('unidad_medida') == 'Metro' ? 'selected' : '' }}>Metro (Telas, Cierres continuos...)</option>
+                            <option value="Rollo" {{ old('unidad_medida') == 'Rollo' ? 'selected' : '' }}>Rollo (Hilos, Cintas, Elásticos...)</option>
+                            <option value="Madeja" {{ old('unidad_medida') == 'Madeja' ? 'selected' : '' }}>Madeja (Lanas...)</option>
+                            <option value="Ovillo" {{ old('unidad_medida') == 'Ovillo' ? 'selected' : '' }}>Ovillo (Lanas...)</option>
+                            <option value="Tubino" {{ old('unidad_medida') == 'Tubino' ? 'selected' : '' }}>Tubino (Hilos...)</option>
+                            <option value="Blíster" {{ old('unidad_medida') == 'Blíster' ? 'selected' : '' }}>Blíster (Agujas...)</option>
+                            <option value="Pieza" {{ old('unidad_medida') == 'Pieza' ? 'selected' : '' }}>Pieza general</option>
+                            <option value="Ninguna" {{ old('unidad_medida') == 'Ninguna' ? 'selected' : '' }}>Ninguna</option>
                         </select>
-                        <input type="hidden" name="unidad_nombre" id="unidad_nombre" value="Ninguna">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Factor de Conversión</label>
-                        <input name="factor_conversion" id="factor_conversion" type="number" step="1" value="{{ old('factor_conversion', 1) }}"
-                               class="w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary py-2.5 px-4 text-slate-500" readonly/>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                            <span>Precio Base (Ref. USD) *</span>
-                            <span id="label-precio-calculado" class="text-primary font-black hidden"></span>
-                        </label>
-                        <input name="precio_usd" id="precio_usd" type="number" step="0.01" value="{{ old('precio_usd') }}" placeholder="0.00"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Base ($) *</label>
+                        <input name="precio" type="number" step="0.01" min="0" value="{{ old('precio') }}"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
+                    <div class="col-span-2 border border-slate-200 rounded-lg p-4 bg-slate-50 shadow-inner">
+                        <h4 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">dynamic_feed</span> Presentaciones de Venta</h4>
+                        <div id="empaques-container" class="space-y-3">
+                            <!-- JS inserts rows here -->
+                        </div>
+                        <button type="button" onclick="addEmpaqueRow('', 1, false)" class="mt-4 text-primary font-bold text-sm flex items-center gap-1 hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span> Añadir otra presentación
+                        </button>
+                    </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Stock *</label>
-                        <input name="stock" type="number" min="0" value="{{ old('stock', 0) }}"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Proveedor</label>
+                        <select name="proveedor_id" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
+                            <option value="">— Sin proveedor asignado —</option>
+                            @foreach($proveedores as $prov)
+                                <option value="{{ $prov->id }}" {{ old('proveedor_id') == $prov->id ? 'selected' : '' }}>
+                                    {{ $prov->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Stock Base*</label>
+                        <input name="stock_base" type="number" min="0" value="{{ old('stock_base', 0) }}"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
                     <div class="col-span-2">
@@ -209,11 +228,32 @@
         'default': { 'Ninguna': 1, 'Unidad': 1, 'Rollo': 1, 'Docena': 12, 'Caja': 24, 'Bulto': 100 }
     };
 
-    const unidadSelect = document.getElementById('unidad_medida');
-    const factorInput = document.getElementById('factor_conversion');
-    const hiddenUnidadNombre = document.getElementById('unidad_nombre');
-    const precioBaseInput = document.getElementById('precio_usd');
-    const labelPrecioCalculado = document.getElementById('label-precio-calculado');
+    let empaqueIndex = 0;
+    const container = document.getElementById('empaques-container');
+    
+    window.addEmpaqueRow = function(nombre = '', factor = 1, isRequired = false) {
+        const reqStr = isRequired ? 'required' : '';
+        const html = `
+        <div class="flex items-end gap-3 empaque-row relative">
+            <div class="flex-1">
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Empaque</label>
+                <input type="text" name="empaques[${empaqueIndex}][nombre]" value="${nombre}" placeholder="Ej: Docena" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" ${reqStr}>
+            </div>
+            <div class="w-24">
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Trae (Cant)</label>
+                <input type="number" name="empaques[${empaqueIndex}][factor]" value="${factor}" min="1" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" ${reqStr}>
+            </div>
+            <div class="flex-1">
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Precio Compra ($)</label>
+                <input type="number" step="0.01" name="empaques[${empaqueIndex}][precio]" placeholder="0.00" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" required>
+            </div>
+            <button type="button" onclick="if(document.querySelectorAll('.empaque-row').length > 1) this.closest('.empaque-row').remove()" class="text-rose-400 hover:text-rose-600 mb-1.5 p-1.5 rounded border border-transparent hover:border-rose-200 hover:bg-rose-50 transition-all">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
+            </button>
+        </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+        empaqueIndex++;
+    };
 
     function updateCategoryUnits() {
         let currentCategory = '';
@@ -233,39 +273,13 @@
             }
         }
 
-        // Vaciar Select
-        unidadSelect.innerHTML = '';
+        // Generar las filas base
+        container.innerHTML = '';
+        empaqueIndex = 0;
+        let isFirst = true;
         for (const [unitName, factorValue] of Object.entries(unitsObj)) {
-            const option = document.createElement('option');
-            option.value = factorValue; // Visualmente guardamos temporal el factor
-            option.text = unitName;
-            option.setAttribute('data-name', unitName);
-            unidadSelect.appendChild(option);
-        }
-        
-        updateFactorValue();
-    }
-
-    function updateFactorValue() {
-        if(unidadSelect.selectedIndex >= 0) {
-            const option = unidadSelect.options[unidadSelect.selectedIndex];
-            factorInput.value = option.value;
-            hiddenUnidadNombre.value = option.getAttribute('data-name');
-        }
-        calculatePrice();
-    }
-
-    function calculatePrice() {
-        let base = parseFloat(precioBaseInput.value) || 0;
-        let factor = parseInt(factorInput.value) || 1;
-        let unitName = hiddenUnidadNombre.value;
-        
-        let total = base * factor;
-        if(total > 0 && factor > 1) {
-            labelPrecioCalculado.textContent = `Total (Por ${unitName}): $${total.toFixed(2)}`;
-            labelPrecioCalculado.classList.remove('hidden');
-        } else {
-            labelPrecioCalculado.classList.add('hidden');
+            addEmpaqueRow(unitName, factorValue, isFirst);
+            isFirst = false;
         }
     }
 
@@ -277,7 +291,9 @@
             const c = this.options[this.selectedIndex].getAttribute('data-category');
             if(c) catInput.value = c;
         } else {
-            catInput.setAttribute('required', 'required');
+            if (!catSelect.value) {
+                catInput.setAttribute('required', 'required');
+            }
         }
         updateCategoryUnits();
     });
@@ -307,20 +323,27 @@
     catSelect.addEventListener('change', function() {
         if(this.value) {
             catInput.value = this.value;
+            catInput.classList.add('hidden');
             catInput.style.display = 'none';
+            catInput.removeAttribute('required');
         } else {
             catInput.value = '';
+            catInput.classList.remove('hidden');
             catInput.style.display = 'block';
+            if (!productSelect.value) {
+                catInput.setAttribute('required', 'required');
+            }
         }
         catInput.dispatchEvent(new Event('input'));
     });
     
     // Set initial state
     if(catSelect.value) {
+        catInput.classList.add('hidden');
         catInput.style.display = 'none';
+        catInput.removeAttribute('required');
     }
-    unidadSelect.addEventListener('change', updateFactorValue);
-    precioBaseInput.addEventListener('input', calculatePrice);
+
 
     // Initialize on load
     updateCategoryUnits();

@@ -53,6 +53,16 @@
                 <span class="material-symbols-outlined">inventory_2</span>
                 Productos
             </a>
+            <a href="{{ route('admin.proveedores.index') }}"
+               class="{{ request()->routeIs('admin.proveedores.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                <span class="material-symbols-outlined">factory</span>
+                Proveedores
+            </a>
+            <a href="{{ route('admin.inventario-logs') }}"
+               class="{{ request()->routeIs('admin.inventario-logs') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                <span class="material-symbols-outlined">history</span>
+                Kardex (Logs)
+            </a>
             <a href="{{ route('admin.offers.index') }}"
                class="{{ request()->routeIs('admin.offers.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                 <span class="material-symbols-outlined">loyalty</span>

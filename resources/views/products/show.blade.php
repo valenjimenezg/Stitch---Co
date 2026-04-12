@@ -8,7 +8,7 @@
 <nav class="flex items-center gap-2 text-sm text-slate-400 mb-10">
     <a class="hover:text-primary transition-colors" href="{{ route('home') }}">Inicio</a>
     <span class="material-symbols-outlined text-xs">chevron_right</span>
-    <a class="hover:text-primary transition-colors" href="{{ route('categories.show', $variante->producto->categoria ?? 'all') }}">{{ $variante->producto->categoria ?? 'Categoría' }}</a>
+    <a class="hover:text-primary transition-colors" href="{{ route('categories.show', $variante->producto->categoria->nombre ?? 'all') }}">{{ $variante->producto->categoria->nombre ?? 'Categoría' }}</a>
     <span class="material-symbols-outlined text-xs">chevron_right</span>
     <span class="text-slate-900 font-semibold">{{ $variante->producto->nombre ?? '—' }}</span>
 </nav>
@@ -140,11 +140,11 @@
     <div class="flex flex-col">
         <div class="flex justify-between items-start mb-4">
             <span class="bg-primary/10 text-primary text-xs font-bold px-3 py-1.5 rounded-full tracking-wider uppercase">
-                {{ $variante->producto->categoria ?? 'Producto' }}
+                {{ $variante->producto->categoria->nombre ?? 'Producto' }}
             </span>
             
             @php
-                $cat = strtolower(trim($variante->producto->categoria ?? ''));
+                $cat = strtolower(trim($variante->producto->categoria->nombre ?? ''));
                 $unidad = '';
                 if (!empty($variante->unidad_medida)) {
                     $unidad = 'Se vende por: ' . $variante->unidad_medida;
@@ -182,9 +182,9 @@
                 <span class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1 block">Ref: ${{ number_format($variante->en_oferta && $variante->descuento_porcentaje > 0 ? $variante->precio_con_descuento : $variante->precio, 2) }}</span>
             </div>
 
-            @if($variante->stock > 0)
+            @if($variante->stock_disponible > 0)
                 <span class="text-emerald-500 flex items-center gap-1 text-sm font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-                    <span class="material-symbols-outlined text-lg">check_circle</span> Disponibles: {{ $variante->stock }} unidades
+                    <span class="material-symbols-outlined text-lg">check_circle</span> Disponibles: {{ $variante->stock_disponible }} unidades
                 </span>
             @else
                 <span class="text-rose-500 flex items-center gap-1 text-sm font-black bg-rose-50 px-3 py-1 rounded-full border border-rose-100 uppercase tracking-widest">
@@ -198,15 +198,15 @@
         </p>
 
         {{-- Variants (other colors/variants of same product) --}}
-        @if($variante->producto->detalleProductos->count() > 1)
+        @if($variante->producto->variantes->count() > 1)
         <div class="mb-8">
             <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">
                 Variante: <span class="text-slate-500 font-normal">{{ $variante->grosor ? $variante->grosor . ' | ' : '' }}{{ $variante->color ?? $variante->talla ?? '—' }}</span>
             </span>
             <div class="flex gap-4 flex-wrap">
-                @foreach($variante->producto->detalleProductos as $v)
+                @foreach($variante->producto->variantes as $v)
                     @php 
-                        $isOutOfStock = $v->stock <= 0; 
+                        $isOutOfStock = $v->stock_disponible <= 0; 
                         $isActive = $v->id === $variante->id;
                     @endphp
                     
@@ -235,8 +235,6 @@
                             ];
                             $hex = $colorMap[$colorName] ?? $colorName;
                             
-                            // If it's an image variant (like the Sephora screenshot sometimes uses textures), 
-                            // we could use background-image, but for now we use the solid hex color.
                         @endphp
                         
                         <a href="{{ route('products.show', $v->id) }}"
@@ -269,10 +267,37 @@
         @endif
 
         {{-- Add to Cart --}}
-        @if($variante->stock > 0)
+        @if($variante->stock_disponible > 0)
         <form action="{{ route('cart.add') }}" method="POST" class="mb-10">
             @csrf
             <input type="hidden" name="variante_id" value="{{ $variante->id }}">
+
+            @if($variante->empaques && $variante->empaques->count() > 0)
+            <div class="mb-5">
+                <span class="block text-sm font-bold text-slate-900 mb-2 uppercase tracking-widest">
+                    Presentación
+                </span>
+                <select name="empaque_id" id="empaque_select" class="w-full rounded-xl border-slate-200 focus:border-primary focus:ring-primary py-3 px-4 font-semibold text-slate-800" onchange="updatePresentation()">
+                    @foreach($variante->empaques as $empaque)
+                        @php
+                            $bcv = \Illuminate\Support\Facades\Cache::get('bcv_rate', 1);
+                            $p_bs = $empaque->precio_usd * $bcv;
+                            $p_bs_desc = $p_bs;
+                            if($variante->en_oferta && $variante->descuento_porcentaje > 0) {
+                                $p_bs_desc = $p_bs * (1 - $variante->descuento_porcentaje / 100);
+                            }
+                        @endphp
+                        <option value="{{ $empaque->id }}" 
+                                data-factor="{{ $empaque->factor_conversion }}"
+                                data-name="{{ $empaque->nombre }}"
+                                data-preciobs="{{ bs($p_bs) }}"
+                                data-preciodesc="{{ bs($p_bs_desc) }}">
+                            {{ $empaque->nombre }} {{ $empaque->factor_conversion > 1 ? '('.$empaque->factor_conversion.' uds)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
 
             <div class="mb-6">
                 @php
@@ -281,21 +306,21 @@
                     $step = $isFractional ? '0.5' : '1';
                     $min = $isFractional ? '0.5' : '1';
                 @endphp
-                <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">
-                    Cantidad {{ $variante->unidad_medida && $u !== 'ninguna' ? '(' . $u . 's)' : '' }}
+                <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest" id="cantidad_label">
+                    Cantidad {!! !empty($u) && $u !== 'ninguna' ? '<span id="lbl_unidad">(' . $u . 's)</span>' : '' !!}
                 </span>
                 <div class="flex items-center gap-6">
                     <div class="flex items-center bg-white rounded-xl p-1.5 border border-slate-200 shadow-sm">
                         <button type="button" onclick="changeQty(-{{ $step }})" class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
                             <span class="material-symbols-outlined">remove</span>
                         </button>
-                        <input type="number" name="cantidad" id="cantidad" value="{{ $min }}" min="{{ $min }}" max="{{ $variante->stock }}" step="{{ $step }}"
+                        <input type="number" name="cantidad" id="cantidad" value="{{ $min }}" min="{{ $min }}" max="{{ $variante->stock_disponible }}" step="{{ $step }}"
                                class="w-16 text-center font-bold text-lg border-none focus:ring-0 bg-transparent">
                         <button type="button" onclick="changeQty({{ $step }})" class="size-10 flex items-center justify-center hover:bg-slate-50 rounded-lg transition-colors text-slate-600">
                             <span class="material-symbols-outlined">add</span>
                         </button>
                     </div>
-                    <span class="text-slate-400 text-sm italic font-medium">Quedan {{ $variante->stock }} {{ $isFractional ? $u.'s' : 'unidades' }}</span>
+                    <span class="text-slate-400 text-sm italic font-medium" id="stock-display">Quedan {{ $variante->stock_disponible }} {{ $isFractional ? $u.'s' : 'unidades' }}</span>
                 </div>
             </div>
 
@@ -305,7 +330,7 @@
                     Agregar al carrito
                 </button>
 
-                @php $enWishlist = auth()->check() ? auth()->user()->listaDeseos()->where('variante_id', $variante->id)->exists() : false; @endphp
+                @php $enWishlist = auth()->check() && is_array(auth()->user()->lista_deseos) ? in_array($variante->id, auth()->user()->lista_deseos) : false; @endphp
                 
                 <button type="button" id="wishlist-btn" 
                         data-url="{{ route('wishlist.toggle') }}" 
@@ -358,7 +383,7 @@
                 <span class="material-symbols-outlined text-primary">description</span> Ficha Técnica
             </h3>
             @php
-                $catLower = strtolower(trim($variante->producto->categoria ?? ''));
+                $catLower = strtolower(trim($variante->producto->categoria->nombre ?? ''));
                 $esTela = str_contains($catLower, 'tela') || str_contains($catLower, 'retazo') || str_contains($catLower, 'cinta') || str_contains($catLower, 'encaje');
                 $esBoton = str_contains($catLower, 'boton') || str_contains($catLower, 'botón') || str_contains($catLower, 'cierre') || str_contains($catLower, 'broche');
                 $esLana = str_contains($catLower, 'hilo') || str_contains($catLower, 'lana') || str_contains($catLower, 'estambre');
@@ -435,7 +460,7 @@
                         <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">category</span>
                         <span class="font-black uppercase text-xs tracking-widest">Familia</span>
                     </div>
-                    <p class="text-lg font-semibold text-slate-900">{{ $variante->producto->categoria ?? '—' }}</p>
+                    <p class="text-lg font-semibold text-slate-900">{{ $variante->producto->categoria->nombre ?? '—' }}</p>
                 </div>
                 @endif
             </div>
@@ -663,5 +688,75 @@
             @endauth
         });
     }
+
+    const masterStock = {{ $variante->stock_disponible }};
+
+    window.updatePresentation = function() {
+        const select = document.getElementById('empaque_select');
+        if (!select) return;
+
+        const option = select.options[select.selectedIndex];
+        const factor = parseInt(option.getAttribute('data-factor')) || 1;
+        const name = option.getAttribute('data-name') || 'Unidad';
+        const priceBs = option.getAttribute('data-preciobs');
+        const priceDesc = option.getAttribute('data-preciodesc');
+        
+        // Update price display
+        const priceDisplay = document.getElementById('product-price-display');
+        const oldPriceDisplay = document.getElementById('product-old-price-display');
+        
+        if (oldPriceDisplay) {
+            priceDisplay.innerHTML = priceDesc + ' <span class="text-2xl text-slate-400 font-normal">/ ' + name.toLowerCase() + '</span>';
+            oldPriceDisplay.innerHTML = priceBs;
+        } else if (priceDisplay) {
+            priceDisplay.innerHTML = priceBs + ' <span class="text-2xl text-slate-400 font-normal">/ ' + name.toLowerCase() + '</span>';
+        }
+
+        // Update Stock Logic
+        const availableInPack = Math.floor(masterStock / factor);
+        
+        const qtyInput = document.getElementById('cantidad');
+        const stockDisplay = document.getElementById('stock-display');
+        const lblUnidad = document.getElementById('lbl_unidad');
+        const btnAdd = document.querySelector('button[type="submit"]');
+
+        if (lblUnidad) lblUnidad.innerText = '(' + name.toLowerCase() + 's)';
+        stockDisplay.innerText = "Quedan " + availableInPack + " " + name.toLowerCase() + (availableInPack !== 1 ? 's' : '');
+        
+        qtyInput.max = availableInPack;
+        if(parseFloat(qtyInput.value) > availableInPack) {
+            qtyInput.value = availableInPack;
+        }
+
+        if (availableInPack <= 0) {
+            btnAdd.disabled = true;
+            btnAdd.classList.add('opacity-50', 'cursor-not-allowed');
+            btnAdd.innerHTML = '<span class="material-symbols-outlined">block</span> Insuficiente stock para esta presentación';
+        } else {
+            btnAdd.disabled = false;
+            btnAdd.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnAdd.innerHTML = '<span class="material-symbols-outlined">shopping_cart</span> Agregar al carrito';
+            if (parseFloat(qtyInput.value) < 1) qtyInput.value = 1;
+        }
+    }
+
+    window.changeQty = function(amount) {
+        const input = document.getElementById('cantidad');
+        let val = parseFloat(input.value) + amount;
+        let max = parseFloat(input.max) || {{ $variante->stock_disponible }};
+        let min = parseFloat(input.min) || 1;
+        if(val >= min && val <= max) {
+            input.value = val;
+        } else if (val > max) {
+            input.value = max;
+        } else if (val < min) {
+            input.value = min;
+        }
+    }
+    
+    // Initialize if Empaques are present
+    document.addEventListener('DOMContentLoaded', () => {
+        updatePresentation();
+    });
 </script>
 @endpush

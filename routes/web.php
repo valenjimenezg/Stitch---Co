@@ -30,8 +30,8 @@ Route::post('/lista-deseos/toggle', [\App\Http\Controllers\WishlistController::c
 Route::middleware('guest')->group(function () {
     Route::get('/acceso', [LoginController::class, 'showForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-    Route::post('/registro', [RegisterController::class, 'store'])->name('register');
-    Route::post('/api/auth/check-document', [RegisterController::class, 'checkDocument'])->name('api.check-document');
+    Route::post('/registro', [RegisterController::class, 'store'])->name('register')->middleware('throttle:3,15');
+    Route::post('/api/auth/check-document', [RegisterController::class, 'checkDocument'])->name('api.check-document')->middleware('throttle:5,1');
 
     // Recuperación de Contraseña
     Route::get('/password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showRequestForm'])->name('password.request');
@@ -92,6 +92,8 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::put('/productos/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/productos/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy'])->name('admin.products.destroy');
 
+    Route::get('/inventario-logs', [\App\Http\Controllers\Admin\InventarioLogController::class, 'index'])->name('admin.inventario-logs');
+
     Route::get('/ofertas', [\App\Http\Controllers\Admin\OfferController::class, 'index'])->name('admin.offers.index');
     Route::post('/ofertas', [\App\Http\Controllers\Admin\OfferController::class, 'apply'])->name('admin.offers.apply');
 
@@ -110,6 +112,8 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     
     Route::get('/pagos', [\App\Http\Controllers\Admin\OrderController::class, 'payments'])->name('admin.payments');
     Route::get('/envios', [\App\Http\Controllers\Admin\OrderController::class, 'shipping'])->name('admin.shipping');
+    
+    Route::get('/proveedores', [\App\Http\Controllers\Admin\ProveedorController::class, 'index'])->name('admin.proveedores.index');
 
     Route::get('/clientes', [\App\Http\Controllers\Admin\DashboardController::class, 'clients'])->name('admin.clients');
     Route::get('/clientes/exportar', [\App\Http\Controllers\Admin\DashboardController::class, 'exportClients'])->name('admin.clients.export');

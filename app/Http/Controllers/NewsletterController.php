@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Subscriber;
+use App\Models\NotificacionCrm;
 use Illuminate\Support\Facades\Validator;
 
 class NewsletterController extends Controller
@@ -11,7 +11,7 @@ class NewsletterController extends Controller
     public function subscribe(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:subscribers,email',
+            'email' => 'required|email|unique:notificaciones_crm,email',
         ], [
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El formato del correo electrónico no es válido.',
@@ -25,9 +25,10 @@ class NewsletterController extends Controller
             ], 422);
         }
 
-        Subscriber::create([
+        NotificacionCrm::create([
             'email' => $request->email,
-            'is_active' => true,
+            'tipo' => 'newsletter',
+            'procesado' => false,
         ]);
 
         return response()->json([

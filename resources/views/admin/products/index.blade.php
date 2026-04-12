@@ -25,7 +25,7 @@
 @endif
 
 @php
-    $lowStockCount = \App\Models\DetalleProducto::where('stock', '<=', 5)->count();
+    $lowStockCount = \App\Models\ProductoVariante::whereNull('parent_id')->where('stock_base', '<=', 5)->count();
 @endphp
 @if($lowStockCount > 0)
     <div class="mb-6 bg-rose-50 border border-rose-200 rounded-xl p-5 flex items-start gap-4 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
@@ -72,7 +72,7 @@
                         </div>
                         <span class="font-semibold">{{ $variante->producto->nombre ?? '—' }}</span>
                     </td>
-                    <td class="px-6 py-4 text-slate-500">{{ $variante->producto->categoria ?? '—' }}</td>
+                    <td class="px-6 py-4 text-slate-500">{{ $variante->producto->categoria->nombre ?? '—' }}</td>
                     <td class="px-6 py-4 text-slate-500">
                         {{ $variante->grosor ?? '' }}{{ $variante->grosor && $variante->color ? ' / ' : '' }}{{ $variante->color ?? '' }}
                         @if(!$variante->grosor && !$variante->color) — @endif
@@ -87,10 +87,10 @@
                         @endif
                     </td>
                     <td class="px-6 py-4">
-                        @if($variante->stock > 5)
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">{{ $variante->stock }}</span>
-                        @elseif($variante->stock > 0)
-                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-bold uppercase">{{ $variante->stock }}</span>
+                        @if($variante->stock_disponible > 5)
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">{{ $variante->stock_disponible }}</span>
+                        @elseif($variante->stock_disponible > 0)
+                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-bold uppercase">{{ $variante->stock_disponible }}</span>
                         @else
                             <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-[10px] font-bold uppercase">Agotado</span>
                         @endif

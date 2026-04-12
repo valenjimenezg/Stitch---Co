@@ -41,8 +41,8 @@ class ForgotPasswordController extends Controller
             'usuario.email' => 'El usuario debe ser un correo electrónico válido.',
         ]);
 
-        $user = User::where('document_type', $request->document_type)
-                    ->where('document_number', $request->document_number)
+        $user = User::where('tipo_documento', $request->document_type)
+                    ->where('documento_identidad', $request->document_number)
                     ->where('email', $request->usuario)
                     ->first();
         

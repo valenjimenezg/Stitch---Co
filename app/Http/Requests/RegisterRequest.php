@@ -15,31 +15,32 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'nombre'   => ['required', 'string', 'max:100'],
-            'apellido' => ['required', 'string', 'max:100'],
-            'email'    => ['required', 'email', 'unique:users,email'],
-            'document_type' => ['required', 'in:V,E,J,G'],
-            'document_number' => ['required', 'numeric', 'unique:users,document_number'],
-            'telefono' => ['nullable', 'string', 'max:20'],
+            'nombre'   => ['required', 'string', 'max:100', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'apellido' => ['required', 'string', 'max:100', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'email'    => [
+                'required', 
+                'email:rfc,filter', 
+                'regex:/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/', // Obliga formato valido x@x.com
+                'regex:/^\S*$/', // Sin espacios en lo absoluto
+                'unique:users,email'
+            ],
+            'tipo_documento' => ['required', 'in:V,E,J,G'],
+            'documento_identidad' => [
+                'required', 
+                'numeric', 
+                'digits_between:6,9', 
+                'not_regex:/^(\d)\1+$/', // No permitir secuencias de un mismo número repetido (ej. 0000, 9999)
+                'unique:users,documento_identidad'
+            ],
+            'telefono_prefijo' => ['nullable', 'string', 'in:0412,0414,0424,0416,0426,0212'],
+            'telefono_numero'  => ['nullable', 'numeric', 'digits:7', 'not_regex:/^(\d)\1+$/'],
             'password' => [
                 'required',
                 'confirmed',
                 'string',
-                'min:8',
-                'max:15',
-                'regex:/[a-z]/',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/',
-                'regex:/[=*\-._]/',
-                'regex:/^(?:(.)(?!\1\1))*$/'
+                new \App\Rules\StrictPasswordRule
             ],
         ];
-
-        if (in_array($this->document_type, ['V', 'E'])) {
-            $rules['document_number'][] = 'digits_between:6,8';
-        } elseif (in_array($this->document_type, ['J', 'G'])) {
-            $rules['document_number'][] = 'digits:9';
-        }
 
         return $rules;
     }
@@ -47,11 +48,17 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'password.regex' => 'La contraseña no cumple con los requisitos de seguridad.',
-            'document_number.unique' => 'Este documento ya se encuentra registrado.',
-            'document_number.numeric' => 'El documento solo debe contener números.',
-            'document_number.digits_between' => 'La cédula debe tener entre 6 y 8 números.',
-            'document_number.digits' => 'El RIF debe tener 9 números.',
+            'nombre.regex' => 'El nombre no debe contener números ni símbolos especiales.',
+            'apellido.regex' => 'El apellido no debe contener números ni símbolos especiales.',
+            'telefono_numero.digits' => 'El número de teléfono debe tener exactamente 7 dígitos numéricos.',
+            'telefono_numero.numeric' => 'El número de teléfono solo debe contener números.',
+            'telefono_numero.not_regex' => 'El número de teléfono es inválido (secuencia repetida).',
+            'documento_identidad.unique' => 'Este documento ya se encuentra registrado.',
+            'documento_identidad.numeric' => 'El documento solo debe contener números.',
+            'documento_identidad.not_regex' => 'El documento de identidad es inválido (secuencia numérica repetida).',
+            'documento_identidad.digits_between' => 'La cédula debe tener entre 6 y 8 números enteros.',
+            'email.email' => 'Debes usar un formato de correo electrónico estructuralmente válido.',
+            'email.regex' => 'El correo es inválido. Recuerda que no puede contener espacios, ni formatos incorrectos (ej. @.@).',
         ];
     }
 }

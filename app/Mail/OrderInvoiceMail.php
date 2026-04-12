@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Venta;
+use App\Models\Orden;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -18,7 +18,7 @@ class OrderInvoiceMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(Venta $venta)
+    public function __construct(Orden $venta)
     {
         $this->venta = $venta;
     }

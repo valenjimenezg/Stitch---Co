@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Configuracion;
 use Illuminate\Support\Facades\Cache;
 
 class SettingsController extends Controller
 {
     public function bcvIndex()
     {
-        $config = Configuracion::firstOrCreate(['clave' => 'general']);
+        $config = (object) [
+            'usar_tasa_manual' => Cache::get('config_usar_tasa_manual', false),
+            'tasa_bcv_manual' => Cache::get('config_tasa_bcv_manual', 0)
+        ];
         return view('admin.settings.bcv', compact('config'));
     }
 
@@ -30,15 +32,15 @@ class SettingsController extends Controller
             'tasa_bcv_manual'  => 'nullable|numeric|min:0.01',
         ]);
 
-        $config = Configuracion::firstOrCreate(['clave' => 'general']);
-        $config->usar_tasa_manual = $request->has('usar_tasa_manual');
-        if ($config->usar_tasa_manual) {
-            $config->tasa_bcv_manual = $request->tasa_bcv_manual;
+        $usarManual = $request->has('usar_tasa_manual');
+        Cache::forever('config_usar_tasa_manual', $usarManual);
+        
+        if ($usarManual) {
+            Cache::forever('config_tasa_bcv_manual', $request->tasa_bcv_manual);
         }
-        $config->save();
 
         Cache::forget('bcv_rate'); // Borrar caché para que el helper recalcule inmediatamente
 
-        return back()->with('success', 'Configuración de Tasa BCV actualizada exitosamente.');
+        return back()->with('success', 'Configuración de Tasa BCV actualizada exitosamente (via Caché).');
     }
 }

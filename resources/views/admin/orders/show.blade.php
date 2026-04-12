@@ -20,7 +20,7 @@
             'procesando'  => 'bg-blue-100 text-blue-700 border-blue-200',
             'enviado'     => 'bg-indigo-100 text-indigo-700 border-indigo-200',
             'entregado'   => 'bg-emerald-100 text-emerald-700 border-emerald-200',
-            'cancelado'   => 'bg-red-100 text-red-700 border-red-200',
+            'cancelada'   => 'bg-red-100 text-red-700 border-red-200',
         ];
         $color = $colores[$venta->estado] ?? 'bg-slate-100 text-slate-700';
     @endphp
@@ -135,7 +135,7 @@
 
             <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
                 <span class="text-slate-500 font-medium">Total de la Orden</span>
-                <span class="text-2xl font-black text-primary">{{ bs($venta->total_venta, false, $venta->tasa_bcv_aplicada) }} (Ref: ${{ number_format((float) $venta->total_venta, 2) }})</span>
+                <span class="text-2xl font-black text-primary">{{ bs($venta->total_amount, false, $venta->tasa_bcv_aplicada) }} (Ref: ${{ number_format((float) $venta->total_amount, 2) }})</span>
             </div>
             
         </div>
@@ -151,7 +151,7 @@
                 </form>
             @endif
 
-            @if(!in_array($venta->estado, ['completado', 'entregado', 'cancelado', 'pendiente']))
+            @if(!in_array($venta->estado, ['completado', 'entregado', 'cancelada', 'pendiente']))
                 <form action="{{ route('admin.orders.deliver', $venta->id) }}" method="POST">
                     @csrf
                     <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
@@ -160,7 +160,7 @@
                 </form>
             @endif
 
-            @if(!in_array($venta->estado, ['cancelado']))
+            @if(!in_array($venta->estado, ['cancelada']))
                 <div class="flex items-center gap-3">
                     <a href="{{ route('admin.orders.invoice', $venta->id) }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
                         <span class="material-symbols-outlined text-[18px]">print</span> Imprimir / Descargar PDF

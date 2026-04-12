@@ -99,15 +99,15 @@
             <table class="totals-table">
                 <tr>
                     <td>Subtotal:</td>
-                    <td>${{ number_format((float) $venta->total_venta, 2) }}</td>
+                    <td>${{ number_format((float) $venta->total_amount, 2) }}</td>
                 </tr>
                 <tr class="total-row">
                     <td>TOTAL USD:</td>
-                    <td>${{ number_format((float) $venta->total_venta, 2) }}</td>
+                    <td>${{ number_format((float) $venta->total_amount, 2) }}</td>
                 </tr>
                 <tr>
                     <td style="font-size: 12px;">Total Bs (Tasa: {{ number_format((float) ($venta->tasa_bcv_aplicada ?? bcv_rate()), 2, ',', '.') }}):</td>
-                    <td style="font-weight: bold;">Bs {{ number_format((float) $venta->total_venta * (float) ($venta->tasa_bcv_aplicada ?? bcv_rate()), 2, ',', '.') }}</td>
+                    <td style="font-weight: bold;">Bs {{ number_format((float) $venta->total_amount * (float) ($venta->tasa_bcv_aplicada ?? bcv_rate()), 2, ',', '.') }}</td>
                 </tr>
             </table>
         </td>

@@ -14,15 +14,16 @@ class RegisterController extends Controller
     public function store(RegisterRequest $request)
     {
         $data = $request->validated();
+        $telefonoCompleto = !empty($data['telefono_numero']) ? $data['telefono_prefijo'] . $data['telefono_numero'] : null;
 
         $user = User::create([
             'nombre'   => $data['nombre'],
             'apellido' => $data['apellido'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
-            'telefono' => $data['telefono'] ?? null,
-            'document_type'   => $data['document_type'],
-            'document_number' => $data['document_number'],
+            'telefono' => $telefonoCompleto,
+            'tipo_documento'   => $data['tipo_documento'],
+            'documento_identidad' => $data['documento_identidad'],
             'rol'      => 'cliente',
         ]);
 
@@ -33,8 +34,8 @@ class RegisterController extends Controller
 
     public function checkDocument(Request $request)
     {
-        $exists = User::where('document_number', $request->input('document_number'))
-                      ->where('document_type', $request->input('document_type'))
+        $exists = User::where('documento_identidad', $request->input('documento_identidad'))
+                      ->where('tipo_documento', $request->input('tipo_documento'))
                       ->exists();
 
         return response()->json(['exists' => $exists]);

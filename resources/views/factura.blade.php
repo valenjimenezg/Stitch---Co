@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factura de Compra - Stitch & Co</title>
+    
+    <!-- WhatsApp / Open Graph Meta Tags -->
+    <meta property="og:title" content="Factura #{{ str_pad($orden->id, 6, '0', STR_PAD_LEFT) }} - Stitch & Co">
+    <meta property="og:description" content="Visualiza tu factura digital o recibo de compra en nuestra tienda.">
+    <meta property="og:image" content="{{ asset('img/logo.jpg') }}">
+    <meta property="og:type" content="website">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @media print {

@@ -24,12 +24,12 @@ class ProfileController extends Controller
             'apellido' => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email,' . $user->id,
             'telefono' => 'nullable|string|max:20',
-            'document_type' => 'required|in:V,E,J,G',
-            'document_number' => 'required|string|max:20|unique:users,document_number,' . $user->id,
+            'tipo_documento' => 'required|in:V,E,J,G',
+            'documento_identidad' => 'required|string|max:20|unique:users,documento_identidad,' . $user->id,
             'password' => ['nullable', 'confirmed', Password::min(6)],
         ]);
 
-        $data = $request->only('nombre', 'apellido', 'email', 'telefono', 'document_type', 'document_number');
+        $data = $request->only('nombre', 'apellido', 'email', 'telefono', 'tipo_documento', 'documento_identidad');
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -67,19 +67,19 @@ class ProfileController extends Controller
 
     public function orders()
     {
-        $ventas = auth()->user()->ventas()->with('detalles.variante.producto')->latest()->paginate(10);
+        $ventas = auth()->user()->ordenes()->with('detalles.variante.producto')->latest()->paginate(10);
         return view('profile.orders', compact('ventas'));
     }
 
     public function resumeOrder($id)
     {
-        $venta = auth()->user()->ventas()->findOrFail($id);
+        $venta = auth()->user()->ordenes()->findOrFail($id);
         return view('profile.resume_order', compact('venta'));
     }
 
     public function storeReference(Request $request, $id)
     {
-        $venta = auth()->user()->ventas()->findOrFail($id);
+        $venta = auth()->user()->ordenes()->findOrFail($id);
         $request->validate([
             'banco_pago'      => 'nullable|string|max:100',
             'referencia_pago' => 'required|string|max:100',
@@ -95,7 +95,7 @@ class ProfileController extends Controller
 
     public function cancelOrder($id)
     {
-        $venta = auth()->user()->ventas()->with('detalles.variante')->findOrFail($id);
+        $venta = auth()->user()->ordenes()->with('detalles.variante')->findOrFail($id);
         
         if (!in_array($venta->estado, ['pendiente', 'pending'])) {
             abort(403, 'No puedes cancelar un pedido que ya ha sido procesado o pagado.');
@@ -110,14 +110,16 @@ class ProfileController extends Controller
 
             foreach ($venta->detalles as $detalle) {
                 if ($detalle->variante) {
-                    $detalle->variante->increment('stock', $detalle->cantidad);
+                    $varianteBase = $detalle->variante->parent_id ? $detalle->variante->parent : $detalle->variante;
+                    $cantidadRestaurar = $detalle->cantidad * ($detalle->variante->factor_conversion ?? 1);
+                    $varianteBase->increment('stock_base', $cantidadRestaurar);
                     
-                    \App\Models\MovimientoInventario::create([
-                        'variante_id' => $detalle->variante->id,
-                        'venta_id'    => $venta->id,
-                        'cantidad'    => $detalle->cantidad,
-                        'tipo'        => 'entrada',
-                        'motivo'      => 'Devolución: Autocancelación por Cliente',
+                    \App\Models\InventarioLog::create([
+                        'variante_id'     => $detalle->variante->id,
+                        'cantidad_cambio' => $detalle->cantidad,
+                        'motivo'          => 'Devolución: Autocancelación por Cliente - Orden #' . $venta->id,
+                        'orden_id'        => $venta->id,
+                        'user_id'         => auth()->id(),
                     ]);
                 }
             }
@@ -128,10 +130,10 @@ class ProfileController extends Controller
 
     public function factura($id)
     {
-        $venta = auth()->user()->ventas()->with(['detalles.variante.producto', 'factura'])->findOrFail($id);
+        $venta = auth()->user()->ordenes()->with(['detalles.variante.producto'])->findOrFail($id);
         
-        if (!$venta->factura) {
-            abort(404, 'Factura no disponible.');
+        if (empty($venta->invoice_number)) {
+            abort(404, 'Factura no disponible o pedido no pagado completamente.');
         }
         
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('profile.factura_pdf', compact('venta'));

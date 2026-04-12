@@ -3,20 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\DetalleVenta;
 use App\Models\User;
-use App\Models\Venta;
-use App\Models\DetalleProducto;
+use App\Models\Orden;
+use App\Models\OrdenDetalle;
+use App\Models\ProductoVariante;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalVentas  = Venta::sum('total_venta');
-        $pedidosMes   = Venta::whereMonth('created_at', now()->month)->count();
-        $stockTotal   = DetalleProducto::sum('stock');
-        $stockBajo    = DetalleProducto::where('stock', '<=', 5)->count();
-        $topProductos = DetalleVenta::with('variante.producto')
+        $totalVentas  = Orden::whereNotIn('estado', ['carrito', 'cancelada'])->sum('total_amount');
+        $pedidosMes   = Orden::whereNotIn('estado', ['carrito', 'cancelada'])->whereMonth('created_at', now()->month)->count();
+        $stockTotal   = ProductoVariante::whereNull('parent_id')->sum('stock_base');
+        $stockBajo    = ProductoVariante::whereNull('parent_id')->where('stock_base', '<=', 5)->count();
+        
+        $topProductos = OrdenDetalle::with('variante.producto')
+            ->whereHas('orden', fn($q) => $q->whereNotIn('estado', ['carrito', 'cancelada']))
             ->selectRaw('variante_id, COUNT(*) as total_pedidos')
             ->groupBy('variante_id')
             ->orderByDesc('total_pedidos')
@@ -42,7 +44,7 @@ class DashboardController extends Controller
             $file = fopen('php://output', 'w');
             fputcsv($file, ['ID', 'Nombre', 'Apellido', 'CI', 'Email', 'Telefono', 'Registrado']);
             foreach ($clientes as $c) {
-                $doc = $c->document_type . $c->document_number;
+                $doc = $c->tipo_documento . $c->documento_identidad;
                 fputcsv($file, [$c->id, $c->nombre, $c->apellido, $doc, $c->email, $c->telefono, $c->created_at->format('Y-m-d')]);
             }
             fclose($file);
@@ -52,13 +54,13 @@ class DashboardController extends Controller
 
     public function newsletters()
     {
-        $suscritos = \App\Models\NewsletterSubscriber::latest()->paginate(20);
+        $suscritos = \App\Models\NotificacionCrm::where('tipo', 'newsletter')->latest()->paginate(20);
         return view('admin.newsletters', compact('suscritos'));
     }
 
     public function exportNewsletters()
     {
-        $suscritos = \App\Models\NewsletterSubscriber::latest()->get();
+        $suscritos = \App\Models\NotificacionCrm::where('tipo', 'newsletter')->latest()->get();
         $filename = "suscriptores_stitch_co_" . date('Y-m-d') . ".csv";
 
         $headers = [
@@ -78,7 +80,7 @@ class DashboardController extends Controller
                 fputcsv($file, [
                     $sub->id,
                     $sub->email,
-                    $sub->created_at->format('Y-m-d H:i:s')
+                    $sub->created_at ? $sub->created_at->format('Y-m-d H:i:s') : 'N/A'
                 ]);
             }
             fclose($file);
@@ -95,15 +97,24 @@ class DashboardController extends Controller
 
     public function stockNotifications()
     {
-        $notificaciones = \App\Models\NotificacionStock::with('variante.producto')->latest()->paginate(20);
+        $notificaciones = \App\Models\NotificacionCrm::whereIn('tipo', ['stock', 'stock_alert'])->with('variante.producto')->latest()->paginate(20);
         return view('admin.stock-notifications', compact('notificaciones'));
     }
 
     public function updateStockNotification(\Illuminate\Http\Request $request, int $id)
     {
-        $notificacion = \App\Models\NotificacionStock::findOrFail($id);
+        $notificacion = \App\Models\NotificacionCrm::findOrFail($id);
+        
+        if (!$notificacion->procesado && $notificacion->variante) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($notificacion->email)->send(new \App\Mail\BackInStockMail($notificacion->variante));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Error manual BackInStock: ' . $e->getMessage());
+            }
+        }
+        
         $notificacion->update(['procesado' => true]);
-        return back()->with('success', 'La solicitud de notificación ha sido marcada como resuelta.');
+        return back()->with('success', 'Correo enviado y solicitud marcada como resuelta.');
     }
 
     public function ventasMensuales()
@@ -111,7 +122,7 @@ class DashboardController extends Controller
         $meses = collect(range(1, 6))->map(function ($m) {
             return [
                 'mes'   => now()->subMonths(6 - $m)->format('M'),
-                'total' => Venta::whereMonth('created_at', now()->subMonths(6 - $m)->month)->sum('total_venta'),
+                'total' => Orden::whereNotIn('estado', ['carrito', 'cancelada'])->whereMonth('created_at', now()->subMonths(6 - $m)->month)->sum('total_amount'),
             ];
         });
 
@@ -130,9 +141,10 @@ class DashboardController extends Controller
 
     public function ventasCategoria()
     {
-        $categorias = DetalleVenta::with('variante.producto')
+        $categorias = OrdenDetalle::with('variante.producto.categoria')
+            ->whereHas('orden', fn($q) => $q->whereNotIn('estado', ['carrito', 'cancelada']))
             ->get()
-            ->groupBy(fn($d) => $d->variante->producto->categoria ?? 'Otros')
+            ->groupBy(fn($d) => $d->variante->producto->categoria->nombre ?? 'Otros')
             ->map(fn($group) => $group->count());
 
         return response()->json([

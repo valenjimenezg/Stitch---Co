@@ -22,7 +22,6 @@ return new class extends Migration
 
         Schema::table('users', function (Blueprint $table) {
             $table->unique('document_number');
-            $table->dropUnique(['cedula_identidad']);
             $table->dropColumn('cedula_identidad');
         });
     }

@@ -1,9 +1,9 @@
 @props(['variante'])
 
-<div class="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-2xl hover:shadow-primary/5 transition-all group relative {{ $variante->stock <= 0 ? 'grayscale opacity-[0.85]' : '' }}">
+<div class="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-2xl hover:shadow-primary/5 transition-all group relative {{ $variante->stock_disponible <= 0 ? 'grayscale opacity-[0.85]' : '' }}">
 
     {{-- Botón wishlist --}}
-    @php $enWishlist = auth()->check() ? auth()->user()->listaDeseos()->where('variante_id', $variante->id)->exists() : false; @endphp
+    @php $enWishlist = auth()->check() && is_array(auth()->user()->lista_deseos) ? in_array($variante->id, auth()->user()->lista_deseos) : false; @endphp
     <form method="POST" action="{{ route('wishlist.toggle') }}" class="absolute top-6 right-6 z-40" {!! $enWishlist ? 'onsubmit="confirmDeletion(event, \'¿Quitar de la lista?\', \'El producto será eliminado de tus deseos.\')"' : '' !!}>
         @csrf
         <input type="hidden" name="variante_id" value="{{ $variante->id }}">
@@ -15,14 +15,14 @@
     </form>
 
     {{-- Overlay Agotado --}}
-    @if($variante->stock <= 0)
+    @if($variante->stock_disponible <= 0)
     <div class="absolute inset-x-0 top-1/3 z-30 flex justify-center pointer-events-none">
         <div class="bg-slate-900 text-white font-black text-xl px-12 py-3 tracking-widest uppercase -rotate-12 shadow-2xl shadow-slate-900/50 outline outline-4 outline-offset-0 outline-white opacity-90">AGOTADO</div>
     </div>
     @endif
 
     {{-- Badge oferta (Ribbon 3D) --}}
-    @if($variante->stock > 0 && $variante->en_oferta)
+    @if($variante->stock_disponible > 0 && $variante->en_oferta)
         <div class="absolute top-6 -left-2 z-40">
             <div class="bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-r uppercase shadow-md relative z-10">
                 ¡OFERTA!
@@ -92,7 +92,7 @@
                     <span class="block text-[10px] text-slate-400 line-through mt-1">{{ bs($variante->precio) }}</span>
                 @endif
             </div>
-            @if($variante->stock > 0)
+            @if($variante->stock_disponible > 0)
             <form method="POST" action="{{ route('cart.add') }}">
                 @csrf
                 <input type="hidden" name="variante_id" value="{{ $variante->id }}">

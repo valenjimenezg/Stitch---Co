@@ -31,6 +31,55 @@
         {{-- Main fields --}}
         <div class="lg:col-span-2 space-y-6">
 
+            <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-primary/20 bg-primary/5">
+                <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">info</span> Información General
+                </h3>
+                <p class="text-xs text-slate-500 mb-5 flex items-center gap-1.5 font-medium"><span class="material-symbols-outlined text-[13px] text-amber-500">warning</span> Editar el nombre, categoría o descripción afectará a todas las variantes adjuntas a este producto.</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Producto de la Variante *</label>
+                        <select name="producto_id" id="producto_id_select" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-4">
+                            <option value="">— Separar a un producto nuevo —</option>
+                            @foreach($productos as $p)
+                                <option value="{{ $p->id }}" data-category="{{ strtolower(trim($p->categoria->nombre ?? '')) }}" {{ old('producto_id', $variante->producto_id) == $p->id ? 'selected' : '' }}>
+                                    {{ $p->nombre }} ({{ $p->categoria->nombre ?? 'Sin Categoría' }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="product-edit-fields">
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre del Producto *</label>
+                            <input name="nombre" id="nombre-input" type="text" value="{{ old('nombre', $variante->producto->nombre) }}" 
+                                   class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Categoría *</label>
+                            <select id="categoria-select" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
+                                <option value="">— Escribir una nueva —</option>
+                                @foreach(\App\Models\Categoria::orderBy('nombre')->get() as $cat)
+                                    @if(trim($cat->nombre) !== '')
+                                        <option value="{{ strtolower(trim($cat->nombre)) }}" {{ strtolower(trim(old('categoria', $variante->producto->categoria->nombre ?? ''))) == strtolower(trim($cat->nombre)) ? 'selected' : '' }}>
+                                            {{ ucfirst(trim($cat->nombre)) }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            <input name="categoria" id="categoria-input" type="text" value="{{ old('categoria', $variante->producto->categoria->nombre ?? '') }}" 
+                                   class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 {{ old('categoria', $variante->producto->categoria->nombre ?? '') ? 'hidden' : '' }}" {{ old('categoria', $variante->producto->categoria->nombre ?? '') ? 'style="display:none;"' : '' }} required/>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
+                            <textarea name="descripcion" id="descripcion-input" rows="3"
+                                      class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 resize-none">{{ old('descripcion', $variante->producto->descripcion) }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                 <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">palette</span> Detalles de la Variante
@@ -55,29 +104,67 @@
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4"/>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida</label>
-                        <select name="unidad_medida" id="unidad_medida" data-legacy="{{ $variante->unidad_medida }}" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4">
-                            <option value="{{ $variante->factor_conversion ?? 1 }}">{{ $variante->unidad_nombre ?? $variante->unidad_medida ?? 'Ninguna' }}</option>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida *</label>
+                        <select name="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required>
+                            <option value="Unidad" {{ old('unidad_medida', $variante->unidad_medida) == 'Unidad' ? 'selected' : '' }}>Unidad (Botones, Cierres, Agujas...)</option>
+                            <option value="Metro" {{ old('unidad_medida', $variante->unidad_medida) == 'Metro' ? 'selected' : '' }}>Metro (Telas, Cierres continuos...)</option>
+                            <option value="Rollo" {{ old('unidad_medida', $variante->unidad_medida) == 'Rollo' ? 'selected' : '' }}>Rollo (Hilos, Cintas, Elásticos...)</option>
+                            <option value="Madeja" {{ old('unidad_medida', $variante->unidad_medida) == 'Madeja' ? 'selected' : '' }}>Madeja (Lanas...)</option>
+                            <option value="Ovillo" {{ old('unidad_medida', $variante->unidad_medida) == 'Ovillo' ? 'selected' : '' }}>Ovillo (Lanas...)</option>
+                            <option value="Tubino" {{ old('unidad_medida', $variante->unidad_medida) == 'Tubino' ? 'selected' : '' }}>Tubino (Hilos...)</option>
+                            <option value="Blíster" {{ old('unidad_medida', $variante->unidad_medida) == 'Blíster' ? 'selected' : '' }}>Blíster (Agujas...)</option>
+                            <option value="Pieza" {{ old('unidad_medida', $variante->unidad_medida) == 'Pieza' ? 'selected' : '' }}>Pieza general</option>
+                            <option value="Ninguna" {{ old('unidad_medida', $variante->unidad_medida) == 'Ninguna' ? 'selected' : '' }}>Ninguna</option>
                         </select>
-                        <input type="hidden" name="unidad_nombre" id="unidad_nombre" value="{{ $variante->unidad_nombre ?? $variante->unidad_medida ?? 'Ninguna' }}">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Factor de Conversión</label>
-                        <input name="factor_conversion" id="factor_conversion" type="number" step="1" value="{{ old('factor_conversion', $variante->factor_conversion ?? 1) }}"
-                               class="w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary py-2.5 px-4 text-slate-500" readonly/>
-                    </div>
-                    <div id="hidden-category-data" data-category="{{ strtolower(trim($variante->producto->categoria)) }}"></div>
-                    <div>
-                        <label id="lbl_precio" class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                            <span>Precio Base (Ref. USD) *</span>
-                            <span id="label-precio-calculado" class="text-primary font-black hidden"></span>
-                        </label>
-                        <input name="precio" id="precio_usd" type="number" step="0.01" value="{{ old('precio', $variante->precio_usd ?? $variante->precio) }}" placeholder="0.00"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Base ($) *</label>
+                        <input name="precio" type="number" step="0.01" min="0" value="{{ old('precio', $variante->precio) }}"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
+                    <div class="col-span-2 border border-slate-200 rounded-lg p-4 bg-slate-50 shadow-inner">
+                        <h4 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">dynamic_feed</span> Presentaciones de Venta</h4>
+                        <div id="empaques-container" class="space-y-3">
+                            @if($variante->empaques && $variante->empaques->count() > 0)
+                                @foreach($variante->empaques as $index => $empaque)
+                                <div class="flex items-end gap-3 empaque-row relative">
+                                    <div class="flex-1">
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Empaque</label>
+                                        <input type="text" name="empaques[{{$index}}][nombre]" value="{{ $empaque->unidad_medida }}" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" required>
+                                    </div>
+                                    <div class="w-24">
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Trae (Cant)</label>
+                                        <input type="number" name="empaques[{{$index}}][factor]" value="{{ $empaque->factor_conversion }}" min="1" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" required>
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Precio Compra ($)</label>
+                                        <input type="number" step="0.01" name="empaques[{{$index}}][precio]" value="{{ $empaque->precio }}" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" required>
+                                    </div>
+                                    <button type="button" onclick="if(document.querySelectorAll('.empaque-row').length > 1) this.closest('.empaque-row').remove()" class="text-rose-400 hover:text-rose-600 mb-1.5 p-1.5 rounded border border-transparent hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <button type="button" onclick="addEmpaqueRow('', 1, false)" class="mt-4 text-primary font-bold text-sm flex items-center gap-1 hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span> Añadir otra presentación
+                        </button>
+                    </div>
                     <div>
-                        <label id="lbl_stock" class="block text-sm font-semibold text-slate-700 mb-2">Stock *</label>
-                        <input name="stock" type="number" step="0.01" min="0" value="{{ old('stock', $variante->stock) }}"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Proveedor</label>
+                        <select name="proveedor_id" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
+                            <option value="">— Sin proveedor asignado —</option>
+                            @foreach($proveedores as $prov)
+                                <option value="{{ $prov->id }}" {{ old('proveedor_id', $variante->proveedor_id) == $prov->id ? 'selected' : '' }}>
+                                    {{ $prov->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label id="lbl_stock" class="block text-sm font-semibold text-slate-700 mb-2">Stock Base*</label>
+                        <input name="stock_base" type="number" step="0.01" min="0" value="{{ old('stock_base', $variante->stock_base) }}"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required/>
                     </div>
                     <div class="col-span-2">
@@ -185,16 +272,39 @@
             'default': { 'Ninguna': 1, 'Unidad': 1, 'Rollo': 1, 'Docena': 12, 'Caja': 24, 'Bulto': 100 }
         };
 
-        const selUnidad = document.getElementById('unidad_medida');
-        const factorInput = document.getElementById('factor_conversion');
-        const hiddenUnidadNombre = document.getElementById('unidad_nombre');
-        const precioBaseInput = document.getElementById('precio_usd');
-        const labelPrecioCalculado = document.getElementById('label-precio-calculado');
-        const categoryData = document.getElementById('hidden-category-data').getAttribute('data-category') || '';
-        const legacyUnitData = "<?php echo ($variante->unidad_nombre ?? $variante->unidad_medida ?? 'Ninguna') ?>";
-        const legacyFactorData = "<?php echo ($variante->factor_conversion ?? 1) ?>";
+        let empaqueIndex = {{ ($variante->empaques && $variante->empaques->count() > 0) ? $variante->empaques->count() : 0 }};
+        const container = document.getElementById('empaques-container');
+        
+        window.addEmpaqueRow = function(nombre = '', factor = 1, isRequired = false) {
+            const reqStr = isRequired ? 'required' : '';
+            const html = `
+            <div class="flex items-end gap-3 empaque-row relative">
+                <div class="flex-1">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Empaque</label>
+                    <input type="text" name="empaques[${empaqueIndex}][nombre]" value="${nombre}" placeholder="Ej: Docena" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" ${reqStr}>
+                </div>
+                <div class="w-24">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Trae (Cant)</label>
+                    <input type="number" name="empaques[${empaqueIndex}][factor]" value="${factor}" min="1" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" ${reqStr}>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Precio Compra ($)</label>
+                    <input type="number" step="0.01" name="empaques[${empaqueIndex}][precio]" placeholder="0.00" class="w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-primary focus:ring-primary" required>
+                </div>
+                <button type="button" onclick="if(document.querySelectorAll('.empaque-row').length > 1) this.closest('.empaque-row').remove()" class="text-rose-400 hover:text-rose-600 mb-1.5 p-1.5 rounded border border-transparent hover:border-rose-200 hover:bg-rose-50 transition-all">
+                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                </button>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            empaqueIndex++;
+        };
+
+        const catInput = document.getElementById('categoria-input');
 
         function updateCategoryUnits() {
+            if (container.children.length > 0) return;
+
+            let categoryData = (catInput ? catInput.value : '').toLowerCase().trim();
             let unitsObj = categoryUnits['default'];
             for (const [key, value] of Object.entries(categoryUnits)) {
                 if (categoryData.includes(key)) {
@@ -203,61 +313,77 @@
                 }
             }
 
-            selUnidad.innerHTML = '';
-            let injectedLegacy = false;
+            container.innerHTML = '';
+            empaqueIndex = 0;
+            let isFirst = true;
 
             for (const [unitName, factorValue] of Object.entries(unitsObj)) {
-                const option = document.createElement('option');
-                option.value = factorValue;
-                option.text = unitName;
-                option.setAttribute('data-name', unitName);
-                if(unitName.toLowerCase() === legacyUnitData.toLowerCase() || (factorValue == legacyFactorData && legacyUnitData == unitName)){
-                    option.selected = true;
-                    injectedLegacy = true;
+                addEmpaqueRow(unitName, factorValue, isFirst);
+                isFirst = false;
+            }
+        }
+
+        const catSelect = document.getElementById('categoria-select');
+        const productSelect = document.getElementById('producto_id_select');
+        const editFields = document.getElementById('product-edit-fields');
+        const currentProductId = "{{ $variante->producto_id }}";
+        const nombreInput = document.getElementById('nombre-input');
+        const descInput = document.getElementById('descripcion-input');
+
+        function toggleProductFields() {
+            if (productSelect.value && productSelect.value !== currentProductId) {
+                editFields.style.display = 'none';
+                nombreInput.removeAttribute('required');
+                catInput.removeAttribute('required');
+                
+                // Actualizar las unidades según el producto destino
+                const c = productSelect.options[productSelect.selectedIndex].getAttribute('data-category');
+                if(c) {
+                    catInput.value = c;
+                    updateCategoryUnits();
                 }
-                selUnidad.appendChild(option);
-            }
-
-            if(!injectedLegacy) {
-                 const option = document.createElement('option');
-                 option.value = legacyFactorData;
-                 option.text = legacyUnitData;
-                 option.selected = true;
-                 option.setAttribute('data-name', legacyUnitData);
-                 selUnidad.appendChild(option);
-            }
-            
-            updateFactorValue();
-        }
-
-        function updateFactorValue() {
-            if(selUnidad.selectedIndex >= 0) {
-                const option = selUnidad.options[selUnidad.selectedIndex];
-                factorInput.value = option.value;
-                hiddenUnidadNombre.value = option.getAttribute('data-name');
-            }
-            calculatePrice();
-        }
-
-        function calculatePrice() {
-            let base = parseFloat(precioBaseInput.value) || 0;
-            let factor = parseInt(factorInput.value) || 1;
-            let unitName = hiddenUnidadNombre.value;
-            
-            let total = base * factor;
-            if(total > 0 && factor > 1) {
-                labelPrecioCalculado.textContent = `Total (Por ${unitName}): $${total.toFixed(2)}`;
-                labelPrecioCalculado.classList.remove('hidden');
             } else {
-                labelPrecioCalculado.classList.add('hidden');
+                editFields.style.display = 'block';
+                nombreInput.setAttribute('required', 'required');
+                if (!catSelect.value) {
+                    catInput.setAttribute('required', 'required');
+                }
+                updateCategoryUnits(); // based on current cat input
             }
         }
+        
+        productSelect.addEventListener('change', toggleProductFields);
 
-        selUnidad.addEventListener('change', updateFactorValue);
-        precioBaseInput.addEventListener('input', calculatePrice);
+        catSelect.addEventListener('change', function() {
+            if(this.value) {
+                catInput.value = this.value;
+                catInput.classList.add('hidden');
+                catInput.style.display = 'none';
+                catInput.removeAttribute('required');
+            } else {
+                catInput.value = '';
+                catInput.classList.remove('hidden');
+                catInput.style.display = 'block';
+                if (!productSelect.value || productSelect.value === currentProductId) {
+                    catInput.setAttribute('required', 'required');
+                }
+            }
+            catInput.dispatchEvent(new Event('input'));
+        });
+
+        // Set initial state for Category Input
+        if(catSelect.value) {
+            catInput.classList.add('hidden');
+            catInput.style.display = 'none';
+            catInput.removeAttribute('required');
+        }
+
+
+        catInput.addEventListener('input', updateCategoryUnits);
         
         // initialize
         updateCategoryUnits();
+        toggleProductFields();
     });
 
     function previewImage(input) {

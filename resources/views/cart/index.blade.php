@@ -125,33 +125,42 @@
                 : `<div class="w-full h-full flex items-center justify-center"><span class="material-symbols-outlined text-primary/30 text-3xl">straighten</span></div>`;
 
             const itemHtml = `
-            <div class="bg-white border border-primary/10 rounded-xl p-4 flex gap-4 items-center shadow-sm">
-                <a href="/producto/${item.id}" class="h-24 w-24 bg-primary/5 rounded-lg flex-shrink-0 overflow-hidden border border-primary/10 block hover:border-primary/50 transition-colors" title="Ver producto de nuevo">
-                    ${imgHtml}
-                </a>
-                <div class="flex-grow">
-                    <h3 class="font-bold text-slate-900"><a href="/producto/${item.id}" class="hover:text-primary hover:underline transition-colors">${item.nombre}</a></h3>
-                    <p class="text-xs text-slate-500 mb-2">${meta.join(' • ')}</p>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-black text-primary">Bs. ${itemPriceBs.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        <span class="text-[10px] bg-slate-50 font-bold text-slate-400 px-1.5 py-0.5 rounded border border-slate-100">Ref: $${priceToUse.toFixed(2)}</span>
+            <div class="bg-white border border-primary/10 rounded-xl p-4 flex flex-col md:flex-row md:items-center gap-4 shadow-sm relative">
+                <div class="flex gap-4 items-center w-full md:w-auto overflow-hidden">
+                    <a href="/producto/${item.id}" class="h-20 w-20 md:h-24 md:w-24 bg-primary/5 rounded-lg flex-shrink-0 overflow-hidden border border-primary/10 block hover:border-primary/50 transition-colors" title="Ver producto de nuevo">
+                        ${imgHtml}
+                    </a>
+                    <div class="flex-grow pr-8 md:pr-0 overflow-hidden">
+                        <h3 class="font-bold text-slate-900 leading-tight text-sm md:text-base break-words"><a href="/producto/${item.id}" class="hover:text-primary hover:underline transition-colors">${item.nombre}</a></h3>
+                        <p class="text-[11px] md:text-xs text-slate-500 mb-1.5 truncate">${meta.join(' • ')}</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[13px] md:text-sm font-black text-primary whitespace-nowrap">Bs. ${itemPriceBs.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        </div>
                     </div>
+                    
+                    <!-- Delete button (Mobile Absolute Top Right) -->
+                    <button onclick="Cart.remove('${item.cartItemId || item.id}')" class="absolute top-4 right-4 md:hidden p-1.5 text-slate-400 bg-slate-50 rounded-lg border border-slate-100 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition-colors flex items-center shrink-0">
+                        <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center border border-primary/20 rounded-lg overflow-hidden bg-white shadow-sm">
-                        <button onclick="Cart.updateQty(${item.id}, -1)" class="px-3 py-2 hover:bg-primary/5 text-slate-600 transition-colors">
-                            <span class="material-symbols-outlined text-sm">remove</span>
+                
+                <div class="flex items-center justify-between md:justify-end gap-2 md:gap-4 flex-grow md:flex-grow-0 pt-3 md:pt-0 border-t border-slate-100 md:border-transparent md:border-t-0 w-full md:w-auto">
+                    <div class="flex items-center border border-primary/20 rounded-lg overflow-hidden bg-white shadow-sm h-8 md:h-10">
+                        <button onclick="Cart.updateQty('${item.cartItemId || item.id}', -1)" class="px-3 h-full hover:bg-primary/5 text-slate-600 transition-colors flex items-center">
+                            <span class="material-symbols-outlined text-[16px] md:text-sm">remove</span>
                         </button>
-                        <span class="px-3 text-sm font-bold text-slate-900">${item.cantidad}</span>
-                        <button onclick="Cart.updateQty(${item.id}, 1)" class="px-3 py-2 hover:bg-primary/5 text-slate-600 transition-colors">
-                            <span class="material-symbols-outlined text-sm">add</span>
+                        <span class="px-2 md:px-3 text-xs md:text-sm font-bold text-slate-900">${item.cantidad}</span>
+                        <button onclick="Cart.updateQty('${item.cartItemId || item.id}', 1)" class="px-3 h-full hover:bg-primary/5 text-slate-600 transition-colors flex items-center">
+                            <span class="material-symbols-outlined text-[16px] md:text-sm">add</span>
                         </button>
                     </div>
-                    <div class="w-28 text-right flex flex-col items-end">
-                        <p class="text-[15px] font-black text-slate-900 tracking-tight">Bs. ${subtotalBs.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-                        <p class="text-[10px] font-bold text-slate-400 mt-0.5">Ref: $${subtotalUsd.toFixed(2)}</p>
+                    <div class="text-right flex flex-col items-end flex-shrink-0 md:w-28">
+                        <p class="text-sm md:text-[15px] font-black text-slate-900 tracking-tight leading-none mb-1">Bs. ${subtotalBs.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                        <p class="text-[9px] md:text-[10px] font-bold text-slate-400 bg-slate-50 px-1 py-0.5 rounded">Ref: $${subtotalUsd.toFixed(2)}</p>
                     </div>
-                    <button onclick="Cart.remove(${item.id})" class="p-2.5 ml-1 text-slate-400 bg-slate-50 rounded-xl border border-slate-100 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition-colors">
+                    
+                    <!-- Delete button (Desktop) -->
+                    <button onclick="Cart.remove('${item.cartItemId || item.id}')" class="hidden md:flex p-2.5 ml-1 text-slate-400 bg-slate-50 rounded-xl border border-slate-100 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition-colors items-center shrink-0">
                         <span class="material-symbols-outlined text-[18px]">delete</span>
                     </button>
                 </div>

@@ -4,12 +4,12 @@ $app = require_once 'bootstrap/app.php';
 $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 // Tomar la variante de Tijeras de Costura
-$variante = App\Models\DetalleProducto::whereHas('producto', function($q) {
+$variante = App\Models\ProductoVariante::whereHas('producto', function($q) {
     $q->where('nombre', 'like', '%Tijeras de Costura%');
 })->where('color', 'like', '%Negro%')->first();
 
 if (!$variante) {
-    $variante = App\Models\DetalleProducto::whereNotNull('imagen')->first();
+    $variante = App\Models\ProductoVariante::whereNotNull('imagen')->first();
 }
 
 $mailable = new App\Mail\BackInStockMail($variante);

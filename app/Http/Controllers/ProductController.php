@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleProducto;
+use App\Models\ProductoVariante;
 
 class ProductController extends Controller
 {
     public function show(int $id)
     {
-        $variante = DetalleProducto::with('producto.detalleProductos')->findOrFail($id);
+        $variante = ProductoVariante::with(['producto.categoria', 'producto.variantes'])->findOrFail($id);
 
-        $relacionados = DetalleProducto::with('producto')
-            ->whereHas('producto', fn($q) => $q->where('categoria', $variante->producto->categoria))
+        $relacionados = ProductoVariante::with('producto')
+            ->whereHas('producto', fn($q) => $q->where('categoria_id', $variante->producto->categoria_id ?? null))
             ->where('id', '!=', $id)
+            ->whereNull('parent_id') // Solo mostrar bases como relacionados
             ->take(4)
             ->get();
 
@@ -21,24 +22,26 @@ class ProductController extends Controller
 
     public function apiShow(int $id)
     {
-        $variante = DetalleProducto::with('producto')->findOrFail($id);
+        $variante = ProductoVariante::with(['producto.categoria', 'empaques'])->findOrFail($id);
         
         return response()->json([
             'id' => $variante->id,
             'nombre' => $variante->producto->nombre ?? 'Producto',
             'marca' => $variante->marca,
-            'categoria' => $variante->producto->categoria,
+            'categoria' => $variante->producto->categoria->nombre ?? 'Sin Categoria',
             'precio' => $variante->precio,
-            'precio_con_descuento' => $variante->precio_con_descuento,
+            'precio_con_descuento' => $variante->en_oferta ? $variante->precio * (1 - $variante->descuento_porcentaje / 100) : $variante->precio,
+            'precio_usd' => $variante->precio_usd,
             'en_oferta' => $variante->en_oferta,
+            'descuento_porcentaje' => $variante->descuento_porcentaje,
             'color' => $variante->color,
             'grosor' => $variante->grosor,
-            'cm' => $variante->cm,
             'unidad_medida' => $variante->unidad_medida,
-            'talla' => $variante->talla,
-            'descripcion' => $variante->producto->descripcion,
+            'descripcion' => $variante->producto->descripcion ?? '',
             'imagen' => $variante->imagen ? asset($variante->imagen) : null,
-            'stock' => $variante->stock
+            'stock' => $variante->stock_disponible,
+            'factor_conversion' => $variante->factor_conversion,
+            'empaques' => $variante->empaques
         ]);
     }
 }

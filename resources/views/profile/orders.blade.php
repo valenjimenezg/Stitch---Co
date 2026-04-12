@@ -114,8 +114,8 @@
                                 {{ $statusText }}
                             </span>
                             <span class="text-sm font-black text-slate-400 font-mono tracking-tighter">#ORD-{{ str_pad($venta->id, 6, '0', STR_PAD_LEFT) }}</span>
-                            @if($isPaid && $venta->factura)
-                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">Factura #{{ $venta->factura->id }}</span>
+                            @if($isPaid && $venta->invoice_number)
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">Factura {{ $venta->invoice_number }}</span>
                             @endif
                         </div>
                         <span class="text-xs font-bold text-slate-500">{{ $venta->created_at->diffForHumans() }}</span>
@@ -188,9 +188,9 @@
                         <div class="shrink-0 flex flex-col items-start xl:items-end w-full xl:w-auto border-t xl:border-t-0 border-slate-100 pt-6 xl:pt-0">
                             <div class="mb-5 xl:text-right flex flex-col items-start xl:items-end gap-1">
                                 <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">{{ $isPendiente ? 'Saldo Pendiente' : 'Total Cancelado' }}</p>
-                                <p class="text-3xl font-black {{ $isPendiente ? 'text-slate-900' : 'text-primary' }} tracking-tighter">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</p>
+                                <p class="text-3xl font-black {{ $isPendiente ? 'text-slate-900' : 'text-primary' }} tracking-tighter">{{ bs($venta->total_amount ?? 0, false, $venta->tasa_bcv_aplicada) }}</p>
                                 <p class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 mt-1 inline-flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[12px]">payments</span> Ref: ${{ number_format((float)($venta->total_venta ?? 0), 2) }}
+                                    <span class="material-symbols-outlined text-[12px]">payments</span> Ref: ${{ number_format((float)($venta->total_amount ?? 0), 2) }}
                                 </p>
                                 @if($venta->referencia_pago)
                                     <div class="mt-2 text-right">
@@ -224,7 +224,7 @@
                                     </form>
                                 @endif
 
-                                @if(!in_array($venta->estado, ['cancelado']))
+                                @if(!in_array($venta->estado, ['cancelada']))
                                         <div class="w-full xl:w-80">
                                             <a href="{{ route('profile.orders.invoice', $venta->id) }}" target="_blank"
                                                     class="w-full bg-primary hover:bg-primary/90 text-white font-black text-[11px] sm:text-xs px-6 py-4 rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group/btn border border-primary">

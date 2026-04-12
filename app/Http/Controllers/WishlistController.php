@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Carrito;
-use App\Models\ListaDeseo;
+use App\Models\Orden;
+use App\Models\ProductoVariante;
 use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
     public function index()
     {
-        $items = ListaDeseo::with('variante.producto')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(12);
+        $user = auth()->user();
+        $variantesIds = is_array($user->lista_deseos) ? $user->lista_deseos : [];
+
+        $items = collect();
+        if (!empty($variantesIds)) {
+            $items = ProductoVariante::with('producto.categoria')
+                ->whereIn('id', $variantesIds)
+                ->paginate(12);
+        } else {
+            // Retorna un paginador vacío para evitar errores de vista
+            $items = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 12);
+        }
 
         return view('wishlist.index', compact('items'));
     }
@@ -26,24 +34,26 @@ class WishlistController extends Controller
                 ->withInput(['_tab' => 'registro']);
         }
 
-        $request->validate(['variante_id' => 'required|exists:detalle_productos,id']);
+        $request->validate(['variante_id' => 'required|exists:producto_variantes,id']);
+        $varianteId = (int) $request->variante_id;
+        
+        $user = auth()->user();
+        $lista = is_array($user->lista_deseos) ? $user->lista_deseos : [];
 
-        $existe = ListaDeseo::where('user_id', auth()->id())
-            ->where('variante_id', $request->variante_id)
-            ->first();
+        $pos = array_search($varianteId, $lista);
 
-        if ($existe) {
-            $existe->delete();
+        if ($pos !== false) {
+            unset($lista[$pos]);
             $msg = 'Producto eliminado de la lista de deseos.';
             $inWishlist = false;
         } else {
-            ListaDeseo::create([
-                'user_id'     => auth()->id(),
-                'variante_id' => $request->variante_id,
-            ]);
+            $lista[] = $varianteId;
             $msg = 'Producto guardado en tu lista de deseos.';
             $inWishlist = true;
         }
+
+        $user->lista_deseos = array_values($lista);
+        $user->save();
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
@@ -58,26 +68,41 @@ class WishlistController extends Controller
 
     public function moveToCart(int $id)
     {
-        $deseo = ListaDeseo::with('variante')
-            ->where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $user = auth()->user();
+        $lista = is_array($user->lista_deseos) ? $user->lista_deseos : [];
 
-        $carrito = auth()->user()->carritoActivo()
-            ?? Carrito::create(['user_id' => auth()->id(), 'estado' => 'activo']);
+        $pos = array_search($id, $lista);
+        
+        if ($pos === false) {
+            abort(404, 'El producto no está en tu lista de deseos.');
+        }
 
-        $item = $carrito->detalles()->where('variante_id', $deseo->variante_id)->first();
+        $orden = Orden::firstOrCreate(
+            ['user_id' => $user->id, 'estado' => 'carrito'],
+            ['subtotal' => 0, 'impuesto' => 0, 'envio' => 0, 'total' => 0]
+        );
+
+        $item = $orden->detalles()->where('variante_id', $id)->first();
 
         if ($item) {
             $item->increment('cantidad');
         } else {
-            $carrito->detalles()->create([
-                'variante_id' => $deseo->variante_id,
-                'cantidad'    => 1,
-            ]);
+            $variante = ProductoVariante::find($id);
+            if ($variante) {
+                $orden->detalles()->create([
+                    'variante_id' => $id,
+                    'cantidad'    => 1,
+                    'precio_unitario' => $variante->en_oferta ? $variante->precio * (1 - $variante->descuento_porcentaje / 100) : $variante->precio,
+                    'subtotal'    => $variante->en_oferta ? $variante->precio * (1 - $variante->descuento_porcentaje / 100) : $variante->precio,
+                ]);
+            }
         }
 
-        $deseo->delete();
+        // Eliminar de deseos
+        unset($lista[$pos]);
+        $user->lista_deseos = array_values($lista);
+        $user->save();
+        $orden->recalcularTotales();
 
         return redirect()->route('cart.index')->with('success', 'Producto movido al carrito.');
     }

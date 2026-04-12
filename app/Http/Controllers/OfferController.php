@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleProducto;
+use App\Models\ProductoVariante;
 
 class OfferController extends Controller
 {
     public function index()
     {
-        $variantes = DetalleProducto::with('producto')
+        $variantes = ProductoVariante::with('producto')
             ->where('en_oferta', true)
             ->paginate(12);
 

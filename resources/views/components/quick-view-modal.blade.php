@@ -18,10 +18,10 @@
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="qv-backdrop" onclick="closeQuickView()"></div>
 
     {{-- Contenedor del Modal --}}
-    <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden max-w-4xl w-full mx-auto transform scale-95 opacity-0 transition-all duration-300 flex flex-col md:flex-row max-h-[90vh]" id="qv-card">
+    <div class="relative bg-white rounded-2xl shadow-2xl overflow-y-auto md:overflow-hidden max-w-4xl w-full mx-auto transform scale-95 opacity-0 transition-all duration-300 flex flex-col md:flex-row max-h-[95vh] md:max-h-[90vh]" id="qv-card">
         
         {{-- Botón Cerrar (X) móvil / escritorio --}}
-        <button onclick="closeQuickView()" class="absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors shadow-sm">
+        <button onclick="closeQuickView()" class="fixed md:absolute top-4 right-4 md:top-4 md:right-4 z-50 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors shadow-md border border-slate-100">
             <span class="material-symbols-outlined">close</span>
         </button>
 
@@ -31,9 +31,9 @@
             <span class="text-sm text-slate-500 font-medium tracking-widest uppercase">Cargando...</span>
         </div>
 
-        {{-- Columna Izquierda: Imagen --}}
-        <div class="w-full md:w-1/2 bg-slate-50 relative aspect-[4/5] md:aspect-auto">
-            <img id="qv-image" src="" alt="Producto" class="absolute inset-0 w-full h-full object-cover">
+        {{-- Columna Izquierda: Imagen (Altura Fija en Móvil por seguridad JIT) --}}
+        <div class="w-full md:w-1/2 bg-slate-50 relative h-56 sm:h-64 md:h-auto md:aspect-auto shrink-0 flex-shrink-0 border-b border-slate-100 md:border-none">
+            <img id="qv-image" src="" alt="Producto" class="absolute inset-0 w-full h-full object-contain md:object-cover p-4 md:p-0">
             <div id="qv-image-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-300 bg-slate-100 hidden">
                 <span class="material-symbols-outlined text-6xl">image</span>
             </div>
@@ -41,7 +41,7 @@
         </div>
 
         {{-- Columna Derecha: Información --}}
-        <div class="w-full md:w-1/2 p-6 md:p-10 lg:p-12 overflow-y-auto flex flex-col justify-center">
+        <div class="w-full md:w-1/2 p-6 md:p-10 lg:p-12 md:overflow-y-auto flex flex-col justify-center min-h-min bg-white">
             
             <p id="qv-marca" class="text-[10px] font-bold text-primary uppercase tracking-widest mb-2 hidden"></p>
             <h2 id="qv-title" class="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-2"></h2>
@@ -50,10 +50,11 @@
                 <span class="material-symbols-outlined text-[16px]">straighten</span> <span id="qv-subtitle-text"></span>
             </p>
 
-            <div class="flex items-end gap-3 mb-6">
+            <div class="flex items-end gap-3 mb-2">
                 <span id="qv-price" class="text-2xl font-black text-slate-900"></span>
                 <span id="qv-old-price" class="text-sm text-slate-400 line-through mb-1 hidden"></span>
             </div>
+            <span id="qv-ref-price" class="text-sm font-bold text-slate-400 uppercase tracking-widest block mb-6"></span>
 
             <p id="qv-desc" class="text-slate-600 text-sm leading-relaxed mb-8 line-clamp-3"></p>
 

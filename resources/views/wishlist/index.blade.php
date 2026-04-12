@@ -42,8 +42,7 @@
 {{-- Grid --}}
 @if($items->isNotEmpty())
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    @foreach($items as $deseo)
-    @php $variante = $deseo->variante; @endphp
+    @foreach($items as $variante)
     <div class="group relative flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white">
 
         {{-- Image --}}
@@ -91,15 +90,15 @@
                     </div>
                     @if($variante->en_stock)
                         <span class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">EN STOCK</span>
-                    @elseif($variante->stock > 0)
+                    @elseif($variante->stock_disponible > 0)
                         <span class="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">POCO STOCK</span>
                     @else
                         <span class="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-600">SIN STOCK</span>
                     @endif
                 </div>
 
-                @if($variante->stock > 0)
-                    <form method="POST" action="{{ route('wishlist.move', $deseo->id) }}">
+                @if($variante->stock_disponible > 0)
+                    <form method="POST" action="{{ route('wishlist.move', $variante->id) }}">
                         @csrf
                         <button class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
                             <span class="material-symbols-outlined text-lg">shopping_basket</span>

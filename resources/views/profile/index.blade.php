@@ -89,16 +89,16 @@
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-bold text-slate-700">Documento de Identidad <span class="text-rose-500">*</span></label>
                         <div class="flex">
-                            <select name="document_type" class="rounded-l-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-3 border-r-0 transition-all text-slate-700">
-                                <option value="V" {{ old('document_type', auth()->user()->document_type) == 'V' ? 'selected' : '' }}>V</option>
-                                <option value="E" {{ old('document_type', auth()->user()->document_type) == 'E' ? 'selected' : '' }}>E</option>
-                                <option value="J" {{ old('document_type', auth()->user()->document_type) == 'J' ? 'selected' : '' }}>J</option>
-                                <option value="G" {{ old('document_type', auth()->user()->document_type) == 'G' ? 'selected' : '' }}>G</option>
+                            <select name="tipo_documento" class="rounded-l-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-3 border-r-0 transition-all text-slate-700">
+                                <option value="V" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'V' ? 'selected' : '' }}>V</option>
+                                <option value="E" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'E' ? 'selected' : '' }}>E</option>
+                                <option value="J" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'J' ? 'selected' : '' }}>J</option>
+                                <option value="G" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'G' ? 'selected' : '' }}>G</option>
                             </select>
-                            <input name="document_number" type="text" value="{{ old('document_number', auth()->user()->document_number) }}"
+                            <input name="documento_identidad" type="text" value="{{ old('documento_identidad', auth()->user()->documento_identidad) }}"
                                    class="w-full rounded-r-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all" required/>
                         </div>
-                        @error('document_number')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
+                        @error('documento_identidad')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
                     </div>
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-bold text-slate-700">Teléfono (opcional)</label>

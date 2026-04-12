@@ -195,7 +195,7 @@
     <table class="totals" style="width: 50%; float: right;">
         <tr>
             <td class="text-right" style="text-align: right; color: #64748b;">Subtotal:</td>
-            <td class="text-right" style="text-align: right;">Bs. {{ number_format((float)$order->total_venta, 2, ',', '.') }}</td>
+            <td class="text-right" style="text-align: right;">Bs. {{ number_format((float)$order->total_amount, 2, ',', '.') }}</td>
         </tr>
         @if($order->costo_envio > 0)
         <tr>
@@ -205,7 +205,7 @@
         @endif
         <tr class="total-row">
             <td class="text-right" style="text-align: right;">Total General:</td>
-            <td class="text-right" style="text-align: right;">Bs. {{ number_format((float)$order->total_venta + ($order->costo_envio ?? 0), 2, ',', '.') }}</td>
+            <td class="text-right" style="text-align: right;">Bs. {{ number_format((float)$order->total_amount + ($order->costo_envio ?? 0), 2, ',', '.') }}</td>
         </tr>
     </table>
     <div style="clear: both;"></div>

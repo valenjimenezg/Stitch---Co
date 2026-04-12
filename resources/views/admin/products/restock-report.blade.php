@@ -73,10 +73,10 @@
                     @if($item->marca) <div style="font-size: 10px; color: #94a3b8; font-weight:bold;">BY: {{ strtoupper($item->marca) }}</div> @endif
                 </td>
                 <td>
-                    @if($item->stock == 0)
+                    @if($item->stock_base == 0)
                         <span class="stock-critical">0 AGOTADO</span>
                     @else
-                        <span class="stock-low">{{ $item->stock }} Unid.</span>
+                        <span class="stock-low">{{ $item->stock_base }} Unid.</span>
                     @endif
                 </td>
                 <td style="text-align:center">

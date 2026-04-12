@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ucfirst($slug) . ' — Stitch & Co')
+@section('title', $displayName . ' — Stitch & Co')
 
 @section('content')
 
@@ -10,12 +10,12 @@
         <span class="material-symbols-outlined text-sm">home</span> Inicio
     </a>
     <span class="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
-    <span class="text-primary text-sm font-semibold">{{ ucfirst($slug) }}</span>
+    <span class="text-primary text-sm font-semibold">{{ $displayName }}</span>
 </div>
 
 {{-- Page Header --}}
 <div class="flex flex-col gap-4 mb-10">
-    <h1 class="text-5xl font-black text-slate-900 leading-tight tracking-tight">{{ ucfirst($slug) }}</h1>
+    <h1 class="text-5xl font-black text-slate-900 leading-tight tracking-tight">{{ $displayName }}</h1>
     <p class="text-slate-600 text-lg max-w-2xl leading-relaxed">
         Encuentra todos los materiales e insumos de {{ strtolower($slug) }} de alta calidad que necesitas para cada puntada de tu proyecto.
     </p>

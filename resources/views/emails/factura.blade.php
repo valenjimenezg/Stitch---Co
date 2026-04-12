@@ -83,7 +83,7 @@
                     @endif
                     <tr class="total-row">
                         <td colspan="3" class="text-right" style="padding-right: 15px;">TOTAL A PAGAR</td>
-                        <td class="text-right" style="color: #0F172A; font-weight: bold;">{{ bs($venta->total_venta, false, $venta->tasa_bcv_aplicada) }}</td>
+                        <td class="text-right" style="color: #0F172A; font-weight: bold;">{{ bs($venta->total_amount, false, $venta->tasa_bcv_aplicada) }}</td>
                     </tr>
                 </tbody>
             </table>

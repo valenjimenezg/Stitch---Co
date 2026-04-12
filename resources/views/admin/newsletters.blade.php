@@ -33,7 +33,7 @@
                         </div>
                     </td>
                     <td class="px-8 py-5 text-right text-slate-600 font-medium">
-                        {{ $sub->created_at->format('d/m/Y H:i') }}
+                        {{ $sub->created_at ? $sub->created_at->format('d/m/Y H:i') : 'N/A' }}
                     </td>
                 </tr>
                 @empty

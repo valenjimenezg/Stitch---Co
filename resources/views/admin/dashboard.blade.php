@@ -108,7 +108,7 @@
             </thead>
             <tbody class="divide-y divide-slate-100">
                 @forelse($topProductos ?? [] as $item)
-                    @php /** @var \App\Models\DetalleVenta $item */ @endphp
+                    @php /** @var \App\Models\OrdenDetalle $item */ @endphp
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-4 flex items-center gap-3">
                             <div class="size-10 rounded bg-primary/10 flex items-center justify-center">
@@ -122,9 +122,9 @@
                         </td>
                         <td class="px-6 py-4 font-medium">{{ $item->total_pedidos }}</td>
                         <td class="px-6 py-4 text-right">
-                            @if(($item->variante?->stock ?? 0) > 5)
+                            @if(($item->variante?->stock_disponible ?? 0) > 5)
                                 <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">En Stock</span>
-                            @elseif(($item->variante?->stock ?? 0) > 0)
+                            @elseif(($item->variante?->stock_disponible ?? 0) > 0)
                                 <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-bold uppercase">Stock Bajo</span>
                             @else
                                 <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-[10px] font-bold uppercase">Sin Stock</span>

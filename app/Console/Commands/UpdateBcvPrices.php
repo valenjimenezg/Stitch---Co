@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\DetalleProducto;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +21,7 @@ class UpdateBcvPrices extends Command
      *
      * @var string
      */
-    protected $description = 'Fetch the latest BCV rate and update product prices globally in Bs';
+    protected $description = 'Fetch the latest BCV rate and update the global cache variable';
 
     /**
      * Execute the console command.
@@ -57,21 +56,10 @@ class UpdateBcvPrices extends Command
             Cache::forever('bcv_rate', $bcvRate);
             Cache::forever('bcv_last_update', now());
             
-            // Update products
-            $products = DetalleProducto::where('precio_usd', '>', 0)->get();
-            $count = 0;
-            
-            /** @var \App\Models\DetalleProducto $detail */
-            foreach ($products as $detail) {
-                // Calculate new price in Bs
-                $newPrice = round($detail->precio_usd * $bcvRate, 2);
-                $detail->setAttribute('precio', $newPrice);
-                $detail->save();
-                $count++;
-            }
-            
-            $this->info("Successfully updated {$count} product prices (Rate: Bs {$bcvRate}).");
-            Log::info("UpdateBcvPrices: Updated {$count} products. BCV Rate: {$bcvRate}");
+            // In the strict 12-table ERP, we calculate prices dynamically using Cache at runtime.
+            // There is no need to run N+1 update queries on products.
+            $this->info("Successfully updated global BCV Rate to {$bcvRate}.");
+            Log::info("UpdateBcvPrices: Updated BCV Rate globally to {$bcvRate}");
             
         } catch (\Exception $e) {
             $this->error('Exception caught: ' . $e->getMessage());

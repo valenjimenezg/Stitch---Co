@@ -16,6 +16,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin123'),
             'rol'      => 'admin',
             'telefono' => '+58 412 0000000',
+            'tipo_documento' => 'V',
+            'documento_identidad' => '11000000',
         ]);
 
         User::firstOrCreate(['email' => 'cliente@stitchco.com.ve'], [
@@ -24,6 +26,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('cliente123'),
             'rol'      => 'cliente',
             'telefono' => '+58 414 1234567',
+            'tipo_documento' => 'V',
+            'documento_identidad' => '22000000',
         ]);
     }
 }

@@ -10,9 +10,10 @@ if (! function_exists('bcv_rate')) {
      */
     function bcv_rate()
     {
-        $config = \App\Models\Configuracion::firstOrCreate(['clave' => 'general']);
-        if ($config->usar_tasa_manual && $config->tasa_bcv_manual > 0) {
-            return (float) $config->tasa_bcv_manual;
+        $usarManual = \Illuminate\Support\Facades\Cache::get('config_usar_tasa_manual', false);
+        $tasaManual = \Illuminate\Support\Facades\Cache::get('config_tasa_bcv_manual', 0);
+        if ($usarManual && $tasaManual > 0) {
+            return (float) $tasaManual;
         }
 
         // Caché de 5 minutos en lugar de 1 hora para mayor fidelidad a cambios diarios del Banco.

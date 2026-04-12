@@ -39,7 +39,21 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-background-light text-slate-900 font-sans">
+<body class="bg-background-light text-slate-900 font-sans overflow-x-hidden min-w-[320px]">
+    
+    <style>
+        /* Responsive Header Fixes (Bulletproof) */
+        .hdr-layout { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0; }
+        .hdr-logo { order: 1; flex-shrink: 0; }
+        .hdr-actions { order: 2; flex-shrink: 0; }
+        .hdr-search { order: 3; width: 100%; margin-top: 1rem; }
+
+        @media(min-width: 768px) {
+            .hdr-layout { flex-wrap: nowrap; }
+            .hdr-actions { order: 3; }
+            .hdr-search { order: 2; flex: 1; width: auto; margin-top: 0; margin-left: 2rem; margin-right: 2rem; }
+        }
+    </style>
 
     {{-- Top Utility Bar --}}
     <div class="bg-primary text-white border-b border-primary/20">
@@ -80,15 +94,68 @@
 
     {{-- Main Header --}}
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
-        <div class="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between gap-8">
+        <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-3 md:py-4 hdr-layout">
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center shrink-0">
+            <a href="{{ route('home') }}" class="flex items-center hdr-logo">
                 <x-stitch-logo />
             </a>
 
+            {{-- User Actions --}}
+            <div class="flex items-center justify-end gap-1 md:gap-4 hdr-actions">
+                @auth
+                    <a href="{{ route('profile.index') }}" class="flex items-center gap-2 md:gap-3 pr-2 md:pr-4 pl-1 hover:bg-slate-50 rounded-full transition-all border border-transparent hover:border-slate-200 group">
+                        <div class="size-8 md:size-10 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-all text-[18px] md:text-[22px] select-none">
+                            👩🏻‍🦰
+                        </div>
+                        <div class="hidden md:flex flex-col text-left py-1">
+                            <span class="text-[14px] font-medium text-slate-800 leading-none mb-1">Hola, {{ strtok(auth()->user()->nombre, ' ') }}</span>
+                            <span class="text-[10px] font-bold text-slate-600 tracking-wider uppercase leading-none flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[13px] text-yellow-400" style="font-variation-settings: 'FILL' 1;">star</span>
+                                Cliente Estrella
+                            </span>
+                        </div>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="flex items-center gap-1.5 md:gap-2 p-2 text-slate-600 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors font-medium text-xs md:text-sm">
+                        <span class="material-symbols-outlined text-[20px] md:text-[24px]">person</span>
+                        <span class="hidden md:inline">Acceder</span>
+                    </a>
+                @endauth
+
+                <a href="{{ route('wishlist.index') }}" class="p-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors relative flex-shrink-0">
+                    <span class="material-symbols-outlined">favorite</span>
+                    @auth
+                        @php $wlCount = is_array(auth()->user()->lista_deseos) ? count(auth()->user()->lista_deseos) : 0; @endphp
+                        @if($wlCount > 0)
+                            <span class="absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                                {{ $wlCount }}
+                            </span>
+                        @endif
+                    @endauth
+                </a>
+
+                <a href="{{ route('cart.index') }}" class="p-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors relative flex-shrink-0">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                    @php
+                        $displayCount = $globalCartCount > 99 ? '99+' : $globalCartCount;
+                        $badgeClasses = $globalCartCount > 9 ? 'min-w-[20px] px-1 h-4 text-[9px]' : 'size-4 text-[10px]';
+                    @endphp
+                    @if($globalCartCount > 0)
+                        <span class="cart-badge absolute top-1.5 right-0.5 {!! $badgeClasses !!} bg-primary text-white font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200">
+                            {{ $displayCount }}
+                        </span>
+                    @else
+                        <span class="cart-badge absolute top-1.5 right-0.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200 hidden">
+                            0
+                        </span>
+                    @endif
+                </a>
+            </div>
+
             {{-- Search Bar --}}
-            <div class="flex-1 max-w-2xl relative">
+            <div class="relative hdr-search">
                 <form action="{{ route('search.index') }}" method="GET" class="relative group z-40">
+
                     <button type="submit" class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 group-focus-within:text-primary hover:text-primary transition-colors cursor-pointer outline-none border-none bg-transparent">
                         <span class="material-symbols-outlined">search</span>
                     </button>
@@ -117,68 +184,17 @@
                     </div>
                 </div>
             </div>
-
-            {{-- User Actions --}}
-            <div class="flex items-center gap-4">
-                @auth
-                    <a href="{{ route('profile.index') }}" class="flex items-center gap-3 pr-4 pl-1 hover:bg-slate-50 rounded-full transition-all border border-transparent hover:border-slate-200 group">
-                        <div class="size-10 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-all text-[22px] select-none">
-                            👩🏻‍🦰
-                        </div>
-                        <div class="flex flex-col text-left py-1">
-                            <span class="text-[14px] font-medium text-slate-800 leading-none mb-1">Hola, {{ strtok(auth()->user()->nombre, ' ') }}</span>
-                            <span class="text-[10px] font-bold text-slate-600 tracking-wider uppercase leading-none flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[13px] text-yellow-400" style="font-variation-settings: 'FILL' 1;">star</span>
-                                Cliente Estrella
-                            </span>
-                        </div>
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-2 p-2.5 text-slate-600 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors font-medium text-sm">
-                        <span class="material-symbols-outlined">person</span>
-                        <span>Acceder</span>
-                    </a>
-                @endauth
-
-                <a href="{{ route('wishlist.index') }}" class="p-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors relative">
-                    <span class="material-symbols-outlined">favorite</span>
-                    @auth
-                        @if(auth()->user()->listaDeseos()->count() > 0)
-                            <span class="absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
-                                {{ auth()->user()->listaDeseos()->count() }}
-                            </span>
-                        @endif
-                    @endauth
-                </a>
-
-                <a href="{{ route('cart.index') }}" class="p-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors relative">
-                    <span class="material-symbols-outlined">shopping_bag</span>
-                    @php
-                        $displayCount = $globalCartCount > 99 ? '99+' : $globalCartCount;
-                        $badgeClasses = $globalCartCount > 9 ? 'min-w-[20px] px-1 h-4 text-[9px]' : 'size-4 text-[10px]';
-                    @endphp
-                    @if($globalCartCount > 0)
-                        <span class="cart-badge absolute top-1.5 right-0.5 {!! $badgeClasses !!} bg-primary text-white font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200">
-                            {{ $displayCount }}
-                        </span>
-                    @else
-                        <span class="cart-badge absolute top-1.5 right-0.5 size-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200 hidden">
-                            0
-                        </span>
-                    @endif
-                </a>
-            </div>
         </div>
 
         {{-- Navigation Menu --}}
-        <nav class="bg-primary text-white">
-            <div class="max-w-[1280px] mx-auto px-6">
-                <ul class="flex items-center justify-center gap-2 font-medium text-sm">
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'telas') }}">Telas</a></li>
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'tejido') }}">Tejido</a></li>
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'costura') }}">Costura</a></li>
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'manualidades') }}">Manualidades</a></li>
-                    <li><a class="px-5 py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white text-yellow-300 font-bold italic" href="{{ route('offers.index') }}">Ofertas</a></li>
+        <nav class="bg-primary text-white overflow-hidden shadow-sm">
+            <div class="max-w-[1280px] mx-auto px-4 md:px-6 overflow-x-auto no-scrollbar">
+                <ul class="flex items-center md:justify-center gap-2 font-medium text-[13px] md:text-sm w-max md:w-auto mx-auto pb-1 md:pb-0">
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'telas') }}">Telas</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'lanas') }}">Lanas</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'botones') }}">Botones</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'accesorios') }}">Accesorios</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white text-yellow-300 font-bold italic" href="{{ route('offers.index') }}">Ofertas</a></li>
                 </ul>
             </div>
         </nav>
@@ -186,14 +202,14 @@
 
 
     {{-- Page Content --}}
-    <main class="max-w-[1280px] mx-auto px-6 pb-20">
+    <main class="max-w-[1280px] mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-24 md:pb-20 flex-grow w-full">
         @yield('content')
     </main>
 
     {{-- Footer --}}
-    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8">
-        <div class="max-w-[1280px] mx-auto px-6 grid grid-cols-5 gap-12 mb-16">
-            <div class="col-span-2">
+    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 mt-auto">
+        <div class="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+            <div class="col-span-1 lg:col-span-2">
                 <div class="flex items-center mb-6">
                     <x-stitch-logo size="w-8 h-10" textSize="text-2xl" subTextSize="text-[10px]" class="grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all"/>
                 </div>
@@ -214,10 +230,10 @@
             <div>
                 <h6 class="text-white font-bold mb-6">Tienda</h6>
                 <ul class="space-y-4 text-sm">
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'lanas') }}">Lanas y Hilos</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'telas') }}">Telas y Retazos</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'merceria') }}">Mercería y Botones</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'kits') }}">Kits de Inicio</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'telas') }}">Telas</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'lanas') }}">Lanas</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'botones') }}">Botones</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'accesorios') }}">Accesorios</a></li>
                 </ul>
             </div>
             <div>
@@ -237,9 +253,10 @@
                 </ul>
             </div>
         </div>
-        <div class="max-w-[1280px] mx-auto px-6 pt-8 border-t border-white/5 flex items-center justify-between text-xs">
+        </div>
+        <div class="max-w-[1280px] mx-auto px-6 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-center md:text-left">
             <p>© {{ date('Y') }} Stitch &amp; Co Haberdashery. Todos los derechos reservados.</p>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center justify-center gap-4">
                 <span class="text-white/20">Pago seguro:</span>
                 <span class="material-symbols-outlined">credit_card</span>
                 <span class="material-symbols-outlined">account_balance</span>
@@ -247,6 +264,17 @@
             </div>
         </div>
     </footer>
+    
+    <style>
+        /* Ocultar barra de scroll en navegaciones horizontales para móviles */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 
     @stack('scripts')
     <script>

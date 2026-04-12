@@ -19,19 +19,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // \App\Models\ProductoVariante::observe(\App\Observers\ProductoVarianteObserver::class);
+
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
             $cartCount = 0;
             if (auth()->check()) {
-                $carrito = \App\Models\Carrito::where('user_id', auth()->id())
-                    ->where('estado', 'pendiente')
+                $carrito = \App\Models\Orden::where('user_id', auth()->id())
+                    ->where('estado', 'carrito')
                     ->first();
                 if ($carrito) {
                     $cartCount = $carrito->detalles()->count();
                 }
-            } else {
-                // Si usan un carrito en sesión (para invitados futuros)
-                $sessionId = session()->getId();
-                // Acepta otras lógicas; por default 0 si no hay guest carts
             }
             $view->with('globalCartCount', $cartCount);
         });

@@ -12,27 +12,51 @@ const Cart = {
         localStorage.setItem('stitch_cart', JSON.stringify(items));
         this.updateBadge();
     },
-    add: function(variantId, rawQty) {
+    add: function(variantId, rawQty, empaqueId = null) {
         const baseUrl = document.querySelector('meta[name="base-url"]')?.getAttribute('content') || '';
         return fetch(`${baseUrl}/api/producto/${variantId}`)
             .then(res => res.json())
             .then(product => {
                 const qty = parseFloat(rawQty);
-                if (product.stock < qty) {
+                let factor = 1;
+                let priceUsd = product.precio;
+                let nameSuffix = '';
+                
+                if (empaqueId && product.empaques && product.empaques.length > 0) {
+                    const emp = product.empaques.find(e => parseInt(e.id) === parseInt(empaqueId));
+                    if (emp) {
+                         factor = parseInt(emp.factor_conversion);
+                         priceUsd = parseFloat(emp.precio_usd);
+                         nameSuffix = ' (' + emp.nombre + ')';
+                    }
+                }
+
+                if (product.stock < (qty * factor)) {
                     alert('Stock insuficiente.');
                     return false;
                 }
                 const items = this.getItems();
-                const existing = items.find(i => parseInt(i.id) === parseInt(variantId));
+                const cartItemId = empaqueId ? `${variantId}-${empaqueId}` : `${variantId}`;
+                const existing = items.find(i => i.cartItemId === cartItemId);
                 if (existing) {
-                    if (existing.cantidad + qty > product.stock) {
+                    if ((existing.cantidad + qty) * factor > product.stock) {
                          alert('No hay suficiente stock.');
                          return false;
                     }
                     existing.cantidad += qty;
                 } else {
+                    let discountPrice = priceUsd;
+                    if (product.en_oferta && product.descuento_porcentaje > 0) {
+                         discountPrice = priceUsd * (1 - product.descuento_porcentaje / 100);
+                    }
                     items.push({
                         ...product,
+                        cartItemId: cartItemId,
+                        empaque_id: empaqueId,
+                        nombre: product.nombre + nameSuffix,
+                        precio: priceUsd,
+                        precio_con_descuento: discountPrice,
+                        factor_conversion: factor,
                         cantidad: qty
                     });
                 }
@@ -41,8 +65,9 @@ const Cart = {
                 window.dispatchEvent(new Event('cartUpdated'));
 
                 // Mostrar el modal de confirmación
+                const productForModal = {...items.find(i => i.cartItemId === cartItemId)};
                 if (typeof this.showAddedModal === 'function') {
-                    this.showAddedModal(product, qty);
+                    this.showAddedModal(productForModal, qty);
                 }
                 return true;
             });
@@ -125,15 +150,16 @@ const Cart = {
             }
         });
     },
-    updateQty: function(variantId, delta) {
+    updateQty: function(cartItemId, delta) {
         let items = this.getItems();
-        let item = items.find(i => parseInt(i.id) === parseInt(variantId));
+        let item = items.find(i => i.cartItemId === String(cartItemId) || parseInt(i.id) === parseInt(cartItemId));
         if (item) {
             let newVal = parseFloat(item.cantidad) + parseFloat(delta);
             // Avoid extreme precision bugs:
             newVal = Math.round(newVal * 100) / 100;
+            let currentFactor = item.factor_conversion || 1;
             
-            if (newVal > item.stock) {
+            if (newVal * currentFactor > item.stock) {
                 alert('No hay suficiente stock.');
                 return;
             }
@@ -158,14 +184,14 @@ const Cart = {
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            items = items.filter(i => i.id !== item.id);
+                            items = items.filter(i => i.cartItemId !== item.cartItemId);
                             this.save(items);
                             window.dispatchEvent(new Event('cartUpdated'));
                         }
                     });
                 } else {
                     if (confirm('¿Deseas eliminar este producto de tu carrito?')) {
-                        items = items.filter(i => i.id !== item.id);
+                        items = items.filter(i => i.cartItemId !== item.cartItemId);
                         this.save(items);
                         window.dispatchEvent(new Event('cartUpdated'));
                     }
@@ -177,7 +203,7 @@ const Cart = {
             }
         }
     },
-    remove: function(variantId) {
+    remove: function(cartItemId) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 title: '¿Estás seguro?',
@@ -197,7 +223,7 @@ const Cart = {
             }).then((result) => {
                 if (result.isConfirmed) {
                     let items = this.getItems();
-                    items = items.filter(i => parseInt(i.id) !== parseInt(variantId));
+                    items = items.filter(i => i.cartItemId !== String(cartItemId) && parseInt(i.id) !== parseInt(cartItemId));
                     this.save(items);
                     window.dispatchEvent(new Event('cartUpdated'));
                 }
@@ -205,7 +231,7 @@ const Cart = {
         } else {
             if (confirm('¿Deseas eliminar este producto de tu carrito?')) {
                 let items = this.getItems();
-                items = items.filter(i => parseInt(i.id) !== parseInt(variantId));
+                items = items.filter(i => i.cartItemId !== String(cartItemId) && parseInt(i.id) !== parseInt(cartItemId));
                 this.save(items);
                 window.dispatchEvent(new Event('cartUpdated'));
             }
@@ -266,8 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const variantId = form.querySelector('input[name="variante_id"]').value;
             const cantidad = form.querySelector('input[name="cantidad"]').value;
+            const empaqueSelect = form.querySelector('select[name="empaque_id"]');
+            const empaqueId = empaqueSelect ? empaqueSelect.value : null;
 
-            Cart.add(variantId, cantidad).then(success => {
+            Cart.add(variantId, cantidad, empaqueId).then(success => {
                 btn.disabled = false;
                 if (success) {
                     btn.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';

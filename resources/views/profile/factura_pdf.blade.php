@@ -52,7 +52,7 @@
             <td>
                 <div class="invoice-title">Factura</div>
                 <div class="invoice-details">
-                    <b>ORD-{{ str_pad($venta->id, 6, '0', STR_PAD_LEFT) }}</b><br>
+                    <b>{{ $venta->invoice_number ?: 'ORD-' . str_pad($venta->id, 6, '0', STR_PAD_LEFT) }}</b><br>
                     Fecha: {{ $venta->created_at->format('d/m/Y') }}
                 </div>
             </td>
@@ -107,11 +107,11 @@
         <table class="totals-table">
             <tr>
                 <td class="label">Subtotal</td>
-                <td class="value">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
+                <td class="value">{{ bs($venta->total_amount ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
             </tr>
             <tr class="total-row">
                 <td class="label" style="font-size: 18px; color:#1e293b;">TOTAL</td>
-                <td class="value total-value">{{ bs($venta->total_venta ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
+                <td class="value total-value">{{ bs($venta->total_amount ?? 0, false, $venta->tasa_bcv_aplicada) }}</td>
             </tr>
         </table>
     </div>

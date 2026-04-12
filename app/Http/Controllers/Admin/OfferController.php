@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\DetalleProducto;
+use App\Models\ProductoVariante;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DetalleProducto::with('producto');
+        $query = ProductoVariante::with('producto.categoria');
         
         if ($request->has('buscar') && $request->buscar != '') {
             $query->whereHas('producto', function($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->buscar . '%')
-                  ->orWhere('categoria', 'like', '%' . $request->buscar . '%');
+                  ->orWhereHas('categoria', function($cb) use ($request) {
+                      $cb->where('nombre', 'like', '%' . $request->buscar . '%');
+                  });
             });
         }
         
@@ -34,7 +36,7 @@ class OfferController extends Controller
         $enOferta = $request->accion === 'activar';
         $descuento = $enOferta ? ($request->descuento ?? 0) : 0;
 
-        DetalleProducto::whereIn('id', $request->variantes)->update([
+        ProductoVariante::whereIn('id', $request->variantes)->update([
             'en_oferta' => $enOferta,
             'descuento_porcentaje' => $descuento
         ]);

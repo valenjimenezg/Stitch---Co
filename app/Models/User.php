@@ -12,8 +12,8 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'nombre', 'apellido', 'email', 'document_type', 'document_number',
-        'password', 'telefono', 'rol',
+        'nombre', 'apellido', 'email', 'tipo_documento', 'documento_identidad',
+        'password', 'telefono', 'rol', 'direcciones', 'lista_deseos'
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -23,34 +23,21 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'direcciones' => 'array',
+            'lista_deseos' => 'array',
         ];
     }
 
     // Relaciones
-    public function carritos()
+    public function ordenes()
     {
-        return $this->hasMany(Carrito::class);
-    }
-
-    public function ventas()
-    {
-        return $this->hasMany(Venta::class);
-    }
-
-    public function listaDeseos()
-    {
-        return $this->hasMany(ListaDeseo::class);
-    }
-
-    public function direcciones()
-    {
-        return $this->hasMany(Direccion::class);
+        return $this->hasMany(Orden::class);
     }
 
     // Helpers
     public function carritoActivo()
     {
-        return $this->carritos()->where('estado', 'activo')->latest()->first();
+        return $this->ordenes()->where('estado', 'carrito')->latest()->first();
     }
 
     public function isAdmin(): bool

@@ -2,150 +2,145 @@
 
 namespace Database\Seeders;
 
-use App\Models\DetalleProducto;
 use App\Models\Producto;
+use App\Models\Categoria;
+use App\Models\ProductoVariante;
+use App\Models\Proveedor;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ProductoSeeder extends Seeder
 {
     public function run(): void
     {
+        // Limpiamos viejas asociaciones de categorías creadas
+        ProductoVariante::query()->delete();
+        Producto::query()->delete();
+        Categoria::query()->delete();
+
+        $proveedoresIds = Proveedor::pluck('id')->toArray();
+
         $catalogo = [
             [
-                'nombre'      => 'Hilo de Algodón 100%',
-                'descripcion' => 'Hilo suave y resistente, ideal para tejido a crochet y bordado. 100% algodón peinado.',
-                'categoria'   => 'hilos',
+                'nombre'      => 'Hilo de Algodón Premium',
+                'descripcion' => 'Hilo de algodón 100% natural, ideal para bordar a mano y a máquina.',
+                'categoria'   => 'lana',
                 'variantes'   => [
-                    ['color' => 'Blanco',     'grosor' => '4 mm',  'marca' => 'Coats',      'cm' => 200, 'precio' => 15.50, 'stock' => 30],
-                    ['color' => 'Rojo',       'grosor' => '4 mm',  'marca' => 'Coats',      'cm' => 200, 'precio' => 15.50, 'stock' => 20, 'en_oferta' => true, 'descuento_porcentaje' => 10],
-                    ['color' => 'Azul Marino','grosor' => '4 mm',  'marca' => 'Coats',      'cm' => 200, 'precio' => 15.50, 'stock' => 25],
-                ],
-            ],
-            [
-                'nombre'      => 'Lana Merino Premium',
-                'descripcion' => 'Lana de alta calidad, extra suave al tacto. Perfecta para tejido con agujas y crochet.',
-                'categoria'   => 'lanas',
-                'variantes'   => [
-                    ['color' => 'Crema',      'grosor' => '6 mm',  'marca' => 'Lion Brand', 'cm' => 100, 'precio' => 28.00, 'stock' => 15, 'en_oferta' => true, 'descuento_porcentaje' => 15],
-                    ['color' => 'Gris Perla', 'grosor' => '6 mm',  'marca' => 'Lion Brand', 'cm' => 100, 'precio' => 28.00, 'stock' => 18],
-                    ['color' => 'Mostaza',    'grosor' => '6 mm',  'marca' => 'Lion Brand', 'cm' => 100, 'precio' => 28.00, 'stock' => 12],
+                    ['color' => 'Rojo',     'grosor' => '1 mm', 'marca' => 'DMC',      'precio' => 12.50, 'stock' => 100, 'unidad_medida' => 'Rollo', 'factor_conversion' => 1],
+                    ['color' => 'Azul',     'grosor' => '1 mm', 'marca' => 'DMC',      'precio' => 12.50, 'stock' => 80,  'unidad_medida' => 'Rollo', 'factor_conversion' => 1],
+                    ['color' => 'Blanco',   'grosor' => '1 mm', 'marca' => 'DMC',      'precio' => 12.00, 'stock' => 150, 'unidad_medida' => 'Rollo', 'factor_conversion' => 1, 'en_oferta' => true, 'descuento_porcentaje' => 10],
                 ],
             ],
             [
                 'nombre'      => 'Tela de Lino Natural',
-                'descripcion' => 'Tela de lino 100% natural, transpirable y duradera. Ideal para confección de ropa y manualidades.',
-                'categoria'   => 'telas',
+                'descripcion' => 'Lino puro de alta calidad. Perfecto para ropa de verano y decoración del hogar.',
+                'categoria'   => 'tela',
                 'variantes'   => [
-                    ['color' => 'Natural',    'grosor' => '0.5 mm', 'marca' => 'Fabricato',  'cm' => 150, 'precio' => 45.00, 'stock' => 40],
-                    ['color' => 'Blanco',     'grosor' => '0.5 mm', 'marca' => 'Fabricato',  'cm' => 150, 'precio' => 45.00, 'stock' => 35],
-                    ['color' => 'Beige',      'grosor' => '0.5 mm', 'marca' => 'Fabricato',  'cm' => 150, 'precio' => 42.00, 'stock' => 28, 'en_oferta' => true, 'descuento_porcentaje' => 5],
+                    ['color' => 'Natural',    'grosor' => '0.5 mm', 'marca' => 'Fabricato', 'precio' => 45.00, 'stock' => 50, 'unidad_medida' => 'Metro', 'factor_conversion' => 1],
+                    ['color' => 'Blanco',     'grosor' => '0.5 mm', 'marca' => 'Fabricato', 'precio' => 45.00, 'stock' => 35, 'unidad_medida' => 'Metro', 'factor_conversion' => 1],
+                    ['color' => 'Beige',      'grosor' => '0.5 mm', 'marca' => 'Fabricato', 'precio' => 42.00, 'stock' => 28, 'unidad_medida' => 'Metro', 'factor_conversion' => 1, 'en_oferta' => true, 'descuento_porcentaje' => 5],
                 ],
             ],
             [
                 'nombre'      => 'Tela Denim Premium',
-                'descripcion' => 'Denim de alta resistencia, 12 oz. Para confección de jeans, bolsos y accesorios de moda.',
-                'categoria'   => 'telas',
+                'descripcion' => 'Denim de alta resistencia, 12 oz. Para confección de jeans, bolsos y accesorios.',
+                'categoria'   => 'tela',
                 'variantes'   => [
-                    ['color' => 'Azul Claro', 'grosor' => '1.2 mm', 'marca' => 'Denim Co',   'cm' => 140, 'precio' => 68.00, 'stock' => 22],
-                    ['color' => 'Azul Oscuro','grosor' => '1.2 mm', 'marca' => 'Denim Co',   'cm' => 140, 'precio' => 68.00, 'stock' => 18],
-                    ['color' => 'Negro',      'grosor' => '1.2 mm', 'marca' => 'Denim Co',   'cm' => 140, 'precio' => 68.00, 'stock' => 20, 'en_oferta' => true, 'descuento_porcentaje' => 20],
+                    ['color' => 'Azul Claro', 'grosor' => '1.2 mm', 'marca' => 'Denim Co',  'precio' => 68.00, 'stock' => 22, 'unidad_medida' => 'Metro', 'factor_conversion' => 1],
+                    ['color' => 'Azul Oscuro', 'grosor' => '1.2 mm', 'marca' => 'Denim Co', 'precio' => 68.00, 'stock' => 18, 'unidad_medida' => 'Metro', 'factor_conversion' => 1],
+                    ['color' => 'Negro',      'grosor' => '1.2 mm', 'marca' => 'Denim Co',  'precio' => 68.00, 'stock' => 20, 'unidad_medida' => 'Metro', 'factor_conversion' => 1, 'en_oferta' => true, 'descuento_porcentaje' => 20],
                 ],
             ],
             [
                 'nombre'      => 'Kit Agujas de Crochet',
-                'descripcion' => 'Set completo de 12 agujas de crochet en aluminio, con mangos ergonómicos antideslizantes.',
-                'categoria'   => 'herramientas',
+                'descripcion' => 'Set completo de 12 agujas de crochet en aluminio, con mangos ergonómicos.',
+                'categoria'   => 'accesorios',
                 'variantes'   => [
-                    ['color' => 'Multicolor', 'grosor' => null,     'marca' => 'Clover',     'cm' => null, 'precio' => 55.00, 'stock' => 10],
-                    ['color' => 'Plateado',   'grosor' => null,     'marca' => 'Knit Pro',   'cm' => null, 'precio' => 75.00, 'stock' => 8, 'en_oferta' => true, 'descuento_porcentaje' => 10],
-                ],
-            ],
-            [
-                'nombre'      => 'Tijeras de Costura Profesional',
-                'descripcion' => 'Tijeras de acero inoxidable para costura, con mango ergonómico. Corte preciso y duradero.',
-                'categoria'   => 'herramientas',
-                'variantes'   => [
-                    ['color' => 'Plateado',   'grosor' => null,     'marca' => 'Fiskars',    'cm' => 21,  'precio' => 38.00, 'stock' => 25],
-                    ['color' => 'Negro',      'grosor' => null,     'marca' => 'Fiskars',    'cm' => 25,  'precio' => 45.00, 'stock' => 15],
+                    ['color' => 'Multicolor', 'grosor' => null,     'marca' => 'Clover',     'precio' => 55.00, 'stock' => 10, 'unidad_medida' => 'Kit', 'factor_conversion' => 1],
+                    ['color' => 'Plateado',   'grosor' => null,     'marca' => 'Knit Pro',   'precio' => 75.00, 'stock' => 8,  'unidad_medida' => 'Kit', 'factor_conversion' => 1, 'en_oferta' => true, 'descuento_porcentaje' => 10],
                 ],
             ],
             [
                 'nombre'      => 'Botones de Nácar',
-                'descripcion' => 'Botones decorativos de nácar natural, acabado brillante. Para ropa, accesorios y manualidades.',
-                'categoria'   => 'merceria',
+                'descripcion' => 'Botones decorativos de nácar natural, acabado brillante. Para manualidades.',
+                'categoria'   => 'botones',
                 'variantes'   => [
-                    ['color' => 'Blanco',     'grosor' => null,     'marca' => 'Prym',       'cm' => 1.5, 'precio' => 8.50,  'stock' => 200, 'en_oferta' => true, 'descuento_porcentaje' => 20],
-                    ['color' => 'Marfil',     'grosor' => null,     'marca' => 'Prym',       'cm' => 1.5, 'precio' => 8.50,  'stock' => 150],
-                    ['color' => 'Negro',      'grosor' => null,     'marca' => 'Prym',       'cm' => 2.0, 'precio' => 9.50,  'stock' => 180],
+                    ['color' => 'Blanco',     'grosor' => null,     'marca' => 'Prym',       'precio' => 8.50,  'stock' => 200, 'unidad_medida' => 'Unidad', 'factor_conversion' => 1, 'en_oferta' => true, 'descuento_porcentaje' => 20],
+                    ['color' => 'Negro',      'grosor' => null,     'marca' => 'Prym',       'precio' => 9.50,  'stock' => 180, 'unidad_medida' => 'Unidad', 'factor_conversion' => 1],
                 ],
             ],
             [
-                'nombre'      => 'Cremallera YKK Invisible',
-                'descripcion' => 'Cremallera invisible de alta calidad, ideal para vestidos, faldas y blusas. Cierre suave.',
-                'categoria'   => 'merceria',
-                'variantes'   => [
-                    ['color' => 'Blanco',     'grosor' => null,     'marca' => 'YKK',        'cm' => 22,  'precio' => 5.00,  'stock' => 100],
-                    ['color' => 'Negro',      'grosor' => null,     'marca' => 'YKK',        'cm' => 22,  'precio' => 5.00,  'stock' => 120],
-                    ['color' => 'Beige',      'grosor' => null,     'marca' => 'YKK',        'cm' => 22,  'precio' => 5.00,  'stock' => 80, 'en_oferta' => true, 'descuento_porcentaje' => 15],
-                ],
-            ],
-            [
-                'nombre'      => 'Agujas de Tejer Bambú',
-                'descripcion' => 'Agujas de tejer de bambú natural, ligeras y cálidas al tacto. No se resbalan al trabajar.',
-                'categoria'   => 'herramientas',
-                'variantes'   => [
-                    ['color' => 'Natural',    'grosor' => '3.5 mm', 'marca' => 'Seeknit',    'cm' => 35,  'precio' => 18.00, 'stock' => 30],
-                    ['color' => 'Natural',    'grosor' => '5 mm',   'marca' => 'Seeknit',    'cm' => 35,  'precio' => 20.00, 'stock' => 25],
-                    ['color' => 'Natural',    'grosor' => '8 mm',   'marca' => 'Seeknit',    'cm' => 35,  'precio' => 22.00, 'stock' => 20, 'en_oferta' => true, 'descuento_porcentaje' => 10],
-                ],
-            ],
-            [
-                'nombre'      => 'Entretela Termofusible',
-                'descripcion' => 'Entretela adhesiva termofusible de doble cara, para reforzar telas y confeccionar bolsos.',
+                'nombre'      => 'Aros para Bordado',
+                'descripcion' => 'Aros de madera para tensar la tela. Ideal para todo tipo de bordado.',
                 'categoria'   => 'accesorios',
                 'variantes'   => [
-                    ['color' => 'Blanco',     'grosor' => '0.3 mm', 'marca' => 'Vlieseline',  'cm' => 90,  'precio' => 22.00, 'stock' => 50],
-                    ['color' => 'Negro',      'grosor' => '0.3 mm', 'marca' => 'Vlieseline',  'cm' => 90,  'precio' => 22.00, 'stock' => 40, 'en_oferta' => true, 'descuento_porcentaje' => 10],
+                    ['color' => 'Madera', 'grosor' => null, 'marca' => 'DMC', 'precio' => 15.00, 'stock' => 50, 'unidad_medida' => 'Set de 3', 'factor_conversion' => 1],
+                    ['color' => 'Madera Oscura', 'grosor' => null, 'marca' => 'DMC', 'precio' => 16.50, 'stock' => 30, 'unidad_medida' => 'Set de 3', 'factor_conversion' => 1],
                 ],
             ],
             [
-                'nombre'      => 'Hilo de Seda Natural',
-                'descripcion' => 'Hilo de seda 100% natural, luminoso y suave. Ideal para bordados y proyectos especiales.',
-                'categoria'   => 'hilos',
+                'nombre'      => 'Lana Merino Extra Suave',
+                'descripcion' => 'Lana 100% merino, perfecta para tejer suéteres, bufandas y accesorios para el invierno.',
+                'categoria'   => 'lana',
                 'variantes'   => [
-                    ['color' => 'Dorado',     'grosor' => '2 mm',  'marca' => 'Anchor',     'cm' => 300, 'precio' => 35.00, 'stock' => 20, 'en_oferta' => true, 'descuento_porcentaje' => 25],
-                    ['color' => 'Plateado',   'grosor' => '2 mm',  'marca' => 'Anchor',     'cm' => 300, 'precio' => 35.00, 'stock' => 15],
-                    ['color' => 'Rosa Palo',  'grosor' => '2 mm',  'marca' => 'Anchor',     'cm' => 300, 'precio' => 35.00, 'stock' => 18],
+                    ['color' => 'Mostaza', 'grosor' => 'Medio', 'marca' => 'Lanas Alpina', 'precio' => 22.00, 'stock' => 120, 'unidad_medida' => 'Madeja 100g', 'factor_conversion' => 1, 'en_oferta' => true, 'descuento_porcentaje' => 15],
+                    ['color' => 'Gris Jaspeado', 'grosor' => 'Medio', 'marca' => 'Lanas Alpina', 'precio' => 22.00, 'stock' => 85, 'unidad_medida' => 'Madeja 100g', 'factor_conversion' => 1],
+                ],
+            ],
+            [
+                'nombre'      => 'Kit de Bordado Principiantes',
+                'descripcion' => 'Kit que incluye hilos, agujas, tela pre-impresa y aro. Todo para iniciar.',
+                'categoria'   => 'accesorios',
+                'variantes'   => [
+                    ['color' => 'Multicolor', 'grosor' => null, 'marca' => 'Stitch & Co', 'precio' => 35.00, 'stock' => 40, 'unidad_medida' => 'Kit Completo', 'factor_conversion' => 1],
+                ],
+            ],
+            [
+                'nombre'      => 'Set de Pintura Textil',
+                'descripcion' => 'Pinturas acrílicas para crear arte directamente en tus prendas.',
+                'categoria'   => 'accesorios',
+                'variantes'   => [
+                    ['color' => '12 Colores', 'grosor' => null, 'marca' => 'Acrilex', 'precio' => 18.50, 'stock' => 60, 'unidad_medida' => 'Caja', 'factor_conversion' => 1],
                 ],
             ],
             [
                 'nombre'      => 'Tela Polar Suave',
-                'descripcion' => 'Tela polar antifrizz, muy suave y abrigada. Para mantas, pijamas y ropa de invierno.',
-                'categoria'   => 'telas',
+                'descripcion' => 'Ideal para frazadas y ropa de invierno cálida.',
+                'categoria'   => 'tela',
                 'variantes'   => [
-                    ['color' => 'Azul',       'grosor' => '3 mm',  'marca' => 'Polartec',   'cm' => 150, 'precio' => 52.00, 'stock' => 30],
-                    ['color' => 'Rosa',       'grosor' => '3 mm',  'marca' => 'Polartec',   'cm' => 150, 'precio' => 52.00, 'stock' => 25, 'en_oferta' => true, 'descuento_porcentaje' => 15],
-                    ['color' => 'Gris',       'grosor' => '3 mm',  'marca' => 'Polartec',   'cm' => 150, 'precio' => 52.00, 'stock' => 20],
+                    ['color' => 'Rosa Pastel', 'grosor' => 'Grueso', 'marca' => 'Polar', 'precio' => 28.00, 'stock' => 45, 'unidad_medida' => 'Metro', 'factor_conversion' => 1],
+                    ['color' => 'Azul Marino', 'grosor' => 'Grueso', 'marca' => 'Polar', 'precio' => 28.00, 'stock' => 50, 'unidad_medida' => 'Metro', 'factor_conversion' => 1],
                 ],
-            ],
+            ]
         ];
 
         foreach ($catalogo as $item) {
+            $cat = Categoria::firstOrCreate(['nombre' => $item['categoria']]);
+
             $producto = Producto::create([
-                'nombre'      => $item['nombre'],
-                'descripcion' => $item['descripcion'],
-                'categoria'   => $item['categoria'],
+                'categoria_id' => $cat->id,
+                'nombre'       => $item['nombre'],
+                'descripcion'  => $item['descripcion'],
             ]);
 
             foreach ($item['variantes'] as $v) {
-                DetalleProducto::create([
+                // Seleccionamos un proveedor aleatorio de los creados
+                $proveedorId = null;
+                if (!empty($proveedoresIds)) {
+                    $proveedorId = $proveedoresIds[array_rand($proveedoresIds)];
+                }
+
+                ProductoVariante::create([
                     'producto_id'          => $producto->id,
+                    'parent_id'            => null,
+                    'unidad_medida'        => $v['unidad_medida'],
+                    'factor_conversion'    => $v['factor_conversion'],
                     'color'                => $v['color']               ?? null,
                     'grosor'               => $v['grosor']              ?? null,
-                    'cm'                   => $v['cm']                  ?? null,
                     'marca'                => $v['marca']               ?? null,
                     'precio'               => $v['precio'],
-                    'stock'                => $v['stock'],
+                    'stock_base'           => $v['stock'],
+                    'proveedor_id'         => $proveedorId,
                     'en_oferta'            => $v['en_oferta']           ?? false,
                     'descuento_porcentaje' => $v['descuento_porcentaje'] ?? 0,
                 ]);
