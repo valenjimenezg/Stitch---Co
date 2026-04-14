@@ -9,6 +9,9 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @property \App\Models\Orden $venta
+ */
 class InvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;

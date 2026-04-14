@@ -89,4 +89,13 @@ class ProductoVariante extends Model
 
         return 0;
     }
+
+    public function getPrecioConDescuentoAttribute()
+    {
+        if ($this->en_oferta && $this->descuento_porcentaje > 0) {
+            return $this->precio - ($this->precio * ($this->descuento_porcentaje / 100));
+        }
+
+        return $this->precio;
+    }
 }

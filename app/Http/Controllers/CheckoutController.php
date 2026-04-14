@@ -193,11 +193,10 @@ class CheckoutController extends Controller
 
                 // Generar InventarioLog 
                 InventarioLog::create([
-                    'variante_id' => $varianteBase->id,
-                    'orden_id'    => $orden->id,
-                    'cantidad'    => -$cantidadUnidadesBaseAfectadas,
-                    'tipo'        => 'salida',
-                    'motivo'      => 'Venta Web #' . $orden->id,
+                    'variante_id'     => $varianteBase->id,
+                    'orden_id'        => $orden->id,
+                    'cantidad_cambio' => -$cantidadUnidadesBaseAfectadas,
+                    'motivo'          => 'Venta Web #' . $orden->id,
                 ]);
             }
 
@@ -212,13 +211,37 @@ class CheckoutController extends Controller
 
             $totalAmountCalculado = $subtotalVentaCalculado + $iva + $deliveryFee;
 
+            // Lógica de Abonos (ERP Estricto)
+            $monto_abonado = $totalAmountCalculado; // Default: Paga completo
+            $estadoInicial = 'pendiente';
+
+            if ($request->filled('is_abono') && $request->is_abono == '1') {
+                if ($totalAmountCalculado <= 30) {
+                    throw new \Exception("El sistema de pago a crédito solo está disponible para compras superiores a $30 USD.");
+                }
+                if ($request->tipo_envio !== 'retiro_tienda') {
+                    throw new \Exception("Los pagos a crédito solo son válidos para Retiro en Tienda.");
+                }
+                
+                $montoDeclarado = floatval($request->monto_abonar);
+                $minimoRequerido = $totalAmountCalculado * 0.30;
+                
+                if ($montoDeclarado < $minimoRequerido) {
+                    throw new \Exception("Su pago inicial debe ser al menos el 30% del total ($" . number_format($minimoRequerido, 2) . ").");
+                }
+
+                $monto_abonado = $montoDeclarado;
+                $estadoInicial = 'apartado'; // Se asume apartado hasta que se verifique y cancele el resto. Sin embargo, lo mantendremos en 'pendiente' para que pase por verificación, y lo sabremos porque $monto_abonado < $totalAmountCalculado.
+                $estadoInicial = 'pendiente'; // Mejor dejarlo en pendiente para el flujo de Verificación.
+            }
+
             // Actualizar Total ACID.
             $orden->update([
                 'subtotal'     => $subtotalVentaCalculado,
                 'iva_amount'   => $iva,
                 'delivery_fee' => $deliveryFee,
                 'total_amount' => $totalAmountCalculado,
-                'monto_abonado' => $totalAmountCalculado // Se asume abonado por su ticket subido
+                'monto_abonado' => $monto_abonado
             ]);
 
             DB::commit();

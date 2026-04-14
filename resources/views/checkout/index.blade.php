@@ -219,6 +219,56 @@
 
                 </div>
             </section>
+
+            {{-- Módulo Condicional de Pagos a Crédito (Layaway ERP) - Movido al espacio en blanco de la Columna 1 --}}
+            <div id="abono-module" class="hidden mt-6 p-6 bg-primary/5 border-2 border-primary/20 rounded-2xl shadow-sm relative overflow-hidden transition-all duration-300">
+                <div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-black tracking-wider uppercase px-4 py-1.5 rounded-bl-xl shadow-sm">SISTEMA DE CRÉDITO</div>
+                
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">payments</span> Pagos a Plazos
+                </h3>
+
+                <label class="flex items-start gap-3 cursor-pointer group mb-1">
+                    <input type="checkbox" id="is_abono" name="is_abono" value="1" class="mt-1 w-5 h-5 text-primary border-slate-300 focus:ring-primary rounded transition-colors cursor-pointer">
+                    <div>
+                        <span class="font-bold text-slate-900 block group-hover:text-primary transition-colors">Deseo Apartar mi Pedido a Crédito</span>
+                        <span class="text-xs text-slate-500 leading-relaxed block mt-0.5">Paga solo un abono inicial hoy y cancela el resto en <strong class="text-slate-700">7 días</strong>.</span>
+                    </div>
+                </label>
+
+                <div id="abono-details" class="hidden mt-5 pt-5 border-t border-primary/20 space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wide text-primary mb-2">Monto inicial a pagar (Bs.) *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-400 font-bold">Bs.</span>
+                            </div>
+                            <input type="number" step="0.01" id="monto_abonar_bs" min="0" placeholder="0.00" class="w-full pl-10 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm">
+                            <input type="hidden" id="monto_abonar" name="monto_abonar">
+                        </div>
+                        <div class="flex flex-col mt-2">
+                            <p class="text-[11px] text-slate-500"><span class="material-symbols-outlined text-[11px] align-middle mr-0.5">info</span>Mínimo requerido: <strong class="text-slate-700" id="abono-min-req">30% del total</strong></p>
+                            <p id="abono-ref-usd" class="text-[11px] font-bold text-slate-400 uppercase mt-0.5 tracking-wide"></p>
+                            <p id="abono-error" class="text-[11px] text-rose-500 font-bold hidden bg-rose-50 px-2 py-0.5 rounded mt-1">El monto no cumple el mínimo requerido (30%).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-xl border border-primary/20 flex items-center justify-between">
+                        <span class="text-sm font-bold text-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">contract</span> Contrato de Crédito
+                        </span>
+                        <button type="button" onclick="document.getElementById('modal-politicas-credito').classList.remove('hidden')" class="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors">Leer Políticas</button>
+                    </div>
+                    
+                    <label class="flex items-start gap-3 cursor-pointer bg-white p-4 rounded-xl border border-slate-200 hover:border-primary/30 transition-all">
+                        <input type="checkbox" id="terms_abono" name="terms_abono" value="1" class="mt-0.5 w-4 h-4 text-primary focus:ring-primary rounded cursor-pointer">
+                        <span class="text-[11px] text-slate-600 leading-relaxed block flex-1">
+                            <strong class="text-slate-800">Acepto las políticas de pago a crédito:</strong> La mercancía se entrega al cancelar el 100%. Cuento con 7 días continuos para el finiquito.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
         </div>
 
         {{-- Column 2: Payment --}}
@@ -244,7 +294,7 @@
             <!-- Formularios desplegables -->
             <div class="mt-4">
                 <!-- Pago Móvil Details -->
-                <div id="pago-movil-details" class="payment-details hidden space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+                <div id="pago-movil-details" class="payment-details hidden space-y-4 bg-primary/5 p-6 rounded-2xl border-2 border-primary/20 shadow-sm transition-all">
                     <div class="bg-white p-4 rounded-lg border border-slate-100 mb-4 shadow-sm text-sm">
                         <p class="font-bold text-slate-900 mb-2">Realiza tu pago a:</p>
                         <ul class="space-y-1 text-slate-800 font-medium">
@@ -304,7 +354,7 @@
                 </div>
 
                 <!-- Transferencia Details -->
-                <div id="transferencia-details" class="payment-details hidden space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+                <div id="transferencia-details" class="payment-details hidden space-y-4 bg-primary/5 p-6 rounded-2xl border-2 border-primary/20 shadow-sm transition-all">
                     <div class="bg-white p-4 rounded-lg border border-slate-100 mb-4 shadow-sm text-sm">
                         <p class="font-bold text-slate-900 mb-2">Datos para transferencia:</p>
                         <ul class="space-y-1 text-slate-800 font-medium">
@@ -365,8 +415,8 @@
                 </div>
 
                 <!-- Input Componente de Comprobante (Universal para pagos offline) -->
-                <div id="comprobante-upload-details" class="payment-details hidden space-y-3 bg-white p-5 rounded-xl border-2 border-dashed border-slate-300">
-                    <label class="block text-sm font-bold text-slate-800 text-center mb-1">Adjuntar Comprobante (Obligatorio)</label>
+                <div id="comprobante-upload-details" class="payment-details hidden space-y-3 bg-white p-6 rounded-2xl border-2 border-dashed border-primary/40 hover:border-primary/60 transition-colors">
+                    <label class="block text-sm font-bold text-primary text-center mb-1">Adjuntar Comprobante (Obligatorio)</label>
                     <p class="text-xs text-slate-500 text-center mb-3">Sube la captura de pantalla de la transferencia o pago móvil (JPG, PNG, PDF)</p>
                     <input type="file" name="comprobante" accept="image/*,.pdf" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"/>
                 </div>
@@ -392,11 +442,39 @@
                         if (selectedMethod === 'pago_movil') targetId = 'pago-movil-details';
                         else if (selectedMethod === 'transferencia' || selectedMethod === 'transferencia_p2p') targetId = 'transferencia-details';
                         
-                        if (targetId) document.getElementById(targetId).classList.remove('hidden');
+                        if (targetId) {
+                            document.getElementById(targetId).classList.remove('hidden');
+                            
+                            if (targetId === 'pago-movil-details') {
+                                document.querySelector('select[name="banco_pago"]').setAttribute('required', 'required');
+                                document.querySelector('select[name="prefijo_telefono"]').setAttribute('required', 'required');
+                                document.querySelector('input[name="numero_telefono"]').setAttribute('required', 'required');
+                                document.querySelector('input[name="referencia_pago"]').setAttribute('required', 'required');
+                                
+                                document.querySelector('select[name="banco_pago_transf"]').removeAttribute('required');
+                                document.querySelector('select[name="prefijo_telefono_transf"]').removeAttribute('required');
+                                document.querySelector('input[name="numero_telefono_transf"]').removeAttribute('required');
+                                document.querySelector('input[name="referencia_pago_transf"]').removeAttribute('required');
+                            } else {
+                                document.querySelector('select[name="banco_pago_transf"]').setAttribute('required', 'required');
+                                document.querySelector('select[name="prefijo_telefono_transf"]').setAttribute('required', 'required');
+                                document.querySelector('input[name="numero_telefono_transf"]').setAttribute('required', 'required');
+                                document.querySelector('input[name="referencia_pago_transf"]').setAttribute('required', 'required');
+                                
+                                document.querySelector('select[name="banco_pago"]').removeAttribute('required');
+                                document.querySelector('select[name="prefijo_telefono"]').removeAttribute('required');
+                                document.querySelector('input[name="numero_telefono"]').removeAttribute('required');
+                                document.querySelector('input[name="referencia_pago"]').removeAttribute('required');
+                            }
+                        }
                         
                         // Show file upload requirement for both
                         if (selectedMethod === 'pago_movil' || selectedMethod === 'transferencia' || selectedMethod === 'transferencia_p2p') {
                             document.getElementById('comprobante-upload-details').classList.remove('hidden');
+                            document.querySelector('input[name="comprobante"]').setAttribute('required', 'required');
+                        } else {
+                            document.getElementById('comprobante-upload-details').classList.add('hidden');
+                            document.querySelector('input[name="comprobante"]').removeAttribute('required');
                         }
 
                         const selectedOption = document.querySelector(`input[value="${selectedMethod}"]`).closest('.payment-option');
@@ -432,8 +510,10 @@
                     });
 
                     // Validar geofencing si el map API auto-rellena la calle
+                    const forbiddenRegex = /papel[oó]n|guanarito|ospino|boconoito|tucupido|biscucuy|acarigua|araure|tur[eé]n|mesa de cavacas|unellez|vicerrectorado|quebrada de la virgen|municipio sucre|san genaro|morita|pe[ñn]a|c[óo]rdova|la colonia|san jos[eé] de la monta[ñn]a|san juan de guanaguanare|virgen de coromoto/i;
+                    
                     calleInput.addEventListener('input', function() {
-                        if (window.forbiddenZones.test(this.value)) {
+                        if (forbiddenRegex.test(this.value)) {
                             geofencingAlert.classList.remove('hidden');
                             geofencingAlert.classList.add('flex');
                             this.classList.add('border-rose-400', 'bg-rose-50');
@@ -478,20 +558,38 @@
                             activeIndicator.querySelector('span').classList.add('opacity-100');
                         }
 
-                        // Mostrar u ocultar Dirección de envío
+                        // Mostrar u ocultar Dirección de envío y Módulo de Abonos
                         if (selectedMethod === 'retiro_tienda') {
                             direccionContainer.classList.add('hidden');
                             document.querySelector('input[name="calle"]').removeAttribute('required');
+                            document.getElementById('sector-select').removeAttribute('required');
                             // Reseteamos errores visuales de Geofencing para que no bloqueen retirar en tienda
                             geofencingAlert.classList.add('hidden');
                             calleInput.classList.remove('border-rose-400', 'bg-rose-50');
                             calleInput.setCustomValidity("");
+                            
+                            // Mostrar opción de abono solo en retiro en tienda
+                            if (document.getElementById('abono-module')) {
+                                document.getElementById('abono-module').classList.remove('hidden');
+                            }
                         } else {
                             direccionContainer.classList.remove('hidden');
                             document.querySelector('input[name="calle"]').setAttribute('required', 'required');
+                            document.getElementById('sector-select').setAttribute('required', 'required');
                             // Re-validar por seguridad si volvemos a delivery
-                            if (window.forbiddenZones.test(calleInput.value)) {
+                            if (forbiddenRegex.test(calleInput.value)) {
                                 calleInput.setCustomValidity("Dirección fuera de la zona permitida para delivery (Solo válido en Parroquia Guanare)");
+                            }
+                            
+                            // Ocultar opción de abono si no es retiro en tienda (no se fía a domicilio)
+                            if (document.getElementById('abono-module')) {
+                                document.getElementById('abono-module').classList.add('hidden');
+                                document.getElementById('is_abono').checked = false;
+                                if (document.getElementById('abono-details')) {
+                                    document.getElementById('abono-details').classList.add('hidden');
+                                    document.getElementById('monto_abonar').value = '';
+                                    if(document.getElementById('terms_abono')) document.getElementById('terms_abono').checked = false;
+                                }
                             }
                         }
                     }
@@ -522,6 +620,8 @@
                     <span class="material-symbols-outlined text-amber-500 text-lg mt-0.5">info</span>
                     <p>Total calculado a la tasa BCV oficial: <strong class="font-black">Bs. {{ number_format(bcv_rate(), 2, ',', '.') }}</strong><br>Esta tasa quedará registrada en su factura al momento de presionar Finalizar Compra.</p>
                 </div>
+
+
                 <button type="submit"
                         class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all active:scale-95 mt-6">
                     Finalizar compra
@@ -538,6 +638,56 @@
         </div>
     </div>
 </form>
+
+<!-- Modal Políticas de Pago a Crédito (Sistema de Apartado) -->
+<div id="modal-politicas-credito" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center hidden transition-opacity">
+    <div class="bg-white w-full max-w-lg mx-4 rounded-2xl shadow-2xl p-6 relative max-h-[90vh] flex flex-col">
+        <button type="button" onclick="document.getElementById('modal-politicas-credito').classList.add('hidden')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors">
+            <span class="material-symbols-outlined text-sm font-bold">close</span>
+        </button>
+        <div class="flex items-center gap-3 mb-4 shrink-0 border-b border-slate-100 pb-3">
+            <div class="size-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+            <div>
+                <h3 class="font-black text-slate-900 text-lg leading-tight">Políticas de Crédito y Apartado</h3>
+                <p class="text-xs text-slate-500 font-medium">Contrato Simplificado de Compra a Plazos</p>
+            </div>
+        </div>
+        <div class="overflow-y-auto pr-2 custom-scrollbar text-sm text-slate-700 space-y-4">
+            <p>Al utilizar el <strong>Sistema de Pago a Crédito (Apartado)</strong> de Stitch & Co, usted acepta de manera irrevocable los siguientes términos operacionales:</p>
+            
+            <div class="space-y-3">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 1. Reserva y Conservación</h4>
+                    <p class="text-[13px] leading-relaxed">Con la recepción del primer pago (mínimo exigido del 30% del importe total de la orden), nosotros apartaremos del inventario la mercancía por su seguridad. Su pedido estará asegurado y resguardado en almacén.</p>
+                </div>
+                
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 2. Obligación de Entrega</h4>
+                    <p class="text-[13px] leading-relaxed text-rose-700 font-medium bg-rose-50/50 p-2 rounded-lg mb-1">📌 La mercancía bajo ninguna circunstancia será despachada o entregada hasta que la orden no conste del 100% pagado.</p>
+                    <p class="text-[13px] leading-relaxed">El pago del saldo restante podrá hacerlo en cualquier momento dentro del periodo de gracia o presencialmente el día del retiro en tienda.</p>
+                </div>
+                
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 3. Expiración de Reserva</h4>
+                    <p class="text-[13px] leading-relaxed">Usted dispone de <strong>Siete (7) Días Calendario</strong> desde hoy para saldar la deuda principal. Si no culmina el pago luego de este tiempo estipulado, la reserva se considera nula y los artículos retornarán al piso de venta.</p>
+                </div>
+                
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 4. Emisión Fiscal</h4>
+                    <p class="text-[13px] leading-relaxed">Durante la fase de apartado, la plataforma emitirá un recibo provisional contable. La <strong>Factura Fiscal (Seniat)</strong> oficial solo se emite el día de la liquidación y retiro del producto cobrado en su totalidad.</p>
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-400 text-center font-bold uppercase tracking-wider mt-4">Dpto. de Administración - Stitch & Co.</p>
+        </div>
+        <div class="mt-5 pt-4 border-t border-slate-100 shrink-0">
+            <button type="button" onclick="document.getElementById('terms_abono').checked = true; document.getElementById('modal-politicas-credito').classList.add('hidden');" class="w-full py-3.5 bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100 transition-colors uppercase tracking-wide text-sm active:scale-95">
+                Estoy de acuerdo, cerrar
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal del Mapa de Antigravity -->
 <div id="map-modal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center hidden opacity-0 transition-opacity">
@@ -850,6 +1000,76 @@
         
         // Populate Hidden Input
         document.getElementById('cart_payload').value = JSON.stringify(items);
+
+        // Lógica Estricta de Abonos (ERP)
+        const isRetiro = document.querySelector('input[name="tipo_envio"]:checked')?.value === 'retiro_tienda';
+        const abonoModule = document.getElementById('abono-module');
+        const abonoCheckbox = document.getElementById('is_abono');
+        const abonoDetails = document.getElementById('abono-details');
+        const inputMontoBs = document.getElementById('monto_abonar_bs');
+        const inputMontoHidden = document.getElementById('monto_abonar');
+        const termsCheckbox = document.getElementById('terms_abono');
+        const errorAbono = document.getElementById('abono-error');
+        const refUsdLabel = document.getElementById('abono-ref-usd');
+        const minReqLabel = document.getElementById('abono-min-req');
+
+        // Mínimo estricto y solo retiro en tienda
+        if (totalUsd > 30 && isRetiro) {
+            abonoModule.classList.remove('hidden');
+            const minRequiredUsd = (totalUsd * 0.30).toFixed(2);
+            const minRequiredBs = (totalUsd * 0.30 * bcvRate).toFixed(2);
+            
+            inputMontoBs.min = minRequiredBs;
+            inputMontoBs.placeholder = `Mín: Bs. ${minRequiredBs}`;
+            
+            minReqLabel.innerText = `Bs. ${minRequiredBs}`;
+            refUsdLabel.innerText = `Equivalente Mínimo: $${minRequiredUsd} (30%)`;
+        } else {
+            abonoModule.classList.add('hidden');
+            abonoCheckbox.checked = false;
+            abonoDetails.classList.add('hidden');
+            inputMontoBs.value = '';
+            inputMontoHidden.value = '';
+            termsCheckbox.checked = false;
+            errorAbono.classList.add('hidden');
+        }
+
+        // Detectar interacción del usuario
+        abonoCheckbox.onchange = function() {
+            if (this.checked) {
+                abonoDetails.classList.remove('hidden');
+                termsCheckbox.required = true;
+                inputMontoBs.required = true;
+            } else {
+                abonoDetails.classList.add('hidden');
+                termsCheckbox.required = false;
+                inputMontoBs.required = false;
+                errorAbono.classList.add('hidden');
+            }
+        };
+
+        // Validar el 30% en local antes del envío y calcular ref USD local
+        inputMontoBs.oninput = function() {
+            const minRequiredBs = totalUsd * 0.30 * bcvRate;
+            const currentBs = parseFloat(this.value);
+            
+            if (!isNaN(currentBs)) {
+                const refUsd = currentBs / bcvRate;
+                inputMontoHidden.value = refUsd.toFixed(2);
+                refUsdLabel.innerText = `Está Apartando: $${refUsd.toFixed(2)} USD`;
+                
+                if (currentBs < minRequiredBs) {
+                    errorAbono.classList.remove('hidden');
+                } else {
+                    errorAbono.classList.add('hidden');
+                }
+            } else {
+                inputMontoHidden.value = '';
+                const minReqU = (totalUsd * 0.30).toFixed(2);
+                refUsdLabel.innerText = `Equivalente Mínimo: $${minReqU} (30%)`;
+                errorAbono.classList.add('hidden');
+            }
+        };
     }
 
     function cancelTransaction() {

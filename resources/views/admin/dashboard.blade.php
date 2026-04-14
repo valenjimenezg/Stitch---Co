@@ -5,63 +5,104 @@
 @section('content')
 
 <section>
-    <div class="flex items-center justify-between mb-6">
+    {{-- Top Banner - Tasa del Día (Unified with Sidebar Dark Theme) --}}
+    <div class="rounded-2xl shadow-lg p-6 mb-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
         <div>
-            <h2 class="text-2xl font-bold text-slate-900">Dashboard Overview</h2>
+            <h2 class="text-xl font-bold flex items-center gap-2 mb-1">
+                <span class="material-symbols-outlined" style="color: #818cf8;">currency_exchange</span>
+                Dashboard de Operaciones
+            </h2>
             @if(Cache::has('bcv_rate'))
-                <p class="text-sm text-slate-500 mt-1">
-                    Tasa BCV oficial: <strong class="text-slate-900">Bs. {{ Cache::get('bcv_rate') }}</strong> 
-                    <span class="text-xs ml-2">(Sincronizada: {{ \Carbon\Carbon::parse(Cache::get('bcv_last_update'))->format('d/m/Y h:i A') }})</span>
+                <p class="font-medium text-sm" style="color: #cbd5e1;">
+                    Tasa BCV del Día: <strong class="text-white text-xl">Bs. {{ Cache::get('bcv_rate') }}</strong> 
+                    <span class="text-xs opacity-75 ml-2">(Sincronizada: {{ \Carbon\Carbon::parse(Cache::get('bcv_last_update'))->format('d/m/Y h:i A') }} por Admin)</span>
                 </p>
             @endif
         </div>
-        <div class="flex gap-3">
-            <a href="{{ route('admin.settings.bcv') }}" class="px-4 py-2 text-sm font-bold bg-primary text-white hover:bg-primary-dark rounded-lg shadow-sm flex items-center gap-2 transition-colors" title="Configurar Tasa BCV Oficial/Manual">
-                <span class="material-symbols-outlined text-lg">currency_exchange</span>
-                Configurar Tasa
+        <div class="mt-4 md:mt-0">
+            <a href="{{ route('admin.settings.bcv') }}" class="px-5 py-2.5 text-sm font-bold rounded-xl shadow-sm flex items-center gap-2 transition-all" style="background: rgba(255,255,255,0.1); color: white;">
+                Actualizar Tasa BCV
             </a>
         </div>
     </div>
 
-    {{-- Métricas --}}
+    {{-- Métricas de Acción Inmediata (ERP Action-Driven) --}}
+    @php
+        // Consultas rápidas (Demo / Real)
+        $pagosPendientes = \App\Models\Orden::where('estado', 'pendiente')->count();
+        $pedidosPagados = \App\Models\Orden::where('estado', 'pagado')->count(); // Listos para armar
+        $pedidosDelivery = \App\Models\Orden::where('tipo_envio', 'delivery')->whereIn('estado', ['pagado', 'en_ruta'])->count();
+    @endphp
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <x-admin.metric-card
-            icon="payments"
-            label="Ventas Totales"
-            :value="'Bs. ' . number_format($totalVentas ?? 0, 2)"
-            trend="12.5%"
-            :trendUp="true"
-        />
-        <x-admin.metric-card
-            icon="local_mall"
-            label="Pedidos del Mes"
-            :value="$pedidosMes ?? 0"
-            trend="2.1%"
-            :trendUp="false"
-            iconColor="blue-500"
-        />
-        <x-admin.metric-card
-            icon="inventory"
-            label="Stock Total"
-            :value="($stockTotal ?? 0) . ' unidades'"
-            trend="5.0%"
-            :trendUp="true"
-            iconColor="amber-500"
-        />
-        <div class="bg-white border border-red-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between h-full">
+        {{-- Tarjeta 1: Auditoría de Pagos --}}
+        <div class="p-5 rounded-2xl shadow-sm flex flex-col justify-between h-full relative overflow-hidden group" style="background: #fffbeb; border: 2px solid #fde68a;">
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background: #fef3c7; color: #d97706;">
+                    <span class="material-symbols-outlined text-2xl">fact_check</span>
+                </div>
+                <div>
+                    <h3 class="text-[13px] font-bold uppercase tracking-wider mb-1" style="color: #b45309;">Auditoría de Pagos</h3>
+                    <p class="text-2xl font-black leading-none" style="color: #78350f;">{{ $pagosPendientes }} <span class="text-xs font-semibold" style="color: #d97706;">Por revisar</span></p>
+                </div>
+            </div>
+            <a href="{{ route('admin.orders.index') }}?status=pendiente" class="mt-5 flex items-center justify-center w-full py-2.5 rounded-lg text-xs font-bold gap-2 relative z-10" style="background: #d97706; color: white;">
+                Verificar Captures
+            </a>
+            <div class="absolute -right-6 -bottom-6 opacity-20 transform rotate-12 transition-transform group-hover:scale-110">
+                <span class="material-symbols-outlined" style="font-size: 100px;">receipt_long</span>
+            </div>
+        </div>
+
+        {{-- Tarjeta 2: Preparación Almacén --}}
+        <div class="p-5 rounded-2xl shadow-sm flex flex-col justify-between h-full" style="background: #eff6ff; border: 1px solid #bfdbfe;">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center bg-red-100 text-red-500 shrink-0">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style="background: #dbeafe; color: #2563eb;">
+                    <span class="material-symbols-outlined text-2xl">inventory_2</span>
+                </div>
+                <div>
+                    <h3 class="text-[13px] font-bold uppercase tracking-wider mb-1" style="color: #2563eb;">Taller / Almacén</h3>
+                    <p class="text-2xl font-black text-slate-900 leading-none">{{ $pedidosPagados }} <span class="text-xs font-medium text-slate-500">listos p/armar</span></p>
+                </div>
+            </div>
+            <a href="{{ route('admin.orders.index') }}?status=pagado" class="mt-5 flex items-center justify-center w-full py-2.5 rounded-lg text-xs font-bold gap-2" style="background: #dbeafe; color: #1d4ed8;">
+                Ver Órdenes
+            </a>
+        </div>
+
+        {{-- Tarjeta 3: Logística Delivery --}}
+        <div class="p-5 rounded-2xl shadow-sm flex flex-col justify-between h-full" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style="background: #d1fae5; color: #059669;">
+                    <span class="material-symbols-outlined text-2xl">two_wheeler</span>
+                </div>
+                <div>
+                    <h3 class="text-[13px] font-bold uppercase tracking-wider mb-1" style="color: #059669;">Rutas Guanare</h3>
+                    <p class="text-2xl font-black text-slate-900 leading-none">{{ $pedidosDelivery }} <span class="text-xs font-medium text-slate-500">despachos</span></p>
+                </div>
+            </div>
+            <a href="{{ route('admin.shipping') }}" class="mt-5 flex items-center justify-center w-full py-2.5 rounded-lg text-xs font-bold gap-2" style="background: #d1fae5; color: #047857;">
+                Ver Mapa Rutas
+            </a>
+        </div>
+
+        {{-- Tarjeta 4: Alerta de Stock Crítico --}}
+        <div class="bg-white border-2 p-5 rounded-2xl shadow-sm flex flex-col justify-between h-full animate-pulse relative overflow-hidden" style="border-color: #fecaca;">
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style="background: #fee2e2; color: #dc2626;">
                     <span class="material-symbols-outlined text-2xl">warning</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-slate-500 mb-1">Alertas Stock</h3>
-                    <p class="text-2xl font-black text-slate-900 leading-none">{{ $stockBajo ?? 0 }}</p>
+                    <h3 class="text-[13px] font-bold uppercase tracking-wider mb-1" style="color: #ef4444;">Quiebre de Stock</h3>
+                    <p class="text-2xl font-black leading-none" style="color: #dc2626;">{{ $stockBajo ?? 0 }} <span class="text-xs font-medium" style="color: #f87171;">ítems críticos</span></p>
                 </div>
             </div>
-            <a href="{{ route('admin.products.restock') }}" target="_blank" class="mt-4 flex items-center justify-center w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold gap-2">
-                <span class="material-symbols-outlined text-[16px]">print</span>
-                Imprimir PDF
-            </a>
+            <div class="mt-5 border-t pt-3" style="border-color: #fee2e2;">
+                <a href="{{ route('admin.products.restock') }}" target="_blank" class="flex items-center justify-center w-full py-2 hover:underline text-xs font-bold gap-2 z-10 relative" style="color: #dc2626;">
+                    <span class="material-symbols-outlined text-[16px]">contact_phone</span> Contactar Proveedores
+                </a>
+            </div>
+            <div class="absolute right-0 top-0 w-2 h-full" style="background: #ef4444;"></div>
         </div>
     </div>
 </section>

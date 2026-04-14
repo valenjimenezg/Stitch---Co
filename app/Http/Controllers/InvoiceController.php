@@ -32,7 +32,9 @@ class InvoiceController extends Controller
 
         $tasa_actual = $orden->tasa_bcv_aplicada ?? bcv_rate();
 
-        return view('factura', ['orden' => $orden, 'qrCode' => $qrCode, 'tasa_actual' => $tasa_actual]);
+        $vistaPila = ($orden->monto_abonado > 0 && $orden->monto_abonado < $orden->total_amount) ? 'ticket_abono' : 'factura';
+
+        return view($vistaPila, ['orden' => $orden, 'qrCode' => $qrCode, 'tasa_actual' => $tasa_actual]);
     }
 
     public function descargarFacturaPublica(\Illuminate\Http\Request $request, $id)
@@ -52,7 +54,9 @@ class InvoiceController extends Controller
 
         $tasa_actual = $orden->tasa_bcv_aplicada ?? bcv_rate();
         // Cambiado: Ahora la factura pública (la que se envía por WhatsApp) renderiza el diseño moderno nativo
-        return view('factura', ['orden' => $orden, 'qrCode' => $qrCode, 'tasa_actual' => $tasa_actual]);
+        
+        $vistaPila = ($orden->monto_abonado > 0 && $orden->monto_abonado < $orden->total_amount) ? 'ticket_abono' : 'factura';
+        return view($vistaPila, ['orden' => $orden, 'qrCode' => $qrCode, 'tasa_actual' => $tasa_actual]);
     }
 
     public function previewFacturaHTML($id)
@@ -66,6 +70,7 @@ class InvoiceController extends Controller
 
         $tasa_actual = $orden->tasa_bcv_aplicada ?? bcv_rate();
 
-        return view('factura', compact('orden', 'qrCode', 'tasa_actual'));
+        $vistaPila = ($orden->monto_abonado > 0 && $orden->monto_abonado < $orden->total_amount) ? 'ticket_abono' : 'factura';
+        return view($vistaPila, compact('orden', 'qrCode', 'tasa_actual'));
     }
 }

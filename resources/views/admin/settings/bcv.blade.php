@@ -17,10 +17,26 @@
     </div>
 
     @if(session('success'))
-        <div class="mb-8 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-2xl flex items-center gap-3 font-medium text-sm shadow-sm animate-fade-in">
+        <div class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-2xl flex items-center gap-3 font-medium text-sm shadow-sm animate-fade-in">
             <span class="material-symbols-outlined text-xl text-emerald-500">check_circle</span>
             {{ session('success') }}
         </div>
+    @endif
+    
+    @if(session('rate_change'))
+        <div class="mb-4 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-2xl flex items-center gap-3 text-sm shadow-sm animate-fade-in">
+            <span class="material-symbols-outlined text-xl text-blue-500">trending_up</span>
+            <div>{!! session('rate_change') !!}</div>
+        </div>
+    @endif
+
+    @if(session('weekend_notice'))
+        <div class="mb-8 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl flex items-center gap-3 text-sm shadow-sm animate-fade-in">
+            <span class="material-symbols-outlined text-xl text-amber-500">gavel</span>
+            <div>{!! session('weekend_notice') !!}</div>
+        </div>
+    @else
+        <div class="mb-8"></div>
     @endif
     
     @if($errors->any())
@@ -106,15 +122,24 @@
     </div>
 
     {{-- Widget Informativo --}}
-    <div class="mt-8 bg-slate-800 rounded-3xl p-6 border border-slate-700 text-slate-300 flex items-start gap-4 shadow-xl">
-        <span class="material-symbols-outlined text-4xl text-emerald-400">info</span>
-        <div>
+    <div class="mt-8 bg-slate-800 rounded-3xl p-6 border border-slate-700 text-slate-300 flex items-start flex-col md:flex-row gap-5 shadow-xl">
+        <span class="material-symbols-outlined text-4xl text-emerald-400 shrink-0">info</span>
+        <div class="flex-1">
             <h4 class="text-white font-bold mb-1">Estado de la Tasa Actual en la Tienda:</h4>
             <div class="flex items-end gap-3 mt-2">
                 <span class="text-3xl font-black text-white">Bs. {{ number_format(bcv_rate(), 2, ',', '.') }}</span>
                 <span class="text-xs font-medium text-emerald-400 uppercase tracking-wider mb-1 px-2 py-0.5 rounded-md bg-emerald-400/20 border border-emerald-400/30">Valor Activo</span>
             </div>
             <p class="text-xs text-slate-400 mt-3">Las facturas ya emitidas NO se verán afectadas al cambiar esta configuración. Cada orden almacena su propia tasa al momento de realizarse la compra.</p>
+            
+            @if(in_array(date('N'), [6, 7]))
+            <div class="mt-4 bg-slate-700/50 border border-slate-600/50 rounded-xl p-3.5 flex gap-3 text-xs text-slate-300">
+                <span class="material-symbols-outlined text-amber-400 text-lg sm:shrink-0">gavel</span>
+                <div>
+                    <strong class="text-amber-400">Ley Vigente (Fin de Semana):</strong> La tasa actual mostrada en el transcurso del sábado y domingo corresponderá obligatoriamente y por lazo legal al <strong>precio acordado para el día Lunes</strong>. Todas las operaciones realizadas en este periodo operarán como "Fecha Valor: Lunes".
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>

@@ -1,110 +1,138 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Reporte de Reposición | Stitch & Co</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet"/>
-    <style>
-        body { font-family: 'Inter', sans-serif; margin: 0; padding: 40px; color: #1e293b; background: white; }
-        .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 2px solid #8b52ff; padding-bottom: 20px; }
-        .brand h1 { margin: 0; font-size: 28px; font-weight: 900; color: #8b52ff; display: flex; align-items: center; gap: 8px; }
-        .brand p { margin: 5px 0 0 0; font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .meta { text-align: right; font-size: 12px; color: #64748b; }
-        .meta strong { color: #0f172a; }
-        table { w-full; border-collapse: collapse; margin-top: 20px; width: 100%; }
-        th { text-align: left; padding: 12px; background: #f8fafc; border-bottom: 2px solid #e2e8f0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-        .stock-critical { color: #dc2626; font-weight: bold; }
-        .stock-low { color: #d97706; font-weight: bold; }
-        .suggested-qty { width: 60px; height: 30px; border: 1px dashed #cbd5e1; display: inline-block; vertical-align: middle; border-radius: 4px; }
-        
-        @media print {
-            body { padding: 0; }
-            .no-print { display: none !important; }
-            .page-break { page-break-inside: avoid; }
-        }
-        
-        .print-btn { background: #8b52ff; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: block; margin: 0 auto 30px auto; font-family: 'Inter', sans-serif; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(139,82,255,0.2); transition: 0.2s; }
-        .print-btn:hover { background: #7c3aed; }
-    </style>
-</head>
-<body>
+@extends('layouts.admin')
 
-    <button type="button" class="print-btn no-print" onclick="window.print()">Imprimir PDF / Hoja de Requisición</button>
+@section('title', 'CRM - Proveedores')
 
-    <div class="header">
-        <div class="brand">
-            <h1>Stitch & Co.</h1>
-            <p>Lista de Pedidos Mayoristas / Reposición</p>
+@section('content')
+<div class="mb-8">
+    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">contact_phone</span>
+        Centro de Contacto a Proveedores
+    </h2>
+    <p class="text-slate-500 text-sm mt-1">
+        Proveedores con mercancía agotada o en estado crítico (Merma / Quiebre). 
+        Genera su orden en PDF y notifícales directamente por WhatsApp.
+    </p>
+</div>
+
+@if($proveedores->isEmpty())
+    <div class="bg-emerald-50 border border-emerald-200 p-8 rounded-2xl text-center">
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl">check_circle</span>
         </div>
-        <div class="meta">
-            <p>Fecha Cierre: <br><strong>{{ date('d/m/Y h:i A') }}</strong></p>
-            <p style="margin-top:5px">Documento Nº: <strong>REQ-{{ date('Ymd') }}</strong></p>
-        </div>
+        <h3 class="text-lg font-bold text-emerald-800">¡Inventario Saludable!</h3>
+        <p class="text-emerald-600 font-medium">No hay productos en quiebre de stock en este momento. Excelente trabajo.</p>
     </div>
+@else
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach($proveedores as $prov)
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden relative">
+                
+                {{-- Decorative Line --}}
+                <div class="h-2 w-full bg-gradient-to-r from-primary to-blue-500"></div>
+                
+                <div class="p-6 flex-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 leading-tight">{{ $prov->nombre }}</h3>
+                            <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">{{ $prov->productoVariantes->count() }} ítems críticos</p>
+                        </div>
+                        <div class="bg-red-100 text-red-600 size-10 rounded-full flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">warning</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center gap-3 text-sm text-slate-600">
+                            <img src="https://i.pravatar.cc/150?u={{ $prov->id }}" alt="Avatar" class="w-8 h-8 rounded-full border border-slate-200 shadow-sm object-cover">
+                            <span class="font-bold">Contacto: {{ $prov->contacto ?? 'Asesor (General)' }}</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-slate-600">
+                            <span class="material-symbols-outlined text-[18px] text-green-600">phone_iphone</span>
+                            <span class="font-bold">{{ $prov->telefono ?? 'Sin Teléfono' }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 mb-6">
+                        <p class="text-xs text-slate-500 font-semibold mb-2">Vista previa de productos:</p>
+                        <ul class="text-xs text-slate-700 space-y-1">
+                            @foreach($prov->productoVariantes->take(3) as $var)
+                                <li class="flex items-center gap-2 truncate">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> 
+                                    {{ $var->producto->nombre }} ({{ $var->color }})
+                                </li>
+                            @endforeach
+                            @if($prov->productoVariantes->count() > 3)
+                                <li class="text-slate-400 text-[10px] pl-3 italic">+ {{ $prov->productoVariantes->count() - 3 }} más...</li>
+                            @endif
+                        </ul>
+                    </div>
+                </div>
 
-    <div style="margin-bottom: 20px; border-left: 4px solid #ef4444; padding-left: 15px;">
-        <h2 style="margin:0 0 5px 0; font-size:16px; color:#0f172a;">Planilla de Abastecimiento Crítico</h2>
-        <p style="margin:0; font-size:13px; color:#64748b;">Los siguientes artículos han caído por debajo del umbral mínimo de seguridad (5 unidades) y requieren ser encargados al proveedor inmediatamente para evitar quiebres comerciales.</p>
-    </div>
+                <div class="p-4 bg-slate-50 border-t border-slate-100 grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {{-- Generar PDF Button --}}
+                    <a href="{{ route('admin.proveedores.pdf', $prov->id) }}" target="_blank" class="flex flex-col items-center justify-center p-2 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-700 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors text-center group">
+                        <span class="material-symbols-outlined text-2xl mb-1 group-hover:scale-110 transition-transform">picture_as_pdf</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider">Orden (PDF)</span>
+                    </a>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Código M/L</th>
-                <th>Línea / Producto</th>
-                <th>Especificaciones (Color / Grosor)</th>
-                <th>Inv. Actual</th>
-                <th style="text-align:center">Cant. a Comprar (Anotar)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($agotados as $item)
-            <tr class="page-break">
-                <td style="font-family: monospace; font-size: 11px; color:#94a3b8;">VAR-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}</td>
-                <td>
-                    <strong style="color: #0f172a;">{{ $item->producto->nombre ?? 'N/A' }}</strong><br>
-                    <span style="color: #64748b; font-size: 11px;">{{ $item->producto->categoria ?? 'General' }}</span>
-                </td>
-                <td>
-                    {{ $item->color ?? '—' }} 
-                    @if($item->grosor) <span style="color: #94a3b8;">/</span> {{ $item->grosor }} @endif
-                    @if($item->marca) <div style="font-size: 10px; color: #94a3b8; font-weight:bold;">BY: {{ strtoupper($item->marca) }}</div> @endif
-                </td>
-                <td>
-                    @if($item->stock_base == 0)
-                        <span class="stock-critical">0 AGOTADO</span>
+                    {{-- WhatsApp API Button --}}
+                    @php
+                        // Limpiar número para pasarlo por WhatsApp API (Quitar +, espacios, etc)
+                        $phoneFormat = preg_replace('/[^0-9]/', '', $prov->telefono);
+                        if(str_starts_with($phoneFormat, '0')) {
+                            $phoneFormat = '58' . substr($phoneFormat, 1); // Asumiendo formato venezolano
+                        }
+                        
+                        $mensajeRaw = "Hola {$prov->nombre}, te habla el departamento de Compras de Stitch & Co. Te escribo porque tenemos varios productos agotados (o en merma) que necesitamos reponer con urgencia. Te acabo de enviar (o estoy por adjuntar) el reporte PDF de nuestra requisición.\n\nPor favor, indícanos disponibilidad y cotización actual. ¡Quedo atento!";
+                        $encodedMsg = urlencode($mensajeRaw);
+                    @endphp
+                    
+                    @if($phoneFormat)
+                        <a href="https://wa.me/{{ $phoneFormat }}?text={{ $encodedMsg }}" target="_blank" class="flex flex-col items-center justify-center p-2 rounded-lg bg-green-50 border border-green-200 shadow-sm text-green-700 hover:bg-green-100 hover:border-green-300 transition-colors text-center group">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-whatsapp mb-1 group-hover:scale-110 transition-transform" viewBox="0 0 16 16">
+                                <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                            </svg>
+                            <span class="text-[10px] font-bold uppercase tracking-wider">WhatsApp</span>
+                        </a>
                     @else
-                        <span class="stock-low">{{ $item->stock_base }} Unid.</span>
+                        <div class="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-100 text-slate-400 border border-slate-200 text-center" title="El proveedor no tiene teléfono registrado">
+                            <span class="material-symbols-outlined text-2xl mb-1">phonelink_erase</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider">Sin Número</span>
+                        </div>
                     @endif
-                </td>
-                <td style="text-align:center">
-                    <div class="suggested-qty"></div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="5" style="text-align:center; padding: 40px; color:#94a3b8;">
-                    No hay productos agotados o críticos en el sistema. Has mantenido un excelente control de inventario.
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
 
-    <div style="margin-top: 50px; text-align: center; color: #cbd5e1; font-size: 11px;" class="page-break">
-        <p style="margin-bottom: 40px;">_________________________________________<br><strong style="color: #64748b;">Firma / Aprobación de Compra</strong></p>
-        <p>Documento autogenerado por el Sistema de Reposición Stitch & Co.</p>
+                    {{-- Correo al Proveedor --}}
+                    @php
+                        $pdfUrl = route('admin.proveedores.pdf', $prov->id);
+                        $emailSubject = rawurlencode("Orden de Reposición Requerida - Stitch & Co. / {$prov->nombre}");
+                        $emailBody = rawurlencode("Estimado proveedor {$prov->nombre},\n\nNos dirigimos a su departamento de ventas de parte de Stitch & Co. \n\nDebido al alto volumen de ventas recientes, solicitamos la revisión urgente de disponibilidad y cotización. Puede revisar los detalles precisos (cantidades, variaciones y colores agotados) descargando nuestra Orden de Requisición oficial desde nuestro portal administrativo seguro en este enlace:\n\n{$pdfUrl}\n\nAgradecemos su pronta respuesta para proceder con la orden.\n\nAtentamente,\nCompras Stitch & Co.");
+                    @endphp
+                    @if($prov->email)
+                        <a href="mailto:{{ $prov->email }}?subject={{ $emailSubject }}&body={{ $emailBody }}" class="flex flex-col items-center justify-center p-2 rounded-lg bg-orange-50 border border-orange-200 shadow-sm text-orange-700 hover:bg-orange-100 hover:border-orange-300 transition-colors text-center group" title="Enviar correo a {{ $prov->email }}">
+                            <span class="material-symbols-outlined text-2xl mb-1 group-hover:scale-110 transition-transform">mail</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider">Correo</span>
+                        </a>
+                    @else
+                        <div class="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-100 text-slate-400 border border-slate-200 text-center" title="El proveedor no tiene correo registrado">
+                            <span class="material-symbols-outlined text-2xl mb-1">alternate_email</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider">Sin Correo</span>
+                        </div>
+                    @endif
+
+                    {{-- WhatsApp Al Dueño --}}
+                    @php
+                        $ownerPhone = '584120000000'; // Fijo para pruebas
+                        $pdfUrl = route('admin.proveedores.pdf', $prov->id);
+                        $ownerMsg = urlencode("Hola Gerencia, tenemos productos críticos listos para quiebre de stock del proveedor *{$prov->nombre}*. Revisa la requisición en PDF aquí para imprimir de ser necesario: {$pdfUrl} ¿Autorizas procesar la orden y contactar al proveedor?");
+                    @endphp
+                    <a href="https://wa.me/{{ $ownerPhone }}?text={{ $ownerMsg }}" target="_blank" class="flex flex-col items-center justify-center p-2 rounded-lg bg-blue-50 border border-blue-200 shadow-sm text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-colors text-center group" title="Notificar a Gerencia">
+                        <span class="material-symbols-outlined text-2xl mb-1 group-hover:scale-110 transition-transform">admin_panel_settings</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider">Dueño</span>
+                    </a>
+                </div>
+            </div>
+        @endforeach
     </div>
+@endif
 
-    <script>
-        // Imprimir automáticamente al abrir
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                window.print();
-            }, 500);
-        });
-    </script>
-</body>
-</html>
+@endsection

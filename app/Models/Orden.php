@@ -6,6 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int         $id
+ * @property int         $user_id
+ * @property string      $estado
+ * @property float       $subtotal
+ * @property float       $iva_amount
+ * @property float       $delivery_fee
+ * @property float       $total_amount
+ * @property float       $monto_abonado
+ * @property float|null  $tasa_bcv_aplicada
+ * @property array|null  $direccion_envio
+ * @property string      $tipo_envio
+ * @property string|null $agencia_envio
+ * @property string      $metodo_pago
+ * @property string|null $referencia_pago
+ * @property string|null $banco_pago
+ * @property string|null $telefono_pago
+ * @property string|null $invoice_number
+ * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property \Illuminate\Support\Carbon      $created_at
+ * @property \Illuminate\Support\Carbon      $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ */
 class Orden extends Model
 {
     use HasFactory, SoftDeletes;
@@ -67,5 +90,25 @@ class Orden extends Model
         ]);
         
         return $this;
+    }
+
+    public function getCalleEnvioAttribute()
+    {
+        return $this->direccion_envio['calle'] ?? null;
+    }
+
+    public function getCiudadEnvioAttribute()
+    {
+        return $this->direccion_envio['ciudad'] ?? null;
+    }
+
+    public function getEstadoEnvioAttribute()
+    {
+        return $this->direccion_envio['estado'] ?? null;
+    }
+
+    public function getCodigoPostalEnvioAttribute()
+    {
+        return $this->direccion_envio['codigo_postal'] ?? null;
     }
 }

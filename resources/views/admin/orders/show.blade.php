@@ -176,7 +176,14 @@
                         $invoiceUrl = str_replace(['localhost', '127.0.0.1'], getHostByName(getHostName()), $invoiceUrl);
                         
                         $nombreCliente = $venta->user->nombre ?? 'Cliente';
-                        $message = "¡Hola {$nombreCliente}! Confirmamos tu pago en Stitch & Co. Ya estamos preparando tu pedido. Puedes descargar tu factura oficial directamente en este enlace: " . $invoiceUrl;
+                        
+                        if ($venta->monto_abonado > 0 && $venta->monto_abonado < $venta->total_amount) {
+                            $saldo_deudor = number_format($venta->total_amount - $venta->monto_abonado, 2);
+                            $message = "¡Hola {$nombreCliente}! Confirmamos tu pago inicial en Stitch & Co. Te adjunto el enlace para descargar tu TICKET DE ABONO DIGITAL: " . $invoiceUrl . " Recuerda que nos adeudas un saldo de $ {$saldo_deudor} dólares para poder realizar la entrega. ¡Quedamos a tu orden!";
+                        } else {
+                            $message = "¡Hola {$nombreCliente}! Confirmamos tu pago total en Stitch & Co. Ya estamos preparando tu pedido. Puedes descargar tu FACTURA OFICIAL directamente en este enlace: " . $invoiceUrl;
+                        }
+
                         $whatsappUrl = "https://wa.me/{$phone}?text=" . urlencode($message);
                     @endphp
                     <a href="{{ $whatsappUrl }}" target="_blank" style="background-color: #22c55e;" class="text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm hover:opacity-90">

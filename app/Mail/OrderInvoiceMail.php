@@ -9,11 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @property \App\Models\Orden $venta
+ */
 class OrderInvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $venta;
+    public Orden $venta;
 
     /**
      * Create a new message instance.

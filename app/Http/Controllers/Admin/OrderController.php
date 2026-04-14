@@ -220,6 +220,7 @@ class OrderController extends Controller
             return back()->with('info', 'No hay pedidos cancelados para limpiar.');
         }
 
+        /** @var \App\Models\Orden $venta */
         foreach ($cancelados as $venta) {
             $venta->delete();
         }

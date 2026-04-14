@@ -176,7 +176,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Descuento (%)</label>
-                        <input name="descuento_porcentaje" type="number" min="0" max="100" value="{{ old('descuento_porcentaje', $variante->descuento_porcentaje) }}"
+                        <input name="descuento_porcentaje" type="number" step="0.01" min="0" max="100" value="{{ old('descuento_porcentaje', $variante->descuento_porcentaje) }}"
                                class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4"/>
                     </div>
                 </div>

@@ -42,63 +42,86 @@
             </div>
         </div>
 
-        <nav class="flex-1 px-4 py-4 space-y-1">
-            <a href="{{ route('admin.dashboard') }}"
-               class="{{ request()->routeIs('admin.dashboard') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">dashboard</span>
-                Dashboard
-            </a>
-            <a href="{{ route('admin.products.index') }}"
-               class="{{ request()->routeIs('admin.products.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">inventory_2</span>
-                Productos
-            </a>
-            <a href="{{ route('admin.proveedores.index') }}"
-               class="{{ request()->routeIs('admin.proveedores.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">factory</span>
-                Proveedores
-            </a>
-            <a href="{{ route('admin.inventario-logs') }}"
-               class="{{ request()->routeIs('admin.inventario-logs') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">history</span>
-                Kardex (Logs)
-            </a>
-            <a href="{{ route('admin.offers.index') }}"
-               class="{{ request()->routeIs('admin.offers.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">loyalty</span>
-                Gestor de Ofertas
-            </a>
-            <a href="{{ route('admin.orders.index') }}"
-               class="{{ request()->routeIs('admin.orders.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">shopping_cart</span>
-                Pedidos
-            </a>
-            <a href="{{ route('admin.payments') }}"
-               class="{{ request()->routeIs('admin.payments') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">account_balance_wallet</span>
-                Verificar Pagos
-            </a>
-            <a href="{{ route('admin.shipping') }}"
-               class="{{ request()->routeIs('admin.shipping') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">local_shipping</span>
-                Logística y Despachos
-            </a>
-            <a href="{{ route('admin.clients') }}"
-               class="{{ request()->routeIs('admin.clients') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">group</span>
-                Clientes
-            </a>
-            <a href="{{ route('admin.comunidad') }}"
-               class="{{ request()->routeIs('admin.comunidad') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">forum</span>
-                Comunidad
-            </a>
-            <a href="{{ route('admin.stock-notifications') }}"
-               class="{{ request()->routeIs('admin.stock-notifications') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                <span class="material-symbols-outlined">notifications_active</span>
-                Avisos de Stock
-            </a>
-        </nav>
+        <div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
+            <nav class="px-4 py-4 space-y-6">
+                
+                {{-- MÓDULO COMERCIAL --}}
+                <div>
+                    <p class="px-3 text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Comercial</p>
+                    <div class="space-y-1">
+                        <a href="{{ route('admin.dashboard') }}"
+                           class="{{ request()->routeIs('admin.dashboard') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">dashboard</span>
+                            Dashboard
+                        </a>
+                        <a href="{{ route('admin.orders.index') }}"
+                           class="{{ request()->routeIs('admin.orders.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">shopping_cart</span>
+                            Pedidos / Ventas
+                        </a>
+                        <a href="{{ route('admin.payments') }}"
+                           class="{{ request()->routeIs('admin.payments') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">account_balance_wallet</span>
+                            Auditoría de Pagos
+                        </a>
+                        <a href="{{ route('admin.offers.index') }}"
+                           class="{{ request()->routeIs('admin.offers.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">loyalty</span>
+                            Gestor de Ofertas
+                        </a>
+                    </div>
+                </div>
+
+                {{-- MÓDULO ALMACÉN & COMPRAS --}}
+                <div>
+                    <p class="px-3 text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Almacén & Inventario</p>
+                    <div class="space-y-1">
+                        <a href="{{ route('admin.products.index') }}"
+                           class="{{ request()->routeIs('admin.products.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">inventory_2</span>
+                            Catálogo de Productos
+                        </a>
+                        <a href="{{ route('admin.proveedores.index') }}"
+                           class="{{ request()->routeIs('admin.proveedores.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">factory</span>
+                            Proveedores y Compras
+                        </a>
+                        <a href="{{ route('admin.inventario-logs') }}"
+                           class="{{ request()->routeIs('admin.inventario-logs') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">history</span>
+                            Kardex (Trazabilidad)
+                        </a>
+                        <a href="{{ route('admin.stock-notifications') }}"
+                           class="{{ request()->routeIs('admin.stock-notifications') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">warning</span>
+                            Alertas de Quiebre
+                        </a>
+                    </div>
+                </div>
+
+                {{-- MÓDULO LOGÍSTICA & CRM --}}
+                <div>
+                    <p class="px-3 text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Logística & Clientes</p>
+                    <div class="space-y-1">
+                        <a href="{{ route('admin.shipping') }}"
+                           class="{{ request()->routeIs('admin.shipping') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">local_shipping</span>
+                            Rutas Generales
+                        </a>
+                        <a href="{{ route('admin.clients') }}"
+                           class="{{ request()->routeIs('admin.clients') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">group</span>
+                            Directorio Clientes
+                        </a>
+                        <a href="{{ route('admin.comunidad') }}"
+                           class="{{ request()->routeIs('admin.comunidad') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">forum</span>
+                            Comunidad
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
 
         <div class="p-4 border-t border-slate-800">
             <div class="flex items-center gap-3 p-2">

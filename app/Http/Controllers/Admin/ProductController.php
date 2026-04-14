@@ -66,13 +66,39 @@ class ProductController extends Controller
 
     public function restockReport()
     {
+        // Extraemos proveedores que tienen variantes críticas o agotadas vinculadas a ellos
+        $proveedores = Proveedor::whereHas('productoVariantes', function($q) {
+            $q->whereNull('parent_id')
+              ->where('stock_base', '<=', 5);
+        })->with(['productoVariantes' => function($q) {
+            $q->whereNull('parent_id')
+              ->where('stock_base', '<=', 5)
+              ->with('producto')
+              ->orderBy('stock_base', 'asc');
+        }])->get();
+            
+        return view('admin.products.restock-report', compact('proveedores'));
+    }
+
+    public function downloadProviderPdf($proveedor_id)
+    {
+        $proveedor = Proveedor::findOrFail($proveedor_id);
+        
         $agotados = ProductoVariante::with('producto')
+            ->where('proveedor_id', $proveedor_id)
             ->whereNull('parent_id')
             ->where('stock_base', '<=', 5)
             ->orderBy('stock_base', 'asc')
             ->get();
-            
-        return view('admin.products.restock-report', compact('agotados'));
+
+        if ($agotados->isEmpty()) {
+            return back()->with('error', 'El proveedor no tiene productos agotados en este momento.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.products.pdf-restock', compact('proveedor', 'agotados'));
+        
+        $filename = "Orden_Reposicion_" . preg_replace('/[^A-Za-z0-9\-]/', '_', $proveedor->nombre) . "_" . date('Y-m-d') . ".pdf";
+        return $pdf->stream($filename);
     }
 
     public function create()
@@ -99,8 +125,8 @@ class ProductController extends Controller
             'empaques.*.factor'    => 'required|integer|min:1',
             'empaques.*.precio'    => 'required|numeric|min:0',
             'en_oferta'            => 'nullable|boolean',
-            'descuento_porcentaje' => 'nullable|integer|min:0|max:100',
-            'stock_base'           => 'required|integer|min:0',
+            'descuento_porcentaje' => 'nullable|numeric|min:0|max:100',
+            'stock_base'           => 'required|numeric|min:0',
             'precio'               => 'required|numeric|min:0', // Precio USD
             'proveedor_id'         => 'nullable|exists:proveedores,id',
             'imagen'               => 'nullable|image|max:2048',
@@ -124,8 +150,8 @@ class ProductController extends Controller
             if ($request->hasFile('imagen')) {
                 $file = $request->file('imagen');
                 $filename = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
-                $file->move(public_path('img/productos'), $filename);
-                $imagenPath = 'img/productos/' . $filename;
+                $file->move(public_path('productos'), $filename);
+                $imagenPath = 'productos/' . $filename;
             }
 
             // Create Master Variant (Stock holder)
@@ -206,7 +232,7 @@ class ProductController extends Controller
             'empaques.*.factor'    => 'required|integer|min:1',
             'empaques.*.precio'    => 'required|numeric|min:0',
             'en_oferta'            => 'nullable|boolean',
-            'descuento_porcentaje' => 'nullable|integer|min:0|max:100',
+            'descuento_porcentaje' => 'nullable|numeric|min:0|max:100',
             'stock_base'           => 'required|numeric|min:0',
             'precio'               => 'required|numeric|min:0',
             'proveedor_id'         => 'nullable|exists:proveedores,id',
@@ -250,9 +276,9 @@ class ProductController extends Controller
             }
             
             $file = $request->file('imagen');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img/productos'), $filename);
-            $data['imagen'] = 'img/productos/' . $filename;
+            $filename = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+            $file->move(public_path('productos'), $filename);
+            $data['imagen'] = 'productos/' . $filename;
         }
 
         $variante->update($data);

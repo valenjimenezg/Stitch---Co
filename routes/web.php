@@ -15,6 +15,7 @@ Route::get('/sobre-nosotros', function() { return view('pages.about'); })->name(
 Route::get('/preguntas-frecuentes', function() { return view('pages.faq'); })->name('pages.faq');
 Route::post('/contacto', [\App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
 Route::get('/api/search', [\App\Http\Controllers\SearchController::class, 'query'])->name('search.query');
+Route::get('/api/chatbot/producto', [\App\Http\Controllers\ChatbotController::class, 'buscarProducto'])->name('chatbot.producto');
 Route::get('/buscar', [\App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
 Route::get('/factura/{id}', [\App\Http\Controllers\InvoiceController::class, 'descargarFacturaPublica'])->name('invoice.public');
 Route::get('/test-factura/{id}', [\App\Http\Controllers\InvoiceController::class, 'previewFacturaHTML'])->name('invoice.preview');
@@ -86,6 +87,7 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::get('/productos', [\App\Http\Controllers\Admin\ProductController::class, 'index'])->name('admin.products.index');
     Route::get('/productos/exportar', [\App\Http\Controllers\Admin\ProductController::class, 'export'])->name('admin.products.export');
     Route::get('/productos/reporte-reposicion', [\App\Http\Controllers\Admin\ProductController::class, 'restockReport'])->name('admin.products.restock');
+    Route::get('/proveedores/{proveedor}/pdf-reposicion', [\App\Http\Controllers\Admin\ProductController::class, 'downloadProviderPdf'])->name('admin.proveedores.pdf');
     Route::get('/productos/crear', [\App\Http\Controllers\Admin\ProductController::class, 'create'])->name('admin.products.create');
     Route::post('/productos', [\App\Http\Controllers\Admin\ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/productos/{id}/editar', [\App\Http\Controllers\Admin\ProductController::class, 'edit'])->name('admin.products.edit');

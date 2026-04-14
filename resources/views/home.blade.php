@@ -15,7 +15,7 @@
             <span class="text-primary bg-white/90 self-start px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">Nueva Colección</span>
             <h2 class="text-5xl font-black text-white max-w-xl leading-tight mb-6">Crea con Pasión, <br/>Cose con Amor</h2>
             <p class="text-white/80 text-lg max-w-md mb-8">Descubre las mejores texturas y colores para tus proyectos de esta temporada. Calidad premium importada.</p>
-            <a href="{{ route('categories.show', 'novedades') }}"
+            <a href="{{ route('search.index') }}"
                class="bg-primary text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-primary-dark transition-all self-start shadow-xl shadow-primary/30">
                 Comprar Ahora
             </a>
@@ -84,27 +84,27 @@
 </section>
 
 {{-- Newsletter --}}
-<section class="mt-24 bg-primary/10 rounded-[2.5rem] p-12 flex items-center justify-between relative overflow-hidden">
+<section class="mt-24 mb-16 bg-primary/10 rounded-[2.5rem] p-12 flex items-center justify-between relative overflow-hidden">
     <div class="absolute -bottom-12 -right-12 size-64 bg-primary/20 rounded-full blur-3xl"></div>
     <div class="max-w-xl">
         <h3 class="text-4xl font-black text-slate-900 mb-4">¡Que no te falte el hilo! Únete a Stitch & Co</h3>
-        <p class="text-slate-600 text-lg mb-8">Suscríbete para recibir alertas cuando lleguen nuevos hilos, cintas, botones y herramientas, además de cupones de descuento exclusivos para tus proyectos de costura.</p>
+        <p class="text-slate-600 text-lg mb-12">Suscríbete para recibir alertas cuando lleguen nuevos hilos, cintas, botones y herramientas, además de cupones de descuento exclusivos para tus proyectos de costura.</p>
         
         <div id="newsletter-success" class="bg-emerald-100 text-emerald-800 p-4 rounded-xl mb-6 font-medium flex items-center gap-3 hidden transition-opacity duration-500 opacity-0">
             <span class="material-symbols-outlined">check_circle</span>
             <span>¡Listo! Ya eres parte de Stitch & Co.</span>
         </div>
 
-        <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)" class="flex flex-col gap-2 relative z-10 transition-opacity duration-500">
+        <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)" class="flex flex-col gap-4 relative z-10 transition-opacity duration-500">
             @csrf
-            <div class="flex gap-2 w-full">
+            <div class="flex gap-8 w-full">
                 <input name="email" id="newsletter-email" class="flex-1 bg-white border-none rounded-xl px-6 py-4 text-sm focus:ring-2 focus:ring-primary shadow-sm"
                        placeholder="Tu correo electrónico" type="email" required/>
                 <button type="submit" id="newsletter-submit-btn" class="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all shrink-0">
                     Suscribirme
                 </button>
             </div>
-            <p id="newsletter-error" class="hidden text-rose-500 text-sm mt-1 mx-2 font-medium flex items-center gap-1"></p>
+            <p id="newsletter-error" class="hidden text-rose-500 text-sm mt-2 mx-2 font-medium flex items-center gap-1"></p>
         </form>
     </div>
 </section>

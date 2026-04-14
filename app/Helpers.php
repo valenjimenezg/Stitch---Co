@@ -10,8 +10,8 @@ if (! function_exists('bcv_rate')) {
      */
     function bcv_rate()
     {
-        $usarManual = \Illuminate\Support\Facades\Cache::get('config_usar_tasa_manual', false);
-        $tasaManual = \Illuminate\Support\Facades\Cache::get('config_tasa_bcv_manual', 0);
+        $usarManual = Cache::get('config_usar_tasa_manual', false);
+        $tasaManual = Cache::get('config_tasa_bcv_manual', 0);
         if ($usarManual && $tasaManual > 0) {
             return (float) $tasaManual;
         }

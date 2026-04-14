@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="flex flex-col lg:flex-row gap-10">
+<div class="flex flex-col lg:flex-row gap-10 pb-20">
 
     {{-- Sidebar --}}
     <aside class="w-full lg:w-64 flex-shrink-0">
@@ -229,7 +229,11 @@
                                             <a href="{{ route('profile.orders.invoice', $venta->id) }}" target="_blank"
                                                     class="w-full bg-primary hover:bg-primary/90 text-white font-black text-[11px] sm:text-xs px-6 py-4 rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center justify-center gap-2 group/btn border border-primary">
                                                 <span class="material-symbols-outlined text-emerald-400 text-[18px] group-hover/btn:-translate-y-1 transition-transform">print</span>
-                                                Imprimir / PDF
+                                                @if($venta->monto_abonado > 0 && $venta->monto_abonado < $venta->total_amount)
+                                                    Descargar Ticket de Abono
+                                                @else
+                                                    Descargar Factura
+                                                @endif
                                             </a>
                                         </div>
                                 @else

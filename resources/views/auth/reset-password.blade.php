@@ -153,8 +153,18 @@
         const lengthValid = pwd.length >= 8 && pwd.length <= 15;
         const caseValid   = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
         const numValid    = /[0-9]/.test(pwd);
-        const specValid   = /[=\*\-\._]/.test(pwd);
-        const repValid    = !/(.)\1\1/.test(pwd) && pwd.length > 0;
+        const specValid   = /[=\*\-\._]/.test(pwd) && /^[a-zA-Z0-9=\*\-\._]+$/.test(pwd);
+        
+        const lowerPwd = pwd.toLowerCase();
+        const sequences = [
+            '012', '123', '234', '345', '456', '567', '678', '789',
+            '987', '876', '765', '654', '543', '432', '321', '210',
+            'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl', 'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv', 'uvw', 'vwx', 'wxy', 'xyz',
+            'zyx', 'yxw', 'xwv', 'wvu', 'vut', 'uts', 'tsr', 'srq', 'rqp', 'qpo', 'pon', 'onm', 'nml', 'mlk', 'lkj', 'kji', 'jih', 'ihg', 'hgf', 'gfe', 'fed', 'edc', 'dcb', 'cba'
+        ];
+        const hasSequences = sequences.some(seq => lowerPwd.includes(seq));
+        const repValid    = !/(.)\1\1/.test(pwd) && pwd.length > 0 && !hasSequences;
+        const spaceValid  = pwd.length > 0 && !/\s/.test(pwd);
         const isMatch     = pwd !== '' && pwd === confirm;
 
         const setIndicatorStatus = (elId, isValid) => {
@@ -186,7 +196,7 @@
             errorMsg?.classList.add('hidden');
         }
 
-        const allValid = lengthValid && caseValid && numValid && specValid && repValid && isMatch;
+        const allValid = lengthValid && caseValid && numValid && specValid && repValid && spaceValid && isMatch;
 
         if (allValid) {
             submitBtn.disabled = false;
@@ -196,6 +206,54 @@
             submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
         }
     }
+
+    const validateInputs = document.querySelectorAll('input[type="password"]');
+    validateInputs.forEach(input => {
+        const errorEl = document.createElement('p');
+        errorEl.className = 'hidden text-xs text-rose-500 mt-1.5 font-bold items-center gap-1';
+        errorEl.innerHTML = '<span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>';
+        
+        if (input.parentNode.classList.contains('relative')) {
+            input.parentNode.parentNode.appendChild(errorEl);
+        } else {
+            input.parentNode.appendChild(errorEl);
+        }
+
+        const checkErrors = function() {
+            const val = input.value;
+            let errorMessage = '';
+
+            if (val.length === 0) {
+                errorEl.classList.add('hidden');
+                errorEl.classList.remove('flex');
+                checkPasswordMatch();
+                return;
+            }
+
+            if (/\s/.test(val)) {
+                errorMessage = 'No se permiten espacios en este campo.';
+            }
+
+            if (errorMessage) {
+                errorEl.querySelector('.error-text').textContent = errorMessage;
+                errorEl.classList.remove('hidden');
+                errorEl.classList.add('flex');
+                
+                const submitBtn = document.getElementById('btn-submit');
+                if(submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            } else {
+                errorEl.classList.add('hidden');
+                errorEl.classList.remove('flex');
+                checkPasswordMatch();
+            }
+        };
+
+        input.addEventListener('input', checkErrors);
+        input.addEventListener('blur', checkErrors);
+    });
 
     document.getElementById('pass1')?.addEventListener('input', checkPasswordMatch);
     document.getElementById('pass2')?.addEventListener('input', checkPasswordMatch);

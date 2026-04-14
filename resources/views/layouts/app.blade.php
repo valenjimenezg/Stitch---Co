@@ -150,6 +150,7 @@
                         </span>
                     @endif
                 </a>
+                <x-chatbot />
             </div>
 
             {{-- Search Bar --}}
@@ -189,11 +190,12 @@
         {{-- Navigation Menu --}}
         <nav class="bg-primary text-white overflow-hidden shadow-sm">
             <div class="max-w-[1280px] mx-auto px-4 md:px-6 overflow-x-auto no-scrollbar">
-                <ul class="flex items-center md:justify-center gap-2 font-medium text-[13px] md:text-sm w-max md:w-auto mx-auto pb-1 md:pb-0">
+                <ul class="flex items-center justify-center gap-4 font-medium text-[13px] md:text-sm w-full mx-auto pb-1 md:pb-0">
                     <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'telas') }}">Telas</a></li>
                     <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'lanas') }}">Lanas</a></li>
-                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'botones') }}">Botones</a></li>
-                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'accesorios') }}">Accesorios</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'tejidos') }}">Tejidos</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'costura') }}">Costura</a></li>
+                    <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white" href="{{ route('categories.show', 'manualidades') }}">Manualidades</a></li>
                     <li><a class="px-3 md:px-5 py-2.5 md:py-3 inline-block hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white text-yellow-300 font-bold italic" href="{{ route('offers.index') }}">Ofertas</a></li>
                 </ul>
             </div>
@@ -208,12 +210,12 @@
 
     {{-- Footer --}}
     <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 mt-auto">
-        <div class="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
-            <div class="col-span-1 lg:col-span-2">
+        <div class="max-w-[1280px] mx-auto px-6 grid grid-cols-2 lg:grid-cols-5 gap-y-12 gap-x-8 mb-16">
+            <div class="col-span-2 lg:col-span-2">
                 <div class="flex items-center mb-6">
                     <x-stitch-logo size="w-8 h-10" textSize="text-2xl" subTextSize="text-[10px]" class="grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all"/>
                 </div>
-                <p class="text-sm leading-relaxed mb-6 pr-12">
+                <p class="text-sm leading-relaxed mb-6 lg:pr-12">
                     Desde hace más de 15 años, somos el aliado perfecto para diseñadores, costureras y mentes creativas. Ofreciendo lo mejor en insumos de mercería y textiles.
                     <br><br>
                     <span class="flex items-center gap-2 font-bold text-white/90">
@@ -227,32 +229,31 @@
                     <a class="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined">chat</span></a>
                 </div>
             </div>
-            <div>
+            <div class="col-span-1">
                 <h6 class="text-white font-bold mb-6">Tienda</h6>
                 <ul class="space-y-4 text-sm">
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'telas') }}">Telas</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'lanas') }}">Lanas</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'botones') }}">Botones</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('categories.show', 'accesorios') }}">Accesorios</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('categories.show', 'lanas') }}">Lanas y Hilos</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('categories.show', 'telas') }}">Telas y Retazos</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('categories.show', 'botones') }}">Mercería y Botones</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('categories.show', 'kits') }}">Kits de Inicio</a></li>
                 </ul>
             </div>
-            <div>
+            <div class="col-span-1">
                 <h6 class="text-white font-bold mb-6">Compañía</h6>
                 <ul class="space-y-4 text-sm">
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('pages.about') }}">Sobre Nosotros</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('contact.index') }}">Contacto</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="{{ route('pages.faq') }}">Preguntas Frecuentes</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('pages.about') }}">Sobre Nosotros</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('contact.index') }}">Contacto</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="{{ route('pages.faq') }}">Preguntas Frecuentes</a></li>
                 </ul>
             </div>
-            <div>
+            <div class="col-span-2 lg:col-span-1">
                 <h6 class="text-white font-bold mb-6">Legal</h6>
-                <ul class="space-y-4 text-sm">
-                    <li><a class="hover:text-primary transition-colors" href="#">Términos de Uso</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Política de Privacidad</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Envíos y Devoluciones</a></li>
+                <ul class="space-y-4 text-sm flex flex-col md:flex-row lg:flex-col gap-4 md:gap-8 lg:gap-0">
+                    <li><a class="hover:text-primary transition-colors block" href="#">Términos de Uso</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="#">Política de Privacidad</a></li>
+                    <li><a class="hover:text-primary transition-colors block" href="#">Envíos y Devoluciones</a></li>
                 </ul>
             </div>
-        </div>
         </div>
         <div class="max-w-[1280px] mx-auto px-6 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-center md:text-left">
             <p>© {{ date('Y') }} Stitch &amp; Co Haberdashery. Todos los derechos reservados.</p>

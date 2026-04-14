@@ -60,7 +60,7 @@
             </div>
             
             <div class="text-center md:text-right mt-4 md:mt-0">
-                <h2 class="text-4xl font-black text-slate-200 uppercase tracking-tighter mix-blend-multiply">FACTURA</h2>
+                <h2 class="text-4xl font-black text-slate-200 uppercase tracking-tighter mix-blend-multiply">TICKET DE ABONO</h2>
                 <p class="text-lg font-bold text-slate-900">#{{ str_pad($orden->id, 6, '0', STR_PAD_LEFT) }}</p>
                 <div class="mt-4 text-xs text-slate-600 space-y-1 text-right">
                     <p class="flex justify-between md:justify-end gap-4"><span class="font-bold text-slate-400 uppercase tracking-wider">Fecha:</span> <span>{{ $orden->created_at->format('d/m/Y') }}</span></p>
@@ -150,16 +150,20 @@
             </div>
         </section>
 
-        {{-- Sección Inferior (Totales Reales) --}}
+        {{-- Section: Total and Payment info --}}
         <section class="flex flex-col-reverse md:flex-row justify-between items-end gap-10 print-break-inside-avoid">
             
-            {{-- Notas Adicionales --}}
+            {{-- Notas Adicionales / Pagos Varios --}}
             <div class="w-full md:w-1/2">
-                <h3 class="text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-2 border-b border-slate-100 pb-1">Método de Pago</h3>
+                <h3 class="text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-2 border-b border-slate-100 pb-1">Método de Abono Inicial</h3>
                 <p class="text-sm font-semibold text-slate-800 uppercase">{{ str_replace('_', ' ', $orden->metodo_pago) }}</p>
                 <div class="mt-2 text-xs text-slate-500 flex flex-col gap-1">
                     <p><strong class="font-bold text-slate-700">Ref:</strong> {{ $orden->referencia_pago ?? 'N/A' }}</p>
                     <p><strong class="font-bold text-slate-700">Banco:</strong> {{ $orden->banco_pago ?? 'N/A' }}</p>
+                </div>
+                
+                <div class="mt-4 p-3 border-l-4 border-amber-500 bg-amber-50 rounded text-xs text-amber-800">
+                    <strong>NOTA LEGAL:</strong> Según los términos aceptados en caja, la mercancía detallada se encuentra bajo <u>Resguardo de Apartado</u>. No se entregará ni se emitirá factura fiscal original hasta que se cancele el 100% de la deuda. El saldo deudor puede ser pagado en efectivo o transferencia electrónica en diferentes momentos antes del vencimiento.
                 </div>
             </div>
 
@@ -167,33 +171,40 @@
             <div class="w-full md:w-80">
                 <div class="bg-slate-50 p-5 border border-slate-200">
                     <div class="space-y-2">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-500 font-bold uppercase tracking-wider text-[11px]">Subtotal</span>
+                         <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500 font-bold uppercase tracking-wider text-[11px]">Subtotal (Sin IVA)</span>
                             <span class="font-mono text-slate-700 font-medium">${{ number_format($orden->subtotal, 2) }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500 font-bold uppercase tracking-wider text-[11px]">IVA (16%)</span>
                             <span class="font-mono text-slate-700 font-medium">${{ number_format($orden->iva_amount, 2) }}</span>
                         </div>
-                        
-                        @if($orden->delivery_method == 'delivery')
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-500 font-bold uppercase tracking-wider text-[11px]">Delivery</span>
-                            <span class="font-mono text-slate-700 font-medium">${{ number_format($orden->delivery_fee, 2) }}</span>
-                        </div>
-                        @endif
                     </div>
                     
                     <div class="pt-3 mt-3 border-t border-slate-300">
-                        <div class="flex justify-between items-end">
-                            <span class="text-sm font-black text-slate-900 uppercase tracking-widest">TOTAL</span>
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-xs font-black text-slate-900 uppercase tracking-widest">Total Mercancía</span>
                             <div class="text-right">
-                                <span class="block text-2xl font-black text-slate-900 tracking-tighter leading-none">${{ number_format($orden->total_amount, 2) }}</span>
+                                <span class="block text-lg font-black text-slate-900 tracking-tighter leading-none">${{ number_format($orden->total_amount, 2) }}</span>
                             </div>
                         </div>
-                        <div class="mt-3 pt-3 border-t border-dashed border-slate-300 text-right">
-                            <p class="text-sm font-bold text-slate-800">Bs. {{ number_format($orden->total_amount * $tasa_actual, 2, ',', '.') }}</p>
-                            <p class="text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider">Tasa de Cambio: Bs. {{ number_format($tasa_actual, 2, ',', '.') }}</p>
+                        
+                        <div class="flex justify-between items-end border-t border-dashed border-slate-300 pt-2 mb-2">
+                            <span class="text-xs font-black text-emerald-700 uppercase tracking-widest">SU ABONO</span>
+                            <div class="text-right">
+                                <span class="block text-lg font-black text-emerald-700 tracking-tighter leading-none">${{ number_format($orden->monto_abonado, 2) }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-end bg-red-100 p-2 rounded border border-red-200">
+                            <span class="text-sm font-black text-red-700 uppercase tracking-widest">DEUDA (Saldo)</span>
+                            <div class="text-right">
+                                <span class="block text-xl font-black text-red-700 tracking-tighter leading-none">${{ number_format($orden->total_amount - $orden->monto_abonado, 2) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 text-right">
+                            <p class="text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider">Tasa de Cambio Acordada: Bs. {{ number_format($tasa_actual, 2, ',', '.') }}</p>
                         </div>
                     </div>
                 </div>

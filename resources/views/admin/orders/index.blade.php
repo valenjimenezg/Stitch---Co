@@ -12,7 +12,7 @@
             @csrf @method('DELETE')
             <button type="submit" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-bold border border-red-200 hover:bg-red-100 hover:text-red-700 transition-all flex items-center gap-2 shadow-sm">
                 <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
-                Limpiar Cancelados
+                Borrar todas las que son canceladas
             </button>
         </form>
         @endif
@@ -23,11 +23,7 @@
     </div>
 </div>
 
-@if(session('success'))
-    <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-3 rounded-lg">
-        {{ session('success') }}
-    </div>
-@endif
+
 
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
@@ -87,11 +83,11 @@
                             {{ $venta->estado ?? 'pendiente' }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <form method="POST" action="{{ route('admin.orders.status', $venta->id) }}" class="flex items-center gap-2 m-0">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-end gap-3">
+                            <form method="POST" action="{{ route('admin.orders.status', $venta->id) }}" class="w-[115px] shrink-0 m-0">
                                 @csrf @method('PATCH')
-                                <select name="estado" onchange="this.form.submit()" class="border-slate-200 rounded-lg text-xs py-1.5 pr-8 focus:ring-primary focus:border-primary cursor-pointer bg-slate-50 hover:bg-white transition-colors">
+                                <select name="estado" onchange="this.form.submit()" class="w-full border-slate-200 rounded-lg text-xs py-1.5 pl-3 pr-8 focus:ring-primary focus:border-primary cursor-pointer bg-slate-50 hover:bg-white transition-colors" title="Cambiar Estado">
                                     @foreach(['pendiente', 'procesando', 'enviado', 'entregado', 'cancelada'] as $estado)
                                         <option value="{{ $estado }}" {{ $venta->estado === $estado ? 'selected' : '' }}>
                                             {{ ucfirst($estado) }}
@@ -99,41 +95,58 @@
                                     @endforeach
                                 </select>
                             </form>
-                            <a href="{{ route('admin.orders.show', $venta->id) }}" class="text-slate-500 hover:text-primary p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors bg-white shadow-sm flex items-center justify-center h-[34px] w-[34px]" title="Inspeccionar Orden">
-                                <span class="material-symbols-outlined text-[18px]">visibility</span>
-                            </a>
+                            
+                            <div class="flex items-center gap-1.5 w-[110px] shrink-0 justify-start">
+                                <a href="{{ route('admin.orders.show', $venta->id) }}" class="text-slate-500 hover:text-primary p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors bg-white shadow-sm flex items-center justify-center h-[34px] w-[34px] shrink-0" title="Vista Detallada del Pedido">
+                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                </a>
 
-                            {{-- Botones de Entrega y Facturación (Módulo Nuevo) --}}
-                            @if($venta->estado !== 'entregado' && $venta->estado !== 'cancelada')
-                                @if($venta->delivery_method === 'store_pickup')
-                                    <form method="POST" action="{{ route('admin.orders.picked_up', $venta->id) }}" class="m-0">
-                                        @csrf
-                                        <button type="submit" class="bg-emerald-600 text-white hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
-                                            Entregar en Tienda
-                                        </button>
-                                    </form>
-                                @elseif($venta->delivery_method === 'local_delivery')
-                                    <form method="POST" action="{{ route('admin.orders.delivered_locally', $venta->id) }}" class="m-0">
-                                        @csrf
-                                        <button type="submit" class="bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
-                                            Confirmar Entrega (Motorizado)
-                                        </button>
-                                    </form>
+                                <a href="{{ route('admin.orders.generate_invoice', $venta->id) }}" target="_blank" class="text-blue-600 hover:text-white hover:bg-blue-600 p-1.5 rounded-lg border border-blue-200 transition-colors bg-blue-50 shadow-sm flex items-center justify-center h-[34px] w-[34px] shrink-0" title="Imprimir Factura Fiscal">
+                                    <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                                </a>
+
+                                <div class="w-[34px] shrink-0">
+                                    @if($venta->estado !== 'cancelada' && $venta->estado !== 'entregado')
+                                        <form method="POST" action="{{ route('admin.orders.status', $venta->id) }}" class="m-0" onsubmit="return confirm('¿Confirmas que deseas cancelar este pedido? Se restaurará el stock al inventario de manera automática.');">
+                                            @csrf @method('PATCH')
+                                            <input type="hidden" name="estado" value="cancelada">
+                                            <button type="submit" class="text-rose-600 hover:text-white hover:bg-rose-600 p-1.5 rounded-lg border border-rose-200 transition-colors bg-rose-50 shadow-sm flex items-center justify-center h-[34px] w-[34px]" title="Anular y Cancelar Pedido">
+                                                <span class="material-symbols-outlined text-[18px]">cancel</span>
+                                            </button>
+                                        </form>
+                                    @elseif($venta->estado === 'cancelada' || ($venta->estado === 'pendiente' && $venta->created_at->diffInHours(now()) > 48))
+                                        <form method="POST" action="{{ route('admin.orders.destroy', $venta->id) }}" class="m-0" onsubmit="return confirm('ATENCIÓN: ¿Estás seguro de que deseas eliminar permanentemente este registro del ERP?');">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg border border-slate-200 transition-colors bg-slate-50 shadow-sm flex items-center justify-center h-[34px] w-[34px]" title="Eliminar Registro de la Base de Datos">
+                                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Botones de Logística y Entrega --}}
+                            <div class="w-[140px] shrink-0 flex justify-start pl-3 border-l border-slate-100">
+                                @if($venta->estado !== 'entregado' && $venta->estado !== 'cancelada')
+                                    @if($venta->delivery_method === 'store_pickup')
+                                        <form method="POST" action="{{ route('admin.orders.picked_up', $venta->id) }}" class="m-0">
+                                            @csrf
+                                            <button type="submit" class="bg-emerald-600 text-white hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors flex items-center gap-1" title="Formalizar Entrega Física">
+                                                <span class="material-symbols-outlined text-[14px]">storefront</span>
+                                                Entregado
+                                            </button>
+                                        </form>
+                                    @elseif($venta->delivery_method === 'local_delivery')
+                                        <form method="POST" action="{{ route('admin.orders.delivered_locally', $venta->id) }}" class="m-0">
+                                            @csrf
+                                            <button type="submit" class="bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors flex items-center gap-1" title="Confirmar Recepción por Motorizado">
+                                                <span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                                                Entregado
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endif
-                            @endif
-                            
-                            <a href="{{ route('admin.orders.generate_invoice', $venta->id) }}" target="_blank" class="bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition-colors flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[16px]">receipt_long</span> Imprimir Factura
-                            </a>
-                            
-                            @if($venta->estado === 'cancelada' || ($venta->estado === 'pendiente' && $venta->created_at->diffInHours(now()) > 48))
-                                <form method="POST" action="{{ route('admin.orders.destroy', $venta->id) }}" class="m-0" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este pedido abandonado del registro?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-white hover:bg-red-500 p-1.5 rounded-lg border border-red-200 transition-colors bg-red-50 shadow-sm flex items-center justify-center h-[34px] w-[34px]" title="Eliminar Registro">
-                                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                                    </button>
-                                </form>
-                            @endif
+                            </div>
                         </div>
                     </td>
                 </tr>
