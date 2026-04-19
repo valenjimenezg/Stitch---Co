@@ -4,26 +4,23 @@ namespace App\Mail;
 
 use App\Models\Orden;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-/**
- * @property \App\Models\Orden $venta
- */
 class InvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public Orden $venta;
+    public $orden;
+    public $invoiceUrl;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(Orden $venta)
+    public function __construct(Orden $orden, $invoiceUrl)
     {
-        $this->venta = $venta;
+        $this->orden = $orden;
+        $this->invoiceUrl = $invoiceUrl;
     }
 
     /**
@@ -31,8 +28,9 @@ class InvoiceMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $tipo = ($this->orden->monto_abonado > 0 && $this->orden->monto_abonado < $this->orden->total_amount) ? 'Ticket de Abono' : 'Factura Oficial';
         return new Envelope(
-            subject: 'Confirmación de tu pedido #'.str_pad($this->venta->id, 5, '0', STR_PAD_LEFT).' - '.config('app.name'),
+            subject: "Tu {$tipo} - Pedido #" . str_pad($this->orden->id, 5, '0', STR_PAD_LEFT) . " adelantada exitosamente",
         );
     }
 
@@ -42,14 +40,12 @@ class InvoiceMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.factura',
+            view: 'emails.invoice',
         );
     }
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

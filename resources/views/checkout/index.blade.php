@@ -2,20 +2,240 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+/* ── Checkout Global ───────────────────────────── */
+.co-page-hdr {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 32px;
+}
+.co-back-btn {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: #f3f0ff; color: #7c3aed;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+    flex-shrink: 0;
+}
+.co-back-btn:hover { background: #ede9fe; }
+.co-step-badge {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff; font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(109,40,217,0.35);
+}
+.co-page-title {
+    font-size: 1.35rem; font-weight: 800; color: #1e1b4b;
+}
+
+/* ── Section Header ────────────────────────────── */
+.co-section-hdr {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f0ebff;
+}
+.co-section-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, #f3f0ff, #ede9fe);
+    color: #7c3aed;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.co-section-title {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: #4c1d95;
+}
+
+/* ── Zone Alert ────────────────────────────────── */
+.co-zone-alert {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 20px;
+}
+.co-zone-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ── Shipping Cards ────────────────────────────── */
+.shipping-option {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px 16px;
+    border-radius: 18px;
+    border: 2px solid #f0ebff;
+    background: #faf8ff;
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+    gap: 6px;
+}
+.shipping-option:hover {
+    border-color: #c4b5fd;
+    box-shadow: 0 4px 16px rgba(109,40,217,0.12);
+}
+.shipping-option.active,
+.shipping-option[class*="border-primary"] {
+    border-color: #7c3aed !important;
+    background: #f5f3ff !important;
+    box-shadow: 0 4px 20px rgba(109,40,217,0.2);
+}
+
+/* ── Address Block ─────────────────────────────── */
+.co-form-block {
+    background: #fff;
+    border: 1.5px solid #f0ebff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(109,40,217,0.05);
+}
+.co-label {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: #4c1d95; margin-bottom: 7px;
+}
+.co-input, .co-select {
+    width: 100%;
+    background: #f8f7ff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 13.5px; font-weight: 600; color: #1e1b4b;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: auto;
+}
+.co-input:focus, .co-select:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+    outline: none;
+    background: #fff;
+}
+.co-map-btn {
+    width: 100%; margin-top: 10px;
+    padding: 11px;
+    background: #f3f0ff;
+    color: #7c3aed;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 14px;
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+}
+.co-map-btn:hover { background: #ede9fe; border-color: #c4b5fd; }
+
+/* ── Payment Methods ───────────────────────────── */
+.payment-option {
+    display: flex; align-items: center;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1.5px solid #f0ebff;
+    background: #faf8ff;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    gap: 12px;
+}
+.payment-option:hover { border-color: #c4b5fd; background: #f5f3ff; }
+.payment-option.selected {
+    border-color: #7c3aed !important;
+    background: #f5f3ff !important;
+}
+
+/* Payment details panel */
+.payment-details {
+    margin-top: 12px;
+    background: #faf8ff;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+/* Bank info card */
+.co-bank-info {
+    background: #fff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+}
+.co-bank-info p { font-size: 13px; color: #374151; margin: 3px 0; }
+.co-bank-info strong { color: #1e1b4b; }
+
+/* Comprobante upload */
+.co-upload-panel {
+    background: #fff;
+    border: 2px dashed #c4b5fd;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: border-color .2s, background .2s;
+}
+.co-upload-panel:hover { border-color: #7c3aed; background: #faf8ff; }
+
+/* ── Order Summary (right column) ──────────────── */
+.co-summary-block {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #f0ebff;
+}
+.co-summary-item {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    font-size: 13px; color: #6b7280;
+    padding: 6px 0;
+    gap: 8px;
+}
+.co-summary-total {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding: 14px 0 0; margin-top: 8px;
+    border-top: 1px solid #f0ebff;
+}
+.co-total-big {
+    font-size: 1.75rem; font-weight: 900; color: #7c3aed;
+    letter-spacing: -.5px; line-height: 1;
+}
+.co-submit-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff; font-size: 15px; font-weight: 800;
+    border-radius: 16px; border: none; cursor: pointer;
+    box-shadow: 0 8px 24px -6px rgba(109,40,217,0.45);
+    transition: transform .2s, box-shadow .2s;
+    margin-top: 18px;
+}
+.co-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -6px rgba(109,40,217,0.55);
+}
+.co-submit-btn:active { transform: scale(.97); }
+.co-cancel-btn {
+    width: 100%; padding: 13px;
+    background: #fff5f5; color: #ef4444;
+    border: 1.5px solid #fee2e2;
+    border-radius: 16px; font-size: 14px; font-weight: 700;
+    cursor: pointer; margin-top: 10px;
+    transition: background .2s;
+}
+.co-cancel-btn:hover { background: #fee2e2; }
+</style>
 @endpush
 
 @section('title', 'Checkout — Stitch & Co')
 
 @section('content')
 
-<div class="flex items-center gap-3 mb-8">
-    <a href="{{ route('cart.index') }}" class="text-slate-400 hover:text-primary">
-        <span class="material-symbols-outlined">arrow_back</span>
+<div class="co-page-hdr">
+    <a href="{{ route('cart.index') }}" class="co-back-btn">
+        <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
     </a>
-    <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
-        <span class="h-8 w-8 bg-primary/20 text-primary rounded-full flex items-center justify-center text-sm font-bold">1</span>
-        Información de Pago y Envío
-    </h1>
+    <span class="co-step-badge">1</span>
+    <h1 class="co-page-title">Información de Pago y Envío</h1>
 </div>
 
 @if($errors->any())
@@ -38,21 +258,20 @@
 
             {{-- Sección de Modalidad --}}
             <section>
-                <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3">
-                    <div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                        <span class="material-symbols-outlined text-sm">local_shipping</span>
+                <div class="co-section-hdr">
+                    <div class="co-section-icon">
+                        <span class="material-symbols-outlined" style="font-size:18px;">local_shipping</span>
                     </div>
-                    <h3 class="text-[15px] font-black uppercase tracking-wider text-slate-800">Método de Entrega</h3>
+                    <h3 class="co-section-title">Método de Entrega</h3>
                 </div>
 
-                {{-- Banner de Zona Exclusiva --}}
-                <div class="bg-gradient-to-r from-amber-50 to-orange-50/30 border border-amber-200/50 rounded-xl p-4 flex items-start gap-4 shadow-sm mb-6">
-                    <div class="bg-white rounded-full p-1.5 shadow-sm shrink-0">
-                        <span class="material-symbols-outlined text-amber-500 fill-current block text-lg">location_on</span>
+                <div class="co-zone-alert">
+                    <div class="co-zone-icon">
+                        <span class="material-symbols-outlined" style="font-size:18px; color:#f59e0b;">location_on</span>
                     </div>
                     <div>
-                        <h4 class="font-extrabold text-amber-900 text-sm mb-0.5">Operamos solo en la Parroquia Guanare</h4>
-                        <p class="text-xs text-amber-800/80 font-medium leading-relaxed">Nuestros despachos (Delivery o Retiro) están limitados por el momento exclusivamente a la Parroquia Guanare, Portuguesa (Incluye la capital y zonas adyacentes).</p>
+                        <h4 style="font-size:13px; font-weight:800; color:#78350f; margin-bottom:3px;">Operamos solo en la Parroquia Guanare</h4>
+                        <p style="font-size:11.5px; color:#92400e; line-height:1.5;">Nuestros despachos (Delivery o Retiro) están limitados por el momento exclusivamente a la Parroquia Guanare, Portuguesa (Incluye la capital y zonas adyacentes).</p>
                     </div>
                 </div>
 
@@ -83,11 +302,11 @@
 
             {{-- Sección de Dirección --}}
             <section id="direccion-container" class="transition-all duration-300">
-                <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3">
-                    <div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                        <span class="material-symbols-outlined text-sm">home_pin</span>
+                <div class="co-section-hdr">
+                    <div class="co-section-icon">
+                        <span class="material-symbols-outlined" style="font-size:18px;">home_pin</span>
                     </div>
-                    <h3 class="text-[15px] font-black uppercase tracking-wider text-slate-800">Dirección de Entrega</h3>
+                    <h3 class="co-section-title">Dirección de Entrega</h3>
                 </div>
 
                 @if(!empty($direcciones))
@@ -109,25 +328,23 @@
                     </div>
                 @endif
 
-                <div class="space-y-5 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm" id="nueva-direccion">
+                <div class="co-form-block space-y-5" id="nueva-direccion">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-slate-800 mb-2">Ciudad de Destino *</label>
-                        <div class="w-full bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex items-center justify-between cursor-not-allowed select-none">
-                            <div class="flex items-center gap-2.5 text-slate-900">
-                                <span class="material-symbols-outlined text-lg text-slate-500">location_city</span>
-                                <span class="font-bold text-sm">Guanare, Portuguesa</span>
+                        <label class="co-label">Ciudad de Destino *</label>
+                        <div class="co-input flex items-center justify-between cursor-not-allowed">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size:18px; color:#7c3aed;">location_city</span>
+                                <span style="font-size:13.5px; font-weight:700; color:#1e1b4b;">Guanare, Portuguesa</span>
                             </div>
-                            <span class="bg-slate-200 text-slate-500 text-[10px] px-2 py-0.5 rounded-md font-black uppercase tracking-wider">FIJO</span>
+                            <span style="background:#f3f0ff; color:#7c3aed; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; padding:3px 8px; border-radius:50px;">FIJO</span>
                         </div>
-                        <!-- Input real oculto -->
                         <input type="hidden" name="ciudad" value="Guanare" />
                     </div>
 
                     <div id="sector-container">
-                        <label class="block text-xs font-bold uppercase tracking-wide text-slate-800 mb-2">Barrio / Urb. / Sector *</label>
+                        <label class="co-label">Barrio / Urb. / Sector *</label>
                         <div class="relative">
-                            <select name="sector" id="sector-select" required
-                                   class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm">
+                            <select name="sector" id="sector-select" required class="co-select">
                                 <option value="" data-zona="1">Selecciona tu ubicación...</option>
                                 <optgroup label="📍 ZONA 1 (Delivery $1.00)">
                                     <option value="Casco Central" data-zona="1">Casco Central / Centro</option>
@@ -199,33 +416,38 @@
                          Lo sentimos, nuestro delivery no llega a esta zona. Sugerimos <a href="#" onclick="document.querySelector('input[value=\'retiro_tienda\']').click(); document.querySelector(`input[value='retiro_tienda']`).closest('.shipping-option').scrollIntoView({behavior:'smooth'}); return false;" class="underline hover:text-rose-700">Retiro en Tienda</a>.
                     </p>
 
-                    <div class="mt-4">
-                        <label class="block text-xs font-bold uppercase tracking-wide text-slate-800 mb-2">Dirección Exacta y Referencia *</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                <span class="material-symbols-outlined text-[18px]">share_location</span>
+                        <div class="mt-4">
+                            <label class="co-label">Dirección Exacta y Referencia *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none" style="color:#7c3aed;">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">share_location</span>
+                                </div>
+                                <input name="calle" type="text" value="{{ old('calle', old('referencia')) }}" id="calle-input"
+                                       placeholder="Ej: Carrera 5, Casa #12, Portón Negro..."
+                                       class="co-input" style="padding-left:42px;" required/>
                             </div>
-                            <!-- Cambiamos name="referencia" a "calle" para mantener compatibilidad con el backend requerido -->
-                            <input name="calle" type="text" value="{{ old('calle', old('referencia')) }}" id="calle-input"
-                                   placeholder="Ej: Carrera 5, Casa #12, Portón Negro..."
-                                   class="w-full pl-10 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm" required/>
+
+                            <button type="button" onclick="checkoutMap.openMapModal()" class="co-map-btn">
+                                <span class="material-symbols-outlined" style="font-size:18px;">travel_explore</span>
+                                Usar mi ubicación o buscar en el Mapa
+                            </button>
                         </div>
-                        
-                        <!-- Botón para invocar la API del Mapa -->
-                        <button type="button" onclick="checkoutMap.openMapModal()" class="w-full mt-3 py-2.5 bg-indigo-50 hover:bg-primary/10 text-primary text-sm font-bold rounded-xl border border-indigo-200 transition-colors flex items-center justify-center gap-2 shadow-sm">
-                            <span class="material-symbols-outlined text-[18px]">travel_explore</span> Usar mi ubicación o buscar en el Mapa
-                        </button>
-                    </div>
 
                 </div>
             </section>
 
-            {{-- Módulo Condicional de Pagos a Crédito (Layaway ERP) - Movido al espacio en blanco de la Columna 1 --}}
-            <div id="abono-module" class="hidden mt-6 p-6 bg-primary/5 border-2 border-primary/20 rounded-2xl shadow-sm relative overflow-hidden transition-all duration-300">
-                <div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-black tracking-wider uppercase px-4 py-1.5 rounded-bl-xl shadow-sm">SISTEMA DE CRÉDITO</div>
-                
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">payments</span> Pagos a Plazos
+            {{-- Módulo Condicional de Pagos a Crédito (Layaway ERP) --}}
+            <div id="abono-module" class="hidden mt-6 relative overflow-hidden transition-all duration-300"
+                 style="background: linear-gradient(135deg, #f5f3ff, #ede9fe); border: 1.5px solid #ddd6fe; border-radius: 20px; padding: 22px 20px;">
+
+                {{-- Badge sistema crédito --}}
+                <div style="position:absolute; top:0; right:0; background:linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff; font-size:9px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; padding:5px 14px; border-radius:0 20px 0 14px;">
+                    SISTEMA DE CRÉDITO
+                </div>
+
+                <h3 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:#4c1d95; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:#7c3aed;">payments</span>
+                    Pagos a Plazos
                 </h3>
 
                 <label class="flex items-start gap-3 cursor-pointer group mb-1">
@@ -273,7 +495,7 @@
 
         {{-- Column 2: Payment --}}
         <div class="space-y-6">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Método de Pago</h3>
+            <h3 class="co-section-title" style="margin-bottom:14px;">Método de Pago</h3>
             <div class="space-y-3" id="payment-methods">
                 <label class="payment-option flex items-center p-4 border-2 border-primary bg-primary/5 rounded-xl cursor-pointer transition-colors" data-target="pago-movil-details">
                     <input checked name="metodo" type="radio" value="pago_movil" class="text-primary focus:ring-primary mr-4 peer"/>
@@ -294,18 +516,16 @@
             <!-- Formularios desplegables -->
             <div class="mt-4">
                 <!-- Pago Móvil Details -->
-                <div id="pago-movil-details" class="payment-details hidden space-y-4 bg-primary/5 p-6 rounded-2xl border-2 border-primary/20 shadow-sm transition-all">
-                    <div class="bg-white p-4 rounded-lg border border-slate-100 mb-4 shadow-sm text-sm">
-                        <p class="font-bold text-slate-900 mb-2">Realiza tu pago a:</p>
-                        <ul class="space-y-1 text-slate-800 font-medium">
-                            <li><strong>Banco:</strong> Banesco (0134)</li>
-                            <li><strong>Teléfono:</strong> 0424-5659154</li>
-                            <li><strong>RIF:</strong> J-12345678-9</li>
-                        </ul>
+                <div id="pago-movil-details" class="payment-details hidden space-y-4">
+                    <div class="co-bank-info">
+                        <p style="font-weight:800; color:#1e1b4b; margin-bottom:8px; font-size:13px;">Realiza tu pago a:</p>
+                        <p><strong>Banco:</strong> Banesco (0134)</p>
+                        <p><strong>Teléfono:</strong> 0424-5659154</p>
+                        <p><strong>RIF:</strong> J-12345678-9</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1.5 text-slate-700">Banco Emisor *</label>
-                        <select name="banco_pago" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 focus:ring-primary focus:border-primary">
+                        <label class="co-label">Banco Emisor *</label>
+                        <select name="banco_pago" class="co-select">
                             <option value="">Selecciona tu banco</option>
                             <option value="0102 - Banco de Venezuela">0102 - Banco de Venezuela</option>
                             <option value="0134 - Banesco">0134 - Banesco</option>
@@ -354,15 +574,13 @@
                 </div>
 
                 <!-- Transferencia Details -->
-                <div id="transferencia-details" class="payment-details hidden space-y-4 bg-primary/5 p-6 rounded-2xl border-2 border-primary/20 shadow-sm transition-all">
-                    <div class="bg-white p-4 rounded-lg border border-slate-100 mb-4 shadow-sm text-sm">
-                        <p class="font-bold text-slate-900 mb-2">Datos para transferencia:</p>
-                        <ul class="space-y-1 text-slate-800 font-medium">
-                            <li><strong>Banco:</strong> Banesco</li>
-                            <li><strong>Cuenta:</strong> 0134-0123-12-1234567890</li>
-                            <li><strong>Titular:</strong> Stitch & Co C.A.</li>
-                            <li><strong>RIF:</strong> J-12345678-9</li>
-                        </ul>
+                <div id="transferencia-details" class="payment-details hidden space-y-4">
+                    <div class="co-bank-info">
+                        <p style="font-weight:800; color:#1e1b4b; margin-bottom:8px; font-size:13px;">Datos para transferencia:</p>
+                        <p><strong>Banco:</strong> Banesco</p>
+                        <p><strong>Cuenta:</strong> 0134-0123-12-1234567890</p>
+                        <p><strong>Titular:</strong> Stitch & Co C.A.</p>
+                        <p><strong>RIF:</strong> J-12345678-9</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1.5 text-slate-700">Banco Emisor *</label>
@@ -414,10 +632,10 @@
                     </div>
                 </div>
 
-                <!-- Input Componente de Comprobante (Universal para pagos offline) -->
-                <div id="comprobante-upload-details" class="payment-details hidden space-y-3 bg-white p-6 rounded-2xl border-2 border-dashed border-primary/40 hover:border-primary/60 transition-colors">
-                    <label class="block text-sm font-bold text-primary text-center mb-1">Adjuntar Comprobante (Obligatorio)</label>
-                    <p class="text-xs text-slate-500 text-center mb-3">Sube la captura de pantalla de la transferencia o pago móvil (JPG, PNG, PDF)</p>
+                <div id="comprobante-upload-details" class="payment-details hidden co-upload-panel" style="border-style:dashed;">
+                    <span class="material-symbols-outlined" style="font-size:32px; color:#c4b5fd; display:block; margin-bottom:8px;">upload_file</span>
+                    <label class="co-label" style="text-align:center; color:#7c3aed;">Adjuntar Comprobante (Obligatorio)</label>
+                    <p style="font-size:11px; color:#9ca3af; margin-bottom:12px;">Sube la captura de pantalla de la transferencia o pago móvil (JPG, PNG, PDF)</p>
                     <input type="file" name="comprobante" accept="image/*,.pdf" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"/>
                 </div>
             </div>
@@ -603,36 +821,29 @@
                 });
             </script>
 
-            {{-- Order summary --}}
-            <div class="mt-8 pt-6 border-t border-slate-100">
-                <h4 class="font-bold text-slate-900 mb-4">Resumen</h4>
-                
+            <div class="co-summary-block">
+                <h4 style="font-size:14px; font-weight:800; color:#1e1b4b; margin-bottom:12px;">Resumen del pedido</h4>
+
                 <div id="checkout-summary-list"></div>
-                
-                <div class="flex justify-between flex-row items-end mt-4 pt-4 border-t border-slate-200">
-                    <span class="text-slate-900 font-black text-lg mb-1">Total a pagar</span>
-                    <div id="checkout-total-price" class="text-right flex flex-col items-end">
-                        <span class="text-2xl font-black text-primary">Bs. 0.00</span>
+
+                <div class="co-summary-total">
+                    <span style="font-size:15px; font-weight:800; color:#1e1b4b;">Total a pagar</span>
+                    <div id="checkout-total-price" class="text-right">
+                        <span class="co-total-big">Bs. 0.00</span>
                     </div>
                 </div>
-                
-                <div class="mt-4 p-3 bg-amber-50 border border-amber-100/60 rounded-xl flex gap-3 text-xs text-amber-700">
-                    <span class="material-symbols-outlined text-amber-500 text-lg mt-0.5">info</span>
-                    <p>Total calculado a la tasa BCV oficial: <strong class="font-black">Bs. {{ number_format(bcv_rate(), 2, ',', '.') }}</strong><br>Esta tasa quedará registrada en su factura al momento de presionar Finalizar Compra.</p>
+
+                <div style="margin-top:12px; padding:12px 14px; background:#fffbeb; border:1px solid #fde68a; border-radius:14px; display:flex; gap:10px; font-size:11px; color:#92400e;">
+                    <span class="material-symbols-outlined" style="font-size:16px; color:#f59e0b; flex-shrink:0; margin-top:1px;">info</span>
+                    <p>Total calculado a la tasa BCV oficial: <strong style="color:#78350f;">Bs. {{ number_format(bcv_rate(), 2, ',', '.') }}</strong><br>Esta tasa quedará registrada en su factura al momento de presionar Finalizar Compra.</p>
                 </div>
 
+                <button type="submit" class="co-submit-btn">Finalizar compra</button>
 
-                <button type="submit"
-                        class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all active:scale-95 mt-6">
-                    Finalizar compra
-                </button>
-                
-                <button type="button" onclick="cancelTransaction()" class="w-full py-4 mt-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl transition-all">
-                    Cancelar Compra
-                </button>
+                <button type="button" onclick="cancelTransaction()" class="co-cancel-btn">Cancelar Compra</button>
 
-                <p class="text-[10px] text-center text-slate-400 mt-4">
-                    Al hacer clic, aceptas nuestros <a class="underline" href="#">Términos y Condiciones</a>
+                <p style="font-size:10px; text-align:center; color:#9ca3af; margin-top:14px;">
+                    Al hacer clic, aceptas nuestros <a style="text-decoration:underline;" href="#">Términos y Condiciones</a>
                 </p>
             </div>
         </div>

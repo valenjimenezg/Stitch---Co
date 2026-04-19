@@ -40,7 +40,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased font-sans min-h-screen py-0 sm:py-10 print:py-0 print:bg-white invoice-pattern">
 
-    <main class="max-w-4xl mx-auto bg-white p-6 sm:p-12 sm:border border-slate-200 sm:rounded-sm sm:shadow-2xl w-full print:shadow-none print:rounded-none relative overflow-hidden">
+    <main class="max-w-4xl mx-auto bg-white p-6 sm:p-12 sm:border border-slate-200 sm:rounded-sm sm:shadow-2xl w-full print:border-none print:shadow-none print:rounded-none relative overflow-hidden print:p-4 print:m-0">
         
         {{-- Deco superior (Banda de color) --}}
         <div class="absolute top-0 left-0 right-0 h-2 bg-slate-900 print:hidden"></div>
@@ -67,8 +67,10 @@
                     <p class="flex justify-between md:justify-end gap-4"><span class="font-bold text-slate-400 uppercase tracking-wider">Hora:</span> <span>{{ $orden->created_at->format('h:i A') }}</span></p>
                     <p class="flex justify-between md:justify-end gap-4 items-center">
                         <span class="font-bold text-slate-400 uppercase tracking-wider">Estado:</span> 
-                        @if($orden->estado == 'entregado' || $orden->estado == 'completado')
-                            <span class="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">PAGADA</span>
+                        @if($orden->estado == 'entregado' || $orden->estado == 'completado' || $orden->estado == 'pagado')
+                            <span class="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">FINALIZADO</span>
+                        @elseif($orden->estado == 'procesando')
+                            <span class="inline-block px-2 py-0.5 bg-blue-100 text-blue-800 font-bold border border-blue-200">ABONADO</span>
                         @else
                             <span class="inline-block px-2 py-0.5 bg-amber-100 text-amber-800 font-bold border border-amber-200">{{ strtoupper($orden->estado) }}</span>
                         @endif
@@ -213,7 +215,7 @@
         </section>
 
         {{-- Footer QR y Firmas --}}
-        <footer class="mt-16 pt-8 border-t-2 border-slate-900 flex justify-between items-end print-break-inside-avoid">
+        <footer class="mt-10 print:mt-6 pt-6 print:pt-4 border-t-2 border-slate-900 flex justify-between items-end print-break-inside-avoid">
             <div class="flex items-center gap-4">
                 <div class="p-1.5 bg-white border-2 border-slate-900">
                     <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="Código QR" class="w-20 h-20">

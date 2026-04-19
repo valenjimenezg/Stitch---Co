@@ -36,7 +36,9 @@
             
             <!-- Detalles del Producto -->
             <div class="product-card">
-                @if($variante->imagen)
+                @if($variante->imagen && file_exists(public_path($variante->imagen)))
+                    <img src="{{ $message->embed(public_path($variante->imagen)) }}" alt="{{ $variante->producto->nombre ?? 'Producto' }}" class="product-img">
+                @elseif($variante->imagen)
                     <img src="{{ url($variante->imagen) }}" alt="Producto" class="product-img">
                 @endif
                 <h3 class="product-name">{{ $variante->producto->nombre ?? 'Tu producto favorito' }}</h3>

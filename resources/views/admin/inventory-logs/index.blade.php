@@ -96,7 +96,7 @@
                         @else
                             <div class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-slate-400 text-[18px]">smart_toy</span>
-                                Sistema ERP
+                                Sistema Automático
                             </div>
                         @endif
                     </td>

@@ -21,7 +21,8 @@ class CategoryController extends Controller
         $searchSlug = $dbCategoryMap[$slug] ?? $slug;
         $searchSlugTitle = \Illuminate\Support\Str::headline($searchSlug);
         
-        $variantes = ProductoVariante::with('producto.categoria')
+        $variantes = ProductoVariante::with(['producto.categoria', 'producto.variantes'])
+            ->whereNull('parent_id')
             ->whereHas('producto.categoria', function($q) use ($searchSlug, $searchSlugTitle) {
                 $q->where('nombre', $searchSlug)
                   ->orWhere('nombre', $searchSlugTitle);

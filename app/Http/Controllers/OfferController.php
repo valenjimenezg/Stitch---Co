@@ -8,7 +8,8 @@ class OfferController extends Controller
 {
     public function index()
     {
-        $variantes = ProductoVariante::with('producto')
+        $variantes = ProductoVariante::with(['producto.variantes', 'producto.categoria'])
+            ->whereNull('parent_id')
             ->where('en_oferta', true)
             ->paginate(12);
 

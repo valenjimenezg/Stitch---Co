@@ -60,6 +60,11 @@
                             <textarea name="descripcion" rows="3" placeholder="Descripción del producto..."
                                       class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 resize-none">{{ old('descripcion') }}</textarea>
                         </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Instrucciones de Uso</label>
+                            <textarea name="instrucciones_uso" rows="3" placeholder="Ej: Lavar a mano, planchar a temperatura baja..."
+                                      class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 resize-none">{{ old('instrucciones_uso') }}</textarea>
+                        </div>
                     </div>
 
                     <div>
@@ -105,15 +110,9 @@
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Unidad Medida *</label>
                         <select name="unidad_medida" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4" required>
-                            <option value="Unidad" {{ old('unidad_medida') == 'Unidad' ? 'selected' : '' }}>Unidad (Botones, Cierres, Agujas...)</option>
-                            <option value="Metro" {{ old('unidad_medida') == 'Metro' ? 'selected' : '' }}>Metro (Telas, Cierres continuos...)</option>
-                            <option value="Rollo" {{ old('unidad_medida') == 'Rollo' ? 'selected' : '' }}>Rollo (Hilos, Cintas, Elásticos...)</option>
-                            <option value="Madeja" {{ old('unidad_medida') == 'Madeja' ? 'selected' : '' }}>Madeja (Lanas...)</option>
-                            <option value="Ovillo" {{ old('unidad_medida') == 'Ovillo' ? 'selected' : '' }}>Ovillo (Lanas...)</option>
-                            <option value="Tubino" {{ old('unidad_medida') == 'Tubino' ? 'selected' : '' }}>Tubino (Hilos...)</option>
-                            <option value="Blíster" {{ old('unidad_medida') == 'Blíster' ? 'selected' : '' }}>Blíster (Agujas...)</option>
-                            <option value="Pieza" {{ old('unidad_medida') == 'Pieza' ? 'selected' : '' }}>Pieza general</option>
-                            <option value="Ninguna" {{ old('unidad_medida') == 'Ninguna' ? 'selected' : '' }}>Ninguna</option>
+                            @foreach(config('stock.unidades') as $valor => $etiqueta)
+                                <option value="{{ $valor }}" {{ old('unidad_medida') == $valor ? 'selected' : '' }}>{{ $etiqueta }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div>
@@ -166,7 +165,7 @@
         <div class="space-y-6">
             <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                 <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">image</span> Imagen
+                    <span class="material-symbols-outlined text-primary">image</span> Imagen Principal
                 </h3>
                 <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-primary transition-colors">
                     <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">upload_file</span>
@@ -177,6 +176,21 @@
                     </label>
                 </div>
                 <img id="preview" src="#" alt="Preview" class="mt-4 rounded-lg w-full object-cover hidden max-h-48"/>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">photo_library</span> Galería Multimedia
+                </h3>
+                <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-primary transition-colors">
+                    <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">perm_media</span>
+                    <p class="text-xs text-slate-500 mb-3">Sube varias imágenes y videos (Máx 10MB)</p>
+                    <label class="cursor-pointer bg-slate-100 text-slate-600 font-semibold text-sm px-4 py-2 rounded-lg hover:bg-slate-200 transition-all">
+                        Seleccionar archivos
+                        <input type="file" name="galeria[]" multiple accept="image/*,video/mp4,video/quicktime" class="hidden" onchange="document.getElementById('gallery_count').textContent = this.files.length + ' archivos seleccionados';"/>
+                    </label>
+                </div>
+                <p id="gallery_count" class="text-xs text-primary font-bold mt-2 text-center"></p>
             </div>
 
             <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">

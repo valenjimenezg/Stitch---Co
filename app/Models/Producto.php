@@ -14,7 +14,13 @@ class Producto extends Model
     protected $fillable = [
         'categoria_id',
         'nombre',
-        'descripcion'
+        'descripcion',
+        'instrucciones_uso',
+        'galeria'
+    ];
+
+    protected $casts = [
+        'galeria' => 'array',
     ];
 
     public function categoria()
@@ -25,5 +31,10 @@ class Producto extends Model
     public function variantes()
     {
         return $this->hasMany(ProductoVariante::class, 'producto_id');
+    }
+
+    public function comentarios()
+    {
+        return $this->hasMany(ComentarioProducto::class, 'producto_id');
     }
 }

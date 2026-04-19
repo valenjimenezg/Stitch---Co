@@ -28,10 +28,21 @@ class User extends Authenticatable
         ];
     }
 
+    // Accessor para compatibilidad con ->name
+    public function getNameAttribute(): string
+    {
+        return trim(($this->nombre ?? '') . ' ' . ($this->apellido ?? ''));
+    }
+
     // Relaciones
     public function ordenes()
     {
         return $this->hasMany(Orden::class);
+    }
+
+    public function comentarios()
+    {
+        return $this->hasMany(ComentarioProducto::class, 'user_id');
     }
 
     // Helpers

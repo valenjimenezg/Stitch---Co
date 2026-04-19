@@ -97,10 +97,27 @@
                     <p class="text-2xl font-black leading-none" style="color: #dc2626;">{{ $stockBajo ?? 0 }} <span class="text-xs font-medium" style="color: #f87171;">ítems críticos</span></p>
                 </div>
             </div>
-            <div class="mt-5 border-t pt-3" style="border-color: #fee2e2;">
-                <a href="{{ route('admin.products.restock') }}" target="_blank" class="flex items-center justify-center w-full py-2 hover:underline text-xs font-bold gap-2 z-10 relative" style="color: #dc2626;">
-                    <span class="material-symbols-outlined text-[16px]">contact_phone</span> Contactar Proveedores
+            <div class="mt-4 border-t pt-3 flex flex-col gap-2 relative z-10" style="border-color: #fee2e2;">
+                <!-- Link a Proveedores / Restock normal -->
+                <a href="{{ route('admin.products.restock') }}" target="_blank" class="flex items-center justify-center w-full py-1 hover:underline text-[11px] font-bold gap-1.5" style="color: #ef4444;">
+                    <span class="material-symbols-outlined text-[14px]">contact_phone</span> Centro de Proveedores
                 </a>
+
+                <!-- Opciones Gerencia -->
+                <div class="flex gap-2 mt-1">
+                    @php
+                        $pdfAlertaUrl = route('admin.products.alerts_pdf');
+                        $publicPdfAlertaUrl = str_replace(['localhost', '127.0.0.1'], getHostByName(getHostName()), $pdfAlertaUrl);
+                        $ownerPhone = '584245659154'; // Dueño
+                        $ownerMsg = urlencode("Hola Gerencia, te remito el Reporte General de productos en estado crítico para reposición. Por favor, revisa el PDF aquí y confírmame si autorizas iniciar solicitud a proveedores: {$publicPdfAlertaUrl}");
+                    @endphp
+                    <a href="{{ $pdfAlertaUrl }}" target="_blank" title="Imprimir PDF Dueño" class="flex-1 flex justify-center items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg py-1.5 transition-colors border border-red-100 text-[9px] font-bold uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-[14px]">print</span> PDF
+                    </a>
+                    <a href="https://wa.me/{{ $ownerPhone }}?text={{ $ownerMsg }}" target="_blank" title="Enviar WhatsApp a Gerencia" class="flex-1 flex justify-center items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg py-1.5 transition-colors border border-blue-100 text-[9px] font-bold uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-[14px]">send_to_mobile</span> Ger (WA)
+                    </a>
+                </div>
             </div>
             <div class="absolute right-0 top-0 w-2 h-full" style="background: #ef4444;"></div>
         </div>

@@ -35,9 +35,18 @@
     {{-- Sidebar --}}
     <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 border-r border-slate-800">
         <div class="p-6 flex items-center gap-3">
-            <x-stitch-logo size="w-6 h-8" :iconOnly="true" />
+            {{-- Aguja SVG compacta --}}
+            <div style="width: 16px; height: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 80" fill="none">
+                    <rect x="10" y="8" width="4" height="52" rx="2" fill="#F5C518"/>
+                    <ellipse cx="12" cy="12" rx="2.2" ry="3.5" fill="#F5C518" stroke="#c49a00" stroke-width="0.8"/>
+                    <ellipse cx="12" cy="12" rx="1" ry="1.8" fill="white"/>
+                    <polygon points="10,60 14,60 12,76" fill="#F5C518"/>
+                    <path d="M14 12 Q22 20 18 35 Q14 48 20 62" stroke="#c4a8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
             <div>
-                <h1 class="text-lg font-bold leading-tight">Stitch &amp; Co</h1>
+                <h1 style="font-size: 1.1rem; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.1;">Stitch <span style="color: #F5C518;">&amp;</span> Co.</h1>
                 <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Admin Panel</p>
             </div>
         </div>
@@ -117,6 +126,17 @@
                            class="{{ request()->routeIs('admin.comunidad') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                             <span class="material-symbols-outlined">forum</span>
                             Comunidad
+                        </a>
+                        @php $resenasPendientes = \App\Models\ComentarioProducto::where('aprobado', false)->count(); @endphp
+                        <a href="{{ route('admin.reviews.index') }}"
+                           class="{{ request()->routeIs('admin.reviews.*') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">rate_review</span>
+                            Reseñas
+                            @if($resenasPendientes > 0)
+                                <span class="ml-auto bg-amber-400 text-amber-900 text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                                    {{ $resenasPendientes }}
+                                </span>
+                            @endif
                         </a>
                     </div>
                 </div>

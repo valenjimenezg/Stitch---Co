@@ -1,133 +1,314 @@
 @extends('layouts.app')
-
 @section('title', 'Mi Perfil — Stitch & Co')
+
+@push('styles')
+<style>
+/* ── Profile Layout ──────────────────────────────────── */
+.profile-layout { display: flex; flex-direction: column; gap: 28px; }
+@media(min-width:1024px) { .profile-layout { flex-direction: row; gap: 32px; } }
+
+/* ── Sidebar ─────────────────────────────────────────── */
+.profile-sidebar {
+    width: 100%;
+    flex-shrink: 0;
+}
+@media(min-width:1024px) { .profile-sidebar { width: 240px; } }
+
+.profile-sidebar-card {
+    background: #fff;
+    border: 1.5px solid #f0ebff;
+    border-radius: 24px;
+    padding: 24px 20px;
+    position: sticky; top: 88px;
+    box-shadow: 0 4px 20px -8px rgba(109,40,217,0.10);
+}
+
+/* Avatar */
+.profile-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff; font-size: 1.35rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(109,40,217,0.35);
+}
+.profile-user-name {
+    font-size: 14px; font-weight: 800; color: #1e1b4b; line-height: 1.2;
+}
+.profile-user-role {
+    font-size: 11px; font-weight: 600; color: #7c3aed;
+    background: #f3f0ff; padding: 2px 8px; border-radius: 50px;
+    display: inline-block; margin-top: 4px;
+}
+
+/* Nav links */
+.profile-nav { display: flex; flex-direction: column; gap: 2px; margin-top: 20px; }
+.profile-nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13.5px; font-weight: 600; color: #6b7280;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+}
+.profile-nav-link:hover { background: #f3f0ff; color: #7c3aed; }
+.profile-nav-link.active {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(109,40,217,0.28);
+}
+.profile-nav-link .material-symbols-outlined { font-size: 20px; }
+
+.profile-nav-divider { border: none; border-top: 1px solid #f0ebff; margin: 12px 0; }
+.profile-nav-logout {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13.5px; font-weight: 600; color: #ef4444;
+    background: transparent; border: none; cursor: pointer;
+    transition: background .15s;
+}
+.profile-nav-logout:hover { background: #fff5f5; }
+.profile-nav-logout .material-symbols-outlined { font-size: 20px; }
+
+/* ── Main Content Card ───────────────────────────────── */
+.profile-main { flex: 1; max-width: 720px; }
+
+.profile-page-title {
+    font-size: 1.65rem; font-weight: 900; color: #1e1b4b;
+    letter-spacing: -.4px; margin-bottom: 4px;
+}
+.profile-page-sub { font-size: 13.5px; color: #9ca3af; margin-bottom: 24px; }
+
+.profile-form-card {
+    background: #fff;
+    border: 1.5px solid #f0ebff;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 4px 20px -8px rgba(109,40,217,0.08);
+}
+
+/* Field */
+.pf-field { display: flex; flex-direction: column; gap: 6px; }
+.pf-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: #4c1d95;
+}
+.pf-label-note { font-size: 10px; font-weight: 500; color: #9ca3af; text-transform: none; letter-spacing: 0; }
+.pf-input {
+    width: 100%;
+    background: #f8f7ff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 13.5px; font-weight: 600; color: #1e1b4b;
+    height: 46px;
+    transition: border-color .2s, box-shadow .2s;
+}
+.pf-input:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+    outline: none;
+    background: #fff;
+}
+.pf-input-icon-wrap { position: relative; }
+.pf-input-icon-wrap .pf-input { padding-left: 42px; }
+.pf-input-icon {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    color: #7c3aed; font-size: 18px; pointer-events: none;
+}
+
+/* Doc duo */
+.pf-doc-wrap { display: flex; }
+.pf-select-prefix {
+    background: #f3f0ff;
+    border: 1.5px solid #ede9fe;
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+    padding: 0 12px;
+    font-size: 13px; font-weight: 700; color: #7c3aed;
+    height: 46px;
+    transition: border-color .2s;
+}
+.pf-select-prefix:focus { border-color: #7c3aed; outline: none; }
+.pf-doc-wrap .pf-input { border-radius: 0 12px 12px 0; }
+
+/* Divider */
+.pf-section-divider {
+    border: none; border-top: 1px solid #f0ebff;
+    margin: 8px 0;
+}
+
+/* Save button */
+.pf-save-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff; font-size: 14px; font-weight: 700;
+    border-radius: 14px; border: none; cursor: pointer;
+    box-shadow: 0 6px 20px -6px rgba(109,40,217,0.45);
+    transition: transform .2s, box-shadow .2s;
+}
+.pf-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px -6px rgba(109,40,217,0.52);
+}
+.pf-save-btn:active { transform: scale(.97); }
+</style>
+@endpush
 
 @section('content')
 
-<div class="flex flex-col lg:flex-row gap-10">
+<div class="profile-layout">
 
-    {{-- Sidebar --}}
-    <aside class="w-full lg:w-64 flex-shrink-0">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-24">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="size-14 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center text-primary font-black text-xl">
+    {{-- ── Sidebar ──────────────────────────────────────── --}}
+    <aside class="profile-sidebar">
+        <div class="profile-sidebar-card">
+
+            {{-- Avatar + Nombre --}}
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:4px;">
+                <div class="profile-avatar">
                     {{ strtoupper(substr(auth()->user()->nombre, 0, 1)) }}
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900">{{ auth()->user()->nombre }} {{ auth()->user()->apellido }}</h3>
-                    <p class="text-xs font-medium text-primary">Cliente</p>
+                    <div class="profile-user-name">{{ auth()->user()->nombre }} {{ auth()->user()->apellido }}</div>
+                    <span class="profile-user-role">Cliente</span>
                 </div>
             </div>
-            <nav class="flex flex-col gap-1">
+
+            {{-- Nav --}}
+            <nav class="profile-nav">
                 <a href="{{ route('profile.index') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors {{ request()->routeIs('profile.index') ? 'bg-primary text-white' : 'text-slate-600 hover:bg-primary/5 hover:text-primary' }}">
-                    <span class="material-symbols-outlined">person</span> Información Personal
+                   class="profile-nav-link {{ request()->routeIs('profile.index') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined">person</span>
+                    Información Personal
                 </a>
                 <a href="{{ route('profile.orders') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors {{ request()->routeIs('profile.orders') ? 'bg-primary text-white' : 'text-slate-600 hover:bg-primary/5 hover:text-primary' }}">
-                    <span class="material-symbols-outlined">shopping_bag</span> Mis Pedidos
+                   class="profile-nav-link {{ request()->routeIs('profile.orders') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                    Mis Pedidos
                 </a>
                 <a href="{{ route('wishlist.index') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-primary/5 hover:text-primary font-medium transition-colors">
-                    <span class="material-symbols-outlined">favorite</span> Lista de Deseos
+                   class="profile-nav-link {{ request()->routeIs('wishlist.index') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined">favorite</span>
+                    Lista de Deseos
                 </a>
-                <div class="border-t border-slate-100 mt-4 pt-4">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-rose-500 hover:bg-rose-50 font-medium transition-colors">
-                            <span class="material-symbols-outlined">logout</span> Cerrar Sesión
-                        </button>
-                    </form>
-                </div>
+
+                <hr class="profile-nav-divider">
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="profile-nav-logout">
+                        <span class="material-symbols-outlined">logout</span>
+                        Cerrar Sesión
+                    </button>
+                </form>
             </nav>
         </div>
     </aside>
 
-    {{-- Main Content --}}
-    <section class="flex-1 max-w-3xl">
-        <div class="mb-8">
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Información Personal</h1>
-            <p class="text-slate-500 mt-2">Gestiona los datos de tu cuenta.</p>
-        </div>
+    {{-- ── Main Content ─────────────────────────────────── --}}
+    <section class="profile-main">
+
+        <h1 class="profile-page-title">Información Personal</h1>
+        <p class="profile-page-sub">Gestiona los datos de tu cuenta.</p>
 
         @if(session('success'))
-            <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-3 rounded-lg">
+            <div style="margin-bottom:20px; display:flex; align-items:center; gap:10px; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; font-size:13px; padding:12px 16px; border-radius:14px;">
+                <span class="material-symbols-outlined" style="font-size:18px; color:#22c55e;">check_circle</span>
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
-            <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
+        <div class="profile-form-card">
+            <form method="POST" action="{{ route('profile.update') }}" class="space-y-5">
                 @csrf @method('PATCH')
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Nombre</label>
+                {{-- Nombre + Apellido --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="pf-field">
+                        <label class="pf-label">Nombre</label>
                         <input name="nombre" type="text" value="{{ old('nombre', auth()->user()->nombre) }}"
-                               class="rounded-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all" required/>
-                        @error('nombre')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
+                               class="pf-input" required/>
+                        @error('nombre')<p style="font-size:11px; color:#ef4444; margin-top:2px;">{{ $message }}</p>@enderror
                     </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Apellido</label>
+                    <div class="pf-field">
+                        <label class="pf-label">Apellido</label>
                         <input name="apellido" type="text" value="{{ old('apellido', auth()->user()->apellido) }}"
-                               class="rounded-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all" required/>
-                        @error('apellido')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
+                               class="pf-input" required/>
+                        @error('apellido')<p style="font-size:11px; color:#ef4444; margin-top:2px;">{{ $message }}</p>@enderror
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Correo Electrónico</label>
-                    <div class="relative">
-                        <span class="material-symbols-outlined absolute left-4 top-3 text-slate-400 text-xl">mail</span>
+                {{-- Email --}}
+                <div class="pf-field">
+                    <label class="pf-label">Correo Electrónico</label>
+                    <div class="pf-input-icon-wrap">
+                        <span class="material-symbols-outlined pf-input-icon">mail</span>
                         <input name="email" type="email" value="{{ old('email', auth()->user()->email) }}"
-                               class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary h-12 pl-12 pr-4 transition-all" required/>
+                               class="pf-input" required/>
                     </div>
-                    @error('email')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
+                    @error('email')<p style="font-size:11px; color:#ef4444; margin-top:2px;">{{ $message }}</p>@enderror
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Documento de Identidad <span class="text-rose-500">*</span></label>
-                        <div class="flex">
-                            <select name="tipo_documento" class="rounded-l-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-3 border-r-0 transition-all text-slate-700">
+                {{-- Documento + Teléfono --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="pf-field">
+                        <label class="pf-label">Documento de Identidad <span style="color:#ef4444;">*</span></label>
+                        <div class="pf-doc-wrap">
+                            <select name="tipo_documento" class="pf-select-prefix">
                                 <option value="V" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'V' ? 'selected' : '' }}>V</option>
                                 <option value="E" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'E' ? 'selected' : '' }}>E</option>
                                 <option value="J" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'J' ? 'selected' : '' }}>J</option>
                                 <option value="G" {{ old('tipo_documento', auth()->user()->tipo_documento) == 'G' ? 'selected' : '' }}>G</option>
                             </select>
-                            <input name="documento_identidad" type="text" value="{{ old('documento_identidad', auth()->user()->documento_identidad) }}"
-                                   class="w-full rounded-r-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all" required/>
+                            <input name="documento_identidad" type="text"
+                                   value="{{ old('documento_identidad', auth()->user()->documento_identidad) }}"
+                                   class="pf-input" required/>
                         </div>
-                        @error('documento_identidad')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
+                        @error('documento_identidad')<p style="font-size:11px; color:#ef4444; margin-top:2px;">{{ $message }}</p>@enderror
                     </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Teléfono (opcional)</label>
-                        <input name="telefono" type="tel" value="{{ old('telefono', auth()->user()->telefono) }}"
-                               class="rounded-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all"/>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar en blanco para no cambiar)</span></label>
-                        <input name="password" type="password" placeholder="Mínimo 6 caracteres"
-                               class="rounded-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all"/>
-                        <p class="text-[11px] text-slate-500 mt-1"><span class="font-bold">Importante:</span> Mínimo 6 caracteres.</p>
-                        @error('password')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Confirmar Nueva Contraseña</label>
-                        <input name="password_confirmation" type="password" placeholder="Repite la contraseña"
-                               class="rounded-lg border-slate-200 focus:border-primary focus:ring-primary h-12 px-4 transition-all"/>
+                    <div class="pf-field">
+                        <label class="pf-label">Teléfono <span style="font-size:10px; font-weight:500; color:#9ca3af; text-transform:none;">(opcional)</span></label>
+                        <div class="pf-input-icon-wrap">
+                            <span class="material-symbols-outlined pf-input-icon">phone</span>
+                            <input name="telefono" type="tel"
+                                   value="{{ old('telefono', auth()->user()->telefono) }}"
+                                   class="pf-input"/>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pt-6 border-t border-slate-100 flex justify-end gap-4">
-                    <button type="submit"
-                            class="px-8 py-3 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all flex items-center gap-2">
-                        <span class="material-symbols-outlined">save</span> Guardar Cambios
+                <hr class="pf-section-divider">
+
+                {{-- Contraseña --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="pf-field">
+                        <label class="pf-label">Nueva Contraseña</label>
+                        <div class="pf-input-icon-wrap">
+                            <span class="material-symbols-outlined pf-input-icon">lock</span>
+                            <input name="password" type="password" placeholder="Mínimo 6 caracteres" class="pf-input"/>
+                        </div>
+                        <p style="font-size:10.5px; color:#9ca3af;">Déjalo en blanco para no cambiarla.</p>
+                        @error('password')<p style="font-size:11px; color:#ef4444;">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="pf-field">
+                        <label class="pf-label">Confirmar Contraseña</label>
+                        <div class="pf-input-icon-wrap">
+                            <span class="material-symbols-outlined pf-input-icon">lock_reset</span>
+                            <input name="password_confirmation" type="password" placeholder="Repite la contraseña" class="pf-input"/>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Footer --}}
+                <div style="padding-top:18px; border-top:1px solid #f0ebff; display:flex; justify-content:flex-end;">
+                    <button type="submit" class="pf-save-btn">
+                        <span class="material-symbols-outlined" style="font-size:18px;">save</span>
+                        Guardar Cambios
                     </button>
                 </div>
+
             </form>
         </div>
     </section>

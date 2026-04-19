@@ -21,6 +21,8 @@
                     <th class="px-6 py-4">Email</th>
                     <th class="px-6 py-4">Teléfono</th>
                     <th class="px-6 py-4">Registrado</th>
+                    <th class="px-6 py-4">Estado / Etiquetas</th>
+                    <th class="px-6 py-4 text-right">Acciones</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -40,6 +42,36 @@
                     <td class="px-6 py-4 text-slate-500">{{ $cliente->email }}</td>
                     <td class="px-6 py-4 text-slate-500">{{ $cliente->telefono ?? '—' }}</td>
                     <td class="px-6 py-4 text-slate-500">{{ $cliente->created_at->format('d/m/Y') }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-1.5 items-start max-w-[200px]">
+                            @if($cliente->is_active)
+                                <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase px-2 py-0.5 rounded border border-emerald-100 flex items-center gap-1 shrink-0" title="Cliente Activo (Con Compras)">
+                                    <span class="material-symbols-outlined text-[12px]">shopping_bag</span> Activo
+                                </span>
+                            @else
+                                <span class="bg-slate-50 text-slate-500 text-[10px] font-bold uppercase px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1 shrink-0" title="Sin Compras Recientes">
+                                    <span class="material-symbols-outlined text-[12px]">schedule</span> Inactivo
+                                </span>
+                            @endif
+
+                            @if($cliente->is_community)
+                                <span class="bg-purple-50 text-purple-600 text-[10px] font-bold uppercase px-2 py-0.5 rounded border border-purple-100 flex items-center gap-1 shrink-0" title="Suscrito al Newsletter / Comunidad">
+                                    <span class="material-symbols-outlined text-[12px]">mark_email_read</span> Comunidad
+                                </span>
+                            @endif
+
+                            @if($cliente->is_stock_wait)
+                                <span class="bg-blue-50 text-blue-600 text-[10px] font-bold uppercase px-2 py-0.5 rounded border border-blue-100 flex items-center gap-1 shrink-0" title="A la espera de la reposición de algún artículo">
+                                    <span class="material-symbols-outlined text-[12px]">notifications_active</span> Reposición
+                                </span>
+                            @endif
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{{ route('admin.clients.show', $cliente->id) }}" class="text-primary hover:text-primary-dark font-semibold text-sm flex items-center gap-1 justify-end">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span> Ver
+                        </a>
+                    </td>
                 </tr>
                 @empty
                 <tr>

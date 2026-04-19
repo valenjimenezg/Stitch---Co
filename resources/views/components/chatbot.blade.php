@@ -377,16 +377,8 @@
         </div>
     </div>
 
-    {{-- Quick-Reply Chips --}}
-    <div class="bot-chips-bar">
-        <button class="bot-chip" onclick="sendAction('Horarios')"><span class="material-symbols-outlined">schedule</span>Horarios</button>
-        <button class="bot-chip" onclick="sendAction('Ubicacion')"><span class="material-symbols-outlined">location_on</span>Ubicación</button>
-        <button class="bot-chip" onclick="sendAction('Envios')"><span class="material-symbols-outlined">local_shipping</span>Envíos</button>
-        <button class="bot-chip" onclick="sendAction('Pagos')"><span class="material-symbols-outlined">payments</span>Pagos</button>
-        <button class="bot-chip" onclick="sendAction('Creditos')"><span class="material-symbols-outlined">contract</span>Abonos</button>
-        <button class="bot-chip" onclick="sendAction('Productos')"><span class="material-symbols-outlined">category</span>Productos</button>
-        <button class="bot-chip" onclick="sendAction('Medidas')"><span class="material-symbols-outlined">straighten</span>Medidas</button>
-        <button class="bot-chip" onclick="sendAction('Devoluciones')"><span class="material-symbols-outlined">assignment_return</span>Devoluciones</button>
+    {{-- Quick-Reply Chips (Hidden for menu-driven mode) --}}
+    <div class="bot-chips-bar" style="display: none;">
     </div>
 
     {{-- Messages --}}
@@ -398,8 +390,15 @@
             </div>
             <div class="bot-bubble bot">
                 ¡Hola! 👋 Soy <strong>Costurín</strong>, tu asistente en <strong>Stitch & Co</strong>.<br><br>
-                Puedo ayudarte con preguntas sobre nuestros <strong>productos</strong>, <strong>tallas y medidas</strong>, <strong>envíos</strong>, <strong>formas de pago</strong>, <strong>abonos</strong> y mucho más.<br><br>
-                ¿Con qué te ayudo hoy?
+                Por favor selecciona una de las siguientes opciones para poder ayudarte:<br>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+                    <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('pagos')">💸 Formas de Pago</button>
+                    <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('abonos')">💳 Abonos (Sistema de Apartado)</button>
+                    <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('envio')">🚚 Envíos y Delivery</button>
+                    <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('horario')">⏰ Horarios de Atención</button>
+                    <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('devolucion')">🔄 Devoluciones y Cambios</button>
+                    <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('contacto')">📞 Contacto con Asesor</button>
+                </div>
             </div>
         </div>
 
@@ -410,8 +409,8 @@
         </div>
     </div>
 
-    {{-- Input --}}
-    <div class="bot-input-area">
+    {{-- Input (Hidden for menu-driven mode) --}}
+    <div class="bot-input-area" style="display: none;">
         <div class="bot-input-pill">
             <input type="text" id="bot-input-field" class="bot-input" placeholder="Pregúntame algo…" onkeypress="handleEnter(event)" autocomplete="off">
             <button class="bot-send-btn" onclick="sendUserMessage()">
@@ -467,10 +466,23 @@
             title: 'Sistema de Abonos (Crédito)',
             response: `Nuestro <strong>Sistema de Apartado</strong> te permite:<br>
                        ✅ Pagar solo el <strong>30% inicial</strong><br>
-                       ✅ <strong>15 días</strong> para cancelar el saldo<br>
+                       ✅ <strong>7 días</strong> para cancelar el resto<br>
                        ✅ Mínimo de compra: <strong>$30 USD</strong><br>
                        ⚠️ El depósito no es reembolsable en efectivo — solo en crédito en tienda.<br>
                        Solo disponible para <strong>retiro en tienda</strong>.`
+        },
+        {
+            keys: ['menu_principal', 'menu', 'opciones'],
+            title: 'Menú Principal',
+            response: `¿En qué más te puedo ayudar?<br>
+                       <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+                           <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('pagos')">💸 Formas de Pago</button>
+                           <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('abonos')">💳 Abonos (Sistema de Apartado)</button>
+                           <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('envio')">🚚 Envíos y Delivery</button>
+                           <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('horario')">⏰ Horarios de Atención</button>
+                           <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('devolucion')">🔄 Devoluciones y Cambios</button>
+                           <button class="bot-chip" style="width:100%; justify-content:flex-start;" onclick="sendAction('contacto')">📞 Contacto con Asesor</button>
+                       </div>`
         },
         {
             keys: ['producto','productos','que venden','tela','lana','tejido','boton','accesorio','hilo','aguja'],

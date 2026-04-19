@@ -71,7 +71,7 @@
         {{-- Info --}}
         <div class="flex flex-1 flex-col p-4">
             <div class="mb-1 text-xs font-semibold uppercase tracking-wider text-primary/70">
-                {{ $variante->producto->categoria ?? '—' }}
+                {{ $variante->producto->categoria->nombre ?? '—' }}
             </div>
             <h3 class="text-base font-bold text-slate-900">
                 <a href="{{ route('products.show', $variante->id) }}" class="hover:text-primary hover:underline transition-colors">

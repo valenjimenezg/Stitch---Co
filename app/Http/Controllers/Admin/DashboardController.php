@@ -30,7 +30,20 @@ class DashboardController extends Controller
 
     public function clients()
     {
-        $clientes = User::where('rol', 'cliente')->latest()->paginate(20);
+        $clientes = User::with(['ordenes' => function($q) {
+            $q->whereNotIn('estado', ['carrito']);
+        }])->where('rol', 'cliente')->latest()->paginate(20);
+
+        $emails = $clientes->pluck('email')->toArray();
+        $newsletterEmails = \App\Models\NotificacionCrm::where('tipo', 'newsletter')->whereIn('email', $emails)->pluck('email')->toArray();
+        $stockEmails = \App\Models\NotificacionCrm::whereIn('tipo', ['stock', 'stock_alert'])->whereIn('email', $emails)->pluck('email')->toArray();
+
+        foreach ($clientes as $cliente) {
+            $cliente->is_active = $cliente->ordenes->isNotEmpty();
+            $cliente->is_community = in_array($cliente->email, $newsletterEmails);
+            $cliente->is_stock_wait = in_array($cliente->email, $stockEmails);
+        }
+
         return view('admin.clients', compact('clientes'));
     }
 

@@ -77,8 +77,10 @@
                             <span class="font-bold text-slate-800">{{ $v->producto->nombre ?? 'N/A' }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-slate-900 font-medium">{{ $v->producto->categoria ?? 'General' }}</div>
-                            <div class="text-xs text-slate-500">{{ $v->color ?? '' }} {{ $v->grosor ? '('.$v->grosor.')' : '' }}</div>
+                            <div class="text-slate-900 font-medium">
+                                {{ is_object($v->producto->categoria) ? $v->producto->categoria->nombre : ($v->producto->categoria ?? 'General') }}
+                            </div>
+                            <div class="text-xs text-slate-500">{{ $v->color ?? 'Único' }} {{ $v->grosor ? '('.$v->grosor.')' : '' }}</div>
                         </td>
                         <td class="px-6 py-4 font-mono font-medium text-slate-600">
                             Ref: ${{ number_format($v->precio, 2) }} <br><span class="text-xs text-slate-400 font-bold uppercase">{{ bs($v->precio) }}</span>

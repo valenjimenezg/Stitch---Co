@@ -35,16 +35,28 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex flex-col gap-1">
-                            @if($proveedor->email)
-                            <a href="mailto:{{ $proveedor->email }}" class="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium">
-                                <span class="material-symbols-outlined text-[14px]">mail</span> {{ $proveedor->email }}
-                            </a>
-                            @endif
+                        <div class="flex items-center gap-2">
                             @if($proveedor->telefono)
-                            <a href="tel:{{ $proveedor->telefono }}" class="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium">
-                                <span class="material-symbols-outlined text-[14px]">call</span> {{ $proveedor->telefono }}
-                            </a>
+                                @php
+                                    $phoneFormat = preg_replace('/[^0-9]/', '', $proveedor->telefono);
+                                    if(str_starts_with($phoneFormat, '0')) $phoneFormat = '58' . substr($phoneFormat, 1);
+                                    $msg = urlencode("Hola {$proveedor->nombre}, te saluda el departamento de Compras de Stitch & Co. Te contacto para ");
+                                @endphp
+                                <a href="https://wa.me/{{ $phoneFormat }}?text={{ $msg }}" target="_blank" title="Enviar WhatsApp a {{ $proveedor->telefono }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">chat</span>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider">Info</span>
+                                </a>
+                            @endif
+
+                            @if($proveedor->email)
+                                @php
+                                    $emailSubject = rawurlencode("Revisión de Inventario / Catálogo - Stitch & Co.");
+                                    $emailBody = rawurlencode("Estimado proveedor {$proveedor->nombre},\n\nNos dirigimos a usted desde Administración para...\n\nAtentamente,\nCompras Stitch & Co.");
+                                @endphp
+                                <a href="mailto:{{ $proveedor->email }}?subject={{ $emailSubject }}&body={{ $emailBody }}" title="Enviar Correo a {{ $proveedor->email }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100 transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">mail</span>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider">Mail</span>
+                                </a>
                             @endif
                         </div>
                     </td>

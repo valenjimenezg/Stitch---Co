@@ -78,6 +78,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/mis-pedidos/{id}/continuar', [\App\Http\Controllers\ProfileController::class, 'storeReference'])->name('profile.orders.store_reference');
     Route::post('/mis-pedidos/{id}/cancelar', [\App\Http\Controllers\ProfileController::class, 'cancelOrder'])->name('profile.orders.cancel');
     Route::get('/mis-pedidos/{id}/factura', [\App\Http\Controllers\InvoiceController::class, 'descargarFactura'])->name('profile.orders.invoice');
+
+    Route::post('/productos/{id}/comentarios', [\App\Http\Controllers\ProductReviewController::class, 'store'])->name('products.reviews.store');
 });
 
 // --- Admin ---
@@ -87,6 +89,7 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::get('/productos', [\App\Http\Controllers\Admin\ProductController::class, 'index'])->name('admin.products.index');
     Route::get('/productos/exportar', [\App\Http\Controllers\Admin\ProductController::class, 'export'])->name('admin.products.export');
     Route::get('/productos/reporte-reposicion', [\App\Http\Controllers\Admin\ProductController::class, 'restockReport'])->name('admin.products.restock');
+    Route::get('/productos/reporte-alertas-pdf', [\App\Http\Controllers\Admin\ProductController::class, 'alertsPdf'])->name('admin.products.alerts_pdf');
     Route::get('/proveedores/{proveedor}/pdf-reposicion', [\App\Http\Controllers\Admin\ProductController::class, 'downloadProviderPdf'])->name('admin.proveedores.pdf');
     Route::get('/productos/crear', [\App\Http\Controllers\Admin\ProductController::class, 'create'])->name('admin.products.create');
     Route::post('/productos', [\App\Http\Controllers\Admin\ProductController::class, 'store'])->name('admin.products.store');
@@ -108,6 +111,20 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::post('/pedidos/{id}/aprobar', [\App\Http\Controllers\Admin\OrderController::class, 'approvePayment'])->name('admin.orders.approve');
     Route::delete('/pedidos/limpiar-cancelados', [\App\Http\Controllers\Admin\OrderController::class, 'destroyCancelled'])->name('admin.orders.destroy_cancelled');
     Route::get('/pedidos/{order}/generar-factura', [\App\Http\Controllers\Admin\OrderController::class, 'generateInvoice'])->name('admin.orders.generate_invoice');
+    Route::post('/pedidos/{order}/email-factura', function(\Illuminate\Http\Request $request, \App\Models\Orden $order) {
+        $email = $request->email_prueba ?? $order->user->email;
+        if(!$email) return back()->with('error', 'No se proporcionó un correo válido.');
+        
+        $invoiceUrl = \Illuminate\Support\Facades\URL::signedRoute('invoice.public', ['id' => $order->id]);
+        $invoiceUrl = str_replace(['localhost', '127.0.0.1'], getHostByName(getHostName()), $invoiceUrl);
+        
+        try {
+            \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\InvoiceMail($order, $invoiceUrl));
+            return back()->with('success', 'Factura enviada exitosamente a: ' . $email);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al enviar la factura: ' . $e->getMessage());
+        }
+    })->name('admin.orders.email_invoice');
     Route::post('/pedidos/{order}/pickup', [\App\Http\Controllers\Admin\OrderController::class, 'markAsPickedUp'])->name('admin.orders.picked_up');
     Route::post('/pedidos/{order}/local-delivery', [\App\Http\Controllers\Admin\OrderController::class, 'markAsDeliveredLocally'])->name('admin.orders.delivered_locally');
     Route::delete('/pedidos/{id}', [\App\Http\Controllers\Admin\OrderController::class, 'destroy'])->name('admin.orders.destroy');
@@ -119,10 +136,37 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
 
     Route::get('/clientes', [\App\Http\Controllers\Admin\DashboardController::class, 'clients'])->name('admin.clients');
     Route::get('/clientes/exportar', [\App\Http\Controllers\Admin\DashboardController::class, 'exportClients'])->name('admin.clients.export');
+    Route::get('/clientes/{id}', [\App\Http\Controllers\Admin\ClientController::class, 'show'])->name('admin.clients.show');
+    Route::get('/clientes/{id}/editar', [\App\Http\Controllers\Admin\ClientController::class, 'edit'])->name('admin.clients.edit');
+    Route::put('/clientes/{id}', [\App\Http\Controllers\Admin\ClientController::class, 'update'])->name('admin.clients.update');
     Route::get('/comunidad', [\App\Http\Controllers\Admin\DashboardController::class, 'newsletters'])->name('admin.comunidad');
     Route::get('/comunidad/exportar', [\App\Http\Controllers\Admin\DashboardController::class, 'exportNewsletters'])->name('admin.comunidad.export');
     Route::get('/notificaciones-stock', [\App\Http\Controllers\Admin\DashboardController::class, 'stockNotifications'])->name('admin.stock-notifications');
     Route::patch('/notificaciones-stock/{id}', [\App\Http\Controllers\Admin\DashboardController::class, 'updateStockNotification'])->name('admin.stock-notifications.update');
+    Route::get('/notificaciones-stock/preview-mail', function() {
+        $variante = \App\Models\ProductoVariante::with('producto')->whereNotNull('imagen')->first() ?? \App\Models\ProductoVariante::with('producto')->first();
+        if (!$variante) return "No hay variantes registradas en la base de datos para mostrar la plantilla.";
+        return new \App\Mail\BackInStockMail($variante);
+    })->name('admin.stock-notifications.preview');
+
+    Route::post('/notificaciones-stock/send-test', function(\Illuminate\Http\Request $request) {
+        $request->validate(['email_prueba' => 'required|email']);
+        $variante = \App\Models\ProductoVariante::with('producto')->whereNotNull('imagen')->first() ?? \App\Models\ProductoVariante::with('producto')->first();
+        if (!$variante) return back()->with('error', 'No hay variantes registradas para usar como prueba.');
+        
+        try {
+            \Illuminate\Support\Facades\Mail::to($request->email_prueba)->send(new \App\Mail\BackInStockMail($variante));
+            return back()->with('success', 'Correo de prueba enviado exitosamente a: ' . $request->email_prueba);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al enviar el correo de prueba: ' . $e->getMessage());
+        }
+    })->name('admin.stock-notifications.send-test');
+
+    // Moderación de Reseñas
+    Route::get('/resenas', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('admin.reviews.index');
+    Route::patch('/resenas/{id}/aprobar', [\App\Http\Controllers\Admin\ReviewController::class, 'approve'])->name('admin.reviews.approve');
+    Route::delete('/resenas/{id}', [\App\Http\Controllers\Admin\ReviewController::class, 'reject'])->name('admin.reviews.reject');
+    Route::patch('/resenas/{id}/responder', [\App\Http\Controllers\Admin\ReviewController::class, 'respond'])->name('admin.reviews.respond');
 
     Route::get('/configuracion-bcv', [\App\Http\Controllers\Admin\SettingsController::class, 'bcvIndex'])->name('admin.settings.bcv');
     Route::post('/configuracion-bcv', [\App\Http\Controllers\Admin\SettingsController::class, 'bcvUpdate'])->name('admin.settings.bcv.update');

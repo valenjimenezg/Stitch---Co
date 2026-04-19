@@ -197,11 +197,10 @@
             {{ $variante->producto->descripcion ?? 'Sin descripción disponible.' }}
         </p>
 
-        {{-- Variants (other colors/variants of same product) --}}
-        @if($variante->producto->variantes->count() > 1)
+        {{-- Color disponible --}}
         <div class="mb-8">
             <span class="block text-sm font-bold text-slate-900 mb-4 uppercase tracking-widest">
-                Variante: <span class="text-slate-500 font-normal">{{ $variante->grosor ? $variante->grosor . ' | ' : '' }}{{ $variante->color ?? $variante->talla ?? '—' }}</span>
+                Color disponible: <span class="text-slate-500 font-normal">{{ $variante->color ?? '—' }}</span>
             </span>
             <div class="flex gap-4 flex-wrap">
                 @foreach($variante->producto->variantes as $v)
@@ -232,13 +231,25 @@
                                 'morado' => '#a855f7',
                                 'naranja' => '#f97316',
                                 'gris' => '#94a3b8',
+                                'único' => '#94a3b8',
+                                'unico' => '#94a3b8',
+                                'fucsia' => '#ec4899',
+                                'celeste' => '#7dd3fc',
+                                'turquesa' => '#2dd4bf',
+                                'lila' => '#c084fc',
+                                'café' => '#92400e',
+                                'cafe' => '#92400e',
+                                'marrón' => '#78350f',
+                                'mostaza' => '#ca8a04',
+                                'verde oscuro' => '#15803d',
+                                'azul marino' => '#1e3a5f',
                             ];
                             $hex = $colorMap[$colorName] ?? $colorName;
                             
                         @endphp
                         
                         <a href="{{ route('products.show', $v->id) }}"
-                           title="{{ $v->grosor ? $v->grosor . ' | ' : '' }}{{ $v->color }}"
+                           title="{{ $v->grosor ? $v->grosor . ' | ' : '' }}{{ $v->color }}{{ $isOutOfStock ? ' (Agotado)' : '' }}"
                            class="relative block rounded-full transition-all duration-200 cursor-pointer
                                   {{ $isActive ? 'ring-2 ring-black ring-offset-2 scale-110' : 'hover:scale-110 hover:ring-1 hover:ring-slate-300 hover:ring-offset-1' }}
                                   {{ $isOutOfStock ? 'opacity-50' : '' }}"
@@ -250,7 +261,7 @@
                         </a>
 
                     @else
-                        {{-- Fallback original para variantes sin color (ej: Tallas puras) --}}
+                        {{-- Fallback para variantes sin color (ej: Tallas puras) --}}
                         <a href="{{ route('products.show', $v->id) }}"
                            class="px-4 py-2 rounded-xl border-2 text-sm font-bold transition-all relative overflow-hidden flex items-center gap-2
                                   {{ $isActive ? 'border-primary bg-primary/5 text-primary shadow-inner' : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white shadow-sm' }}
@@ -264,7 +275,7 @@
                 @endforeach
             </div>
         </div>
-        @endif
+
 
         {{-- Add to Cart --}}
         @if($variante->stock_disponible > 0)
@@ -280,19 +291,18 @@
                 <select name="empaque_id" id="empaque_select" class="w-full rounded-xl border-slate-200 focus:border-primary focus:ring-primary py-3 px-4 font-semibold text-slate-800" onchange="updatePresentation()">
                     @foreach($variante->empaques as $empaque)
                         @php
-                            $bcv = \Illuminate\Support\Facades\Cache::get('bcv_rate', 1);
-                            $p_bs = $empaque->precio_usd * $bcv;
-                            $p_bs_desc = $p_bs;
+                            $p_usd = $empaque->precio;
+                            $p_usd_desc = $p_usd;
                             if($variante->en_oferta && $variante->descuento_porcentaje > 0) {
-                                $p_bs_desc = $p_bs * (1 - $variante->descuento_porcentaje / 100);
+                                $p_usd_desc = $p_usd * (1 - $variante->descuento_porcentaje / 100);
                             }
                         @endphp
                         <option value="{{ $empaque->id }}" 
                                 data-factor="{{ $empaque->factor_conversion }}"
-                                data-name="{{ $empaque->nombre }}"
-                                data-preciobs="{{ bs($p_bs) }}"
-                                data-preciodesc="{{ bs($p_bs_desc) }}">
-                            {{ $empaque->nombre }} {{ $empaque->factor_conversion > 1 ? '('.$empaque->factor_conversion.' uds)' : '' }}
+                                data-name="{{ $empaque->unidad_medida }}"
+                                data-preciobs="{{ bs($p_usd) }}"
+                                data-preciodesc="{{ bs($p_usd_desc) }}">
+                            {{ $empaque->unidad_medida }} {{ $empaque->factor_conversion > 1 ? '('.$empaque->factor_conversion.' uds)' : '' }}
                         </option>
                     @endforeach
                 </select>
@@ -377,11 +387,8 @@
         </div>
         @endif
 
-        {{-- Ficha Técnica --}}
+        {{-- Ficha Técnica + Instrucciones de Uso: Layout en 2 columnas si hay instrucciones --}}
         <div class="mt-10 pt-8 border-t border-slate-100">
-            <h3 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">description</span> Ficha Técnica
-            </h3>
             @php
                 $catLower = strtolower(trim($variante->producto->categoria->nombre ?? ''));
                 $esTela = str_contains($catLower, 'tela') || str_contains($catLower, 'retazo') || str_contains($catLower, 'cinta') || str_contains($catLower, 'encaje');
@@ -389,82 +396,296 @@
                 $esLana = str_contains($catLower, 'hilo') || str_contains($catLower, 'lana') || str_contains($catLower, 'estambre');
                 $esElastico = str_contains($catLower, 'elastico') || str_contains($catLower, 'elástico') || str_contains($catLower, 'vivo');
                 $esHerramienta = str_contains($catLower, 'herramienta') || str_contains($catLower, 'accesorio') || str_contains($catLower, 'aguja');
+                $tieneInstrucciones = !empty($variante->producto->instrucciones_uso);
             @endphp
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
 
-                {{-- 1. GROSOR / ESPESOR --}}
-                @if($variante->grosor)
-                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center gap-3 text-primary mb-3">
-                        <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">straighten</span>
-                        <span class="font-black uppercase text-xs tracking-widest">
-                            {{ $esBoton || $esHerramienta ? 'Grosor / Espesor' : ($esTela ? 'Peso / Textura' : 'Grosor') }}
-                        </span>
-                    </div>
-                    <p class="text-lg font-semibold text-slate-900">{{ $variante->grosor }}</p>
+            <div class="{{ $tieneInstrucciones ? 'grid grid-cols-1 md:grid-cols-2 gap-8 items-start' : '' }}">
+
+                {{-- COLUMNA IZQUIERDA: Instrucciones de Uso --}}
+                @if($tieneInstrucciones)
+                <div class="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-6 border border-primary/15">
+                    <h3 class="text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary bg-white p-1.5 rounded-lg shadow-sm">menu_book</span>
+                        Instrucciones de Uso
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed whitespace-pre-line text-base">{{ $variante->producto->instrucciones_uso }}</p>
                 </div>
                 @endif
 
-                {{-- 2. COLOR / DISEÑO --}}
-                @if($variante->color)
-                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center gap-3 text-primary mb-3">
-                        <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">palette</span>
-                        <span class="font-black uppercase text-xs tracking-widest">
-                            {{ $esHerramienta ? 'Color / Acabado' : 'Color / Tono' }}
-                        </span>
-                    </div>
-                    <p class="text-lg font-semibold text-slate-900">{{ $variante->color }}</p>
-                </div>
-                @endif
+                {{-- COLUMNA DERECHA: Ficha Técnica --}}
+                <div>
+                    <h3 class="text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg">description</span>
+                        Ficha Técnica
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
 
-                {{-- 3. MEDIDO / CM --}}
-                @if($variante->cm)
-                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center gap-3 text-primary mb-3">
-                        <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">architecture</span>
-                        <span class="font-black uppercase text-xs tracking-widest">
-                            @if($esBoton) Diámetro / Tamaño
-                            @elseif($esTela || $esLana || $esElastico) Rendimiento / Largo
-                            @elseif($esHerramienta) Dimensiones
-                            @else Medida
+                        {{-- 1. GROSOR / ESPESOR --}}
+                        @if($variante->grosor)
+                        <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 text-primary mb-2">
+                                <span class="material-symbols-outlined bg-primary/10 p-1.5 rounded-lg text-sm">straighten</span>
+                                <span class="font-black uppercase text-xs tracking-widest">
+                                    {{ $esBoton || $esHerramienta ? 'Grosor / Espesor' : ($esTela ? 'Peso / Textura' : 'Grosor') }}
+                                </span>
+                            </div>
+                            <p class="text-base font-semibold text-slate-900">{{ $variante->grosor }}</p>
+                        </div>
+                        @endif
+
+                        {{-- 2. COLOR / DISEÑO --}}
+                        @if($variante->color)
+                        <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 text-primary mb-2">
+                                <span class="material-symbols-outlined bg-primary/10 p-1.5 rounded-lg text-sm">palette</span>
+                                <span class="font-black uppercase text-xs tracking-widest">
+                                    {{ $esHerramienta ? 'Color / Acabado' : 'Color / Tono' }}
+                                </span>
+                            </div>
+                            <p class="text-base font-semibold text-slate-900">{{ $variante->color }}</p>
+                        </div>
+                        @endif
+
+                        {{-- 3. MEDIDO / CM --}}
+                        @if($variante->cm)
+                        <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 text-primary mb-2">
+                                <span class="material-symbols-outlined bg-primary/10 p-1.5 rounded-lg text-sm">architecture</span>
+                                <span class="font-black uppercase text-xs tracking-widest">
+                                    @if($esBoton) Diámetro / Tamaño
+                                    @elseif($esTela || $esLana || $esElastico) Rendimiento / Largo
+                                    @elseif($esHerramienta) Dimensiones
+                                    @else Medida
+                                    @endif
+                                </span>
+                            </div>
+                            @php
+                                $medida = floatval($variante->cm);
+                                $textoMedida = $medida . ' cm';
+                                if (($esTela || $esLana || $esElastico) && $medida >= 100) {
+                                    $metros = $medida / 100;
+                                    $textoMedida = $metros . ' ' . ($metros == 1 ? 'Metro' : 'Metros');
+                                } elseif ($esBoton && $medida < 2) {
+                                     $textoMedida = ($medida * 10) . ' mm';
+                                }
+                            @endphp
+                            <p class="text-base font-semibold text-slate-900">{{ $textoMedida }}</p>
+                        </div>
+                        @endif
+
+                        {{-- 4. MARCA --}}
+                        @if($variante->marca)
+                        <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 text-primary mb-2">
+                                <span class="material-symbols-outlined bg-primary/10 p-1.5 rounded-lg text-sm">sell</span>
+                                <span class="font-black uppercase text-xs tracking-widest">Marca / Etiqueta</span>
+                            </div>
+                            <p class="text-base font-semibold text-slate-900">{{ $variante->marca }}</p>
+                        </div>
+                        @else
+                        <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 text-primary mb-2">
+                                <span class="material-symbols-outlined bg-primary/10 p-1.5 rounded-lg text-sm">category</span>
+                                <span class="font-black uppercase text-xs tracking-widest">Familia</span>
+                            </div>
+                            <p class="text-base font-semibold text-slate-900">{{ $variante->producto->categoria->nombre ?? '—' }}</p>
+                        </div>
+                        @endif
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+{{-- Reviews Section --}}
+<div class="mt-20 pt-16 border-t border-slate-200">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+        
+        <!-- IZQUIERDA: Reseñas Existentes y Estadísticas -->
+        <div class="lg:col-span-2 order-2 lg:order-1">
+            <div class="mb-10">
+                <h3 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-4xl text-amber-400" style="font-variation-settings: 'FILL' 1">star</span>
+                    Reseñas de Clientes
+                </h3>
+                <p class="text-slate-500 mt-2">Opiniones reales de usuarios que compraron este producto.</p>
+            </div>
+            
+            @php
+                $reviews = $variante->producto->comentarios()->where('aprobado', true)->latest()->get();
+                $avgResenas = $reviews->avg('calificacion') ?? 0;
+                $totalResenas = $reviews->count();
+            @endphp
+
+            {{-- Resumen de calificación --}}
+            @if($totalResenas > 0)
+            <div class="flex items-center gap-6 mb-8 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                <div class="text-center">
+                    <p class="text-5xl font-black text-slate-900">{{ number_format($avgResenas, 1) }}</p>
+                    <div class="flex justify-center gap-0.5 mt-1 text-amber-400">
+                        @for($i=1; $i<=5; $i++)
+                            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' {{ $i <= round($avgResenas) ? '1' : '0' }}">star</span>
+                        @endfor
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">{{ $totalResenas }} {{ $totalResenas === 1 ? 'reseña' : 'reseñas' }}</p>
+                </div>
+                <div class="flex-1">
+                    @for($star=5; $star>=1; $star--)
+                        @php $count = $reviews->where('calificacion', $star)->count(); $pct = $totalResenas > 0 ? ($count / $totalResenas) * 100 : 0; @endphp
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-slate-500 w-4">{{ $star }}</span>
+                            <span class="material-symbols-outlined text-xs text-amber-400" style="font-variation-settings: 'FILL' 1">star</span>
+                            <div class="flex-1 bg-slate-100 rounded-full h-2">
+                                <div class="bg-amber-400 h-2 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                            </div>
+                            <span class="text-xs text-slate-400 w-5 text-right">{{ $count }}</span>
+                        </div>
+                    @endfor
+                </div>
+            </div>
+            @endif
+
+            <div class="space-y-6">
+                @if($totalResenas > 0)
+                    @foreach($reviews as $review)
+                        <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            {{-- Cabecera: avatar + nombre + fecha + badges --}}
+                            <div class="flex items-start justify-between gap-4 mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg uppercase flex-shrink-0">
+                                        {{ substr($review->user->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h4 class="font-bold text-slate-900 text-sm">{{ $review->user->name }}</h4>
+                                            @if($review->verified_purchase)
+                                                <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                                    <span class="material-symbols-outlined text-[11px]">verified</span> Compra verificada
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <span class="text-xs text-slate-400">{{ $review->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-0.5 text-amber-400 flex-shrink-0">
+                                    @for($i=1; $i<=5; $i++)
+                                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' {{ $i <= $review->calificacion ? '1' : '0' }}">star</span>
+                                    @endfor
+                                </div>
+                            </div>
+
+                            {{-- Título de la reseña --}}
+                            @if($review->titulo)
+                                <p class="font-black text-slate-900 mb-1">{{ $review->titulo }}</p>
                             @endif
-                        </span>
-                    </div>
-                    @php
-                        $medida = floatval($variante->cm);
-                        $textoMedida = $medida . ' cm';
-                        if (($esTela || $esLana || $esElastico) && $medida >= 100) {
-                            $metros = $medida / 100;
-                            $textoMedida = $metros . ' ' . ($metros == 1 ? 'Metro' : 'Metros');
-                        } elseif ($esBoton && $medida < 2) {
-                             $textoMedida = ($medida * 10) . ' mm';
-                        }
-                    @endphp
-                    <p class="text-lg font-semibold text-slate-900">{{ $textoMedida }}</p>
-                </div>
-                @endif
 
-                {{-- 4. MARCA --}}
-                @if($variante->marca)
-                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center gap-3 text-primary mb-3">
-                        <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">sell</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Marca / Etiqueta</span>
-                    </div>
-                    <p class="text-lg font-semibold text-slate-900">{{ $variante->marca }}</p>
-                </div>
+                            {{-- Comentario --}}
+                            <p class="text-slate-600 leading-relaxed">{{ $review->comentario }}</p>
+
+                            {{-- Respuesta del Admin --}}
+                            @if($review->respuesta_admin)
+                                <div class="mt-4 pl-4 border-l-2 border-primary/30 bg-primary/5 rounded-r-xl py-3 pr-3">
+                                    <p class="text-xs font-black text-primary uppercase tracking-wider mb-1 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">storefront</span> Respuesta de Stitch & Co
+                                    </p>
+                                    <p class="text-sm text-slate-700 leading-relaxed">{{ $review->respuesta_admin }}</p>
+                                    @if($review->respondido_at)
+                                        <span class="text-xs text-slate-400 mt-1 block">{{ $review->respondido_at->diffForHumans() }}</span>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 @else
-                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center gap-3 text-primary mb-3">
-                        <span class="material-symbols-outlined bg-primary/10 p-2 rounded-lg text-sm">category</span>
-                        <span class="font-black uppercase text-xs tracking-widest">Familia</span>
+                    <div class="text-center py-12 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+                        <span class="material-symbols-outlined text-5xl text-slate-300 mb-3 block">forum</span>
+                        <h4 class="font-bold text-slate-900 mb-1">Aún no hay reseñas</h4>
+                        <p class="text-sm text-slate-500">¡Sé el primero en compartir tu experiencia!</p>
                     </div>
-                    <p class="text-lg font-semibold text-slate-900">{{ $variante->producto->categoria->nombre ?? '—' }}</p>
-                </div>
                 @endif
             </div>
         </div>
+
+        <!-- DERECHA: Formulario de Nueva Reseña -->
+        <div class="lg:col-span-1 order-1 lg:order-2">
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 sticky top-28">
+                <h4 class="font-bold text-slate-900 mb-4">Escribe una reseña</h4>
+                @auth
+                    <form action="{{ route('products.reviews.store', $variante->producto->id) }}" method="POST" class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Calificación</label>
+                            <div class="flex items-center gap-1 rating-stars">
+                                @for($i=1; $i<=5; $i++)
+                                    <input type="radio" id="star{{$i}}" name="calificacion" value="{{$i}}" class="hidden" required>
+                                    <label for="star{{$i}}" 
+                                           class="material-symbols-outlined text-3xl text-slate-300 cursor-pointer transition-colors star-label" 
+                                           data-value="{{$i}}"
+                                           style="font-variation-settings: 'FILL' 1">star</label>
+                                @endfor
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Título (opcional)</label>
+                            <input type="text" name="titulo" maxlength="120"
+                                   class="w-full rounded-xl border-slate-200 focus:border-primary focus:ring-primary py-3 px-4"
+                                   placeholder='Ej: "¡Excelente calidad!"'>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const labels = document.querySelectorAll('.star-label');
+                                    const inputs = document.querySelectorAll('input[name="calificacion"]');
+                                    
+                                    function updateStars(value) {
+                                        labels.forEach(label => {
+                                            if (parseInt(label.dataset.value) <= value) {
+                                                label.classList.add('text-amber-400');
+                                                label.classList.remove('text-slate-300');
+                                            } else {
+                                                label.classList.remove('text-amber-400');
+                                                label.classList.add('text-slate-300');
+                                            }
+                                        });
+                                    }
+
+                                    labels.forEach(label => {
+                                        label.addEventListener('mouseover', function() {
+                                            updateStars(this.dataset.value);
+                                        });
+                                        label.addEventListener('mouseout', function() {
+                                            const checked = document.querySelector('input[name="calificacion"]:checked');
+                                            updateStars(checked ? checked.value : 0);
+                                        });
+                                    });
+
+                                    inputs.forEach(input => {
+                                        input.addEventListener('change', function() {
+                                            updateStars(this.value);
+                                        });
+                                    });
+                                });
+                            </script>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Tu Comentario</label>
+                            <textarea name="comentario" rows="3" class="w-full rounded-xl border-slate-200 focus:border-primary focus:ring-primary py-3 px-4 resize-none" placeholder="¿Qué te pareció el producto?" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-all shadow-md">
+                            Publicar Reseña
+                        </button>
+                    </form>
+                @else
+                    <p class="text-slate-600 text-sm mb-4">Para compartir tu experiencia con este producto, necesitas iniciar sesión.</p>
+                    <a href="{{ route('login') }}" class="block text-center w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition-all shadow-md">
+                        Iniciar Sesión
+                    </a>
+                @endauth
+            </div>
+        </div>
+        
     </div>
 </div>
 

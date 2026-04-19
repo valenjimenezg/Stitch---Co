@@ -12,7 +12,8 @@ class SearchController extends Controller
         $q = trim($request->input('q', ''));
         $orden = $request->input('orden', 'relevancia');
 
-        $query = ProductoVariante::with('producto')
+        $query = ProductoVariante::with(['producto.variantes', 'producto.categoria'])
+            ->whereNull('parent_id')
             ->whereHas('producto', function ($queryBuilder) use ($q) {
                 if (!empty($q)) {
                     $queryBuilder->where('nombre', 'like', "%{$q}%")

@@ -161,9 +161,17 @@
             @endif
 
             @if(!in_array($venta->estado, ['cancelada']))
-                <div class="flex items-center gap-3">
+                <div class="flex flex-wrap items-center justify-end gap-3 w-full">
+                    <form action="{{ route('admin.orders.email_invoice', $venta->id) }}" method="POST" class="flex items-center m-0">
+                        @csrf
+                        <input type="email" name="email_prueba" value="{{ $venta->user->email ?? '' }}" placeholder="correo_prueba@gmail.com" required title="El correo que recibirá la factura, puedes reemplazarlo por el tuyo para pruebas" class="border border-slate-200 border-r-0 rounded-l-xl px-3 py-2.5 text-sm w-56 focus:ring-0 focus:border-slate-300">
+                        <button type="submit" class="bg-primary text-white px-4 py-2.5 text-sm font-bold border border-primary rounded-r-xl hover:bg-primary-dark transition-all flex items-center gap-1 shadow-sm shrink-0">
+                            <span class="material-symbols-outlined text-[16px]">send</span> Enviar Factura
+                        </button>
+                    </form>
+
                     <a href="{{ route('admin.orders.invoice', $venta->id) }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
-                        <span class="material-symbols-outlined text-[18px]">print</span> Imprimir / Descargar PDF
+                        <span class="material-symbols-outlined text-[18px]">print</span> PDF / Imprimir
                     </a>
                     
                     @php

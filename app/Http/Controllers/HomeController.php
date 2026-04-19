@@ -9,13 +9,13 @@ class HomeController extends Controller
     public function index()
     {
         // En el nuevo ERP, los 'Detalles' base son las variantes con parent_id nulo
-        $destacados = ProductoVariante::with('producto')
+        $destacados = ProductoVariante::with(['producto.variantes', 'producto.categoria'])
             ->whereNull('parent_id')
             ->latest()
             ->take(4)
             ->get();
 
-        $ofertas = ProductoVariante::with('producto')
+        $ofertas = ProductoVariante::with(['producto.variantes', 'producto.categoria'])
             ->whereNull('parent_id')
             ->where('en_oferta', true)
             ->inRandomOrder()

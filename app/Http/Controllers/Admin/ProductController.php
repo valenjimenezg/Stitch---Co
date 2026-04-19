@@ -101,6 +101,26 @@ class ProductController extends Controller
         return $pdf->stream($filename);
     }
 
+    public function alertsPdf()
+    {
+        $agotados = \App\Models\ProductoVariante::with(['producto', 'proveedor'])
+            ->whereNull('parent_id')
+            ->where('stock_base', '<=', 5)
+            ->orderBy('proveedor_id')
+            ->orderBy('stock_base', 'asc')
+            ->get()
+            ->groupBy('proveedor_id');
+
+        if ($agotados->isEmpty()) {
+            return back()->with('error', 'No hay alertas de inventario crítico.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.products.pdf-alerts', compact('agotados'));
+        
+        $filename = "Reporte_Quiebre_Stock_" . date('Y-m-d') . ".pdf";
+        return $pdf->stream($filename);
+    }
+
     public function create()
     {
         $productos = Producto::orderBy('nombre')->get();
@@ -114,6 +134,7 @@ class ProductController extends Controller
             'producto_id'          => 'nullable|exists:productos,id',
             'nombre'               => 'required_without:producto_id|nullable|string|max:150',
             'descripcion'          => 'nullable|string',
+            'instrucciones_uso'    => 'nullable|string',
             'categoria'            => 'required_without:producto_id|nullable|string|max:100',
             'grosor'               => 'nullable|string|max:50',
             'color'                => 'nullable|string|max:50',
@@ -130,6 +151,8 @@ class ProductController extends Controller
             'precio'               => 'required|numeric|min:0', // Precio USD
             'proveedor_id'         => 'nullable|exists:proveedores,id',
             'imagen'               => 'nullable|image|max:2048',
+            'galeria'              => 'nullable|array',
+            'galeria.*'            => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,mov|max:10240',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -143,6 +166,7 @@ class ProductController extends Controller
                     'categoria_id' => $categoria->id,
                     'nombre' => $request->nombre,
                     'descripcion' => $request->descripcion,
+                    'instrucciones_uso' => $request->instrucciones_uso,
                 ]);
             }
 
@@ -152,6 +176,18 @@ class ProductController extends Controller
                 $filename = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
                 $file->move(public_path('productos'), $filename);
                 $imagenPath = 'productos/' . $filename;
+            }
+
+            // Procesar la galería si fue enviada
+            if ($request->hasFile('galeria')) {
+                $galeriaPaths = is_array($producto->galeria) ? $producto->galeria : [];
+                foreach ($request->file('galeria') as $gFile) {
+                    $gFilename = uniqid('gal_') . '_' . time() . '.' . $gFile->getClientOriginalExtension();
+                    $gFile->move(public_path('productos/gallery'), $gFilename);
+                    $galeriaPaths[] = 'productos/gallery/' . $gFilename;
+                }
+                $producto->galeria = $galeriaPaths;
+                $producto->save();
             }
 
             // Create Master Variant (Stock holder)
@@ -222,6 +258,7 @@ class ProductController extends Controller
             'nombre'               => 'required_if:producto_id,' . $variante->producto_id . '|required_without:producto_id|nullable|string|max:150',
             'categoria'            => 'required_if:producto_id,' . $variante->producto_id . '|required_without:producto_id|nullable|string|max:100',
             'descripcion'          => 'nullable|string',
+            'instrucciones_uso'    => 'nullable|string',
             'grosor'               => 'nullable|string|max:50',
             'color'                => 'nullable|string|max:50',
             'marca'                => 'nullable|string|max:100',
@@ -237,6 +274,8 @@ class ProductController extends Controller
             'precio'               => 'required|numeric|min:0',
             'proveedor_id'         => 'nullable|exists:proveedores,id',
             'imagen'               => 'nullable|image|max:2048',
+            'galeria'              => 'nullable|array',
+            'galeria.*'            => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,mov|max:10240',
         ]);
 
         if ($request->filled('producto_id')) {
@@ -246,6 +285,7 @@ class ProductController extends Controller
                 $variante->producto->update([
                     'nombre' => $request->nombre,
                     'descripcion' => $request->descripcion,
+                    'instrucciones_uso' => $request->instrucciones_uso,
                     'categoria_id' => $cat->id
                 ]);
             } else {
@@ -258,9 +298,29 @@ class ProductController extends Controller
                 'categoria_id' => $cat->id,
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
+                'instrucciones_uso' => $request->instrucciones_uso,
             ]);
             $variante->producto_id = $producto->id;
             $variante->save();
+        }
+
+        // Procesar Galería (Update)
+        $prodToUpdate = $variante->producto;
+        
+        if ($request->filled('clear_galeria')) {
+            $prodToUpdate->galeria = [];
+            $prodToUpdate->save();
+        }
+
+        if ($request->hasFile('galeria')) {
+            $galPaths = is_array($prodToUpdate->galeria) ? $prodToUpdate->galeria : [];
+            foreach ($request->file('galeria') as $gFile) {
+                $gFilename = uniqid('gal_') . '_' . time() . '.' . $gFile->getClientOriginalExtension();
+                $gFile->move(public_path('productos/gallery'), $gFilename);
+                $galPaths[] = 'productos/gallery/' . $gFilename;
+            }
+            $prodToUpdate->galeria = $galPaths;
+            $prodToUpdate->save();
         }
 
         $data = $request->only('grosor', 'color', 'marca', 'talla', 'stock_base', 'precio', 'unidad_medida', 'proveedor_id');
