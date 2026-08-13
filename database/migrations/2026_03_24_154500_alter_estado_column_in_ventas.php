@@ -10,7 +10,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE ventas MODIFY COLUMN estado ENUM('pendiente', 'procesando', 'enviado', 'entregado', 'cancelado', 'pending', 'paid', 'cancelled') NOT NULL DEFAULT 'pending'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE ventas MODIFY COLUMN estado ENUM('pendiente', 'procesando', 'enviado', 'entregado', 'cancelado', 'pending', 'paid', 'cancelled') NOT NULL DEFAULT 'pending'");
+        }
     }
 
     /**
@@ -18,6 +20,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE ventas MODIFY COLUMN estado ENUM('pendiente', 'procesando', 'enviado', 'entregado', 'cancelado') NOT NULL DEFAULT 'pendiente'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE ventas MODIFY COLUMN estado ENUM('pendiente', 'procesando', 'enviado', 'entregado', 'cancelado') NOT NULL DEFAULT 'pendiente'");
+        }
     }
 };

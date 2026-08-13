@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE ventas MODIFY metodo_pago ENUM('efectivo', 'transferencia', 'pago_movil', 'transferencia_p2p', 'tarjeta', 'paypal') DEFAULT 'efectivo'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE ventas MODIFY metodo_pago ENUM('efectivo', 'transferencia', 'pago_movil', 'transferencia_p2p', 'tarjeta', 'paypal') DEFAULT 'efectivo'");
+        }
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE ventas MODIFY metodo_pago ENUM('efectivo', 'transferencia', 'tarjeta', 'paypal') DEFAULT 'efectivo'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE ventas MODIFY metodo_pago ENUM('efectivo', 'transferencia', 'tarjeta', 'paypal') DEFAULT 'efectivo'");
+        }
     }
 };

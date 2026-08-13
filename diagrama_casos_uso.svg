@@ -1,0 +1,133 @@
+<svg width="1300" height="1100" xmlns="http://www.w3.org/2000/svg" style="background-color:#ffffff; font-family:Arial, sans-serif;">
+  <!-- Grid background like StarUML -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="#ffffff" />
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f3f8" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Límite del Sistema (System Boundary Box) -->
+  <rect x="250" y="30" width="700" height="1040" fill="#ffffff" stroke="#005db3" stroke-width="2" fill-opacity="0.9" />
+  <text x="270" y="60" font-size="15" font-weight="bold" fill="#005db3" font-style="italic">Límite del Sistema: Stitch &amp; Co.</text>
+
+  <!-- ================= ACTORES ================= -->
+  <!-- Actor Cliente (Izquierda) -->
+  <g id="actor-cliente">
+    <!-- Stick Figure -->
+    <circle cx="120" cy="470" r="15" fill="#f4f6fc" stroke="#005db3" stroke-width="2" />
+    <line x1="120" y1="485" x2="120" y2="530" stroke="#005db3" stroke-width="2" />
+    <line x1="95" y1="500" x2="145" y2="500" stroke="#005db3" stroke-width="2" />
+    <line x1="120" y1="530" x2="105" y2="570" stroke="#005db3" stroke-width="2" />
+    <line x1="120" y1="530" x2="135" y2="570" stroke="#005db3" stroke-width="2" />
+    <!-- Label -->
+    <rect x="70" y="585" width="100" height="25" fill="#ffffff" rx="3" ry="3" stroke="#b0bec5" stroke-width="1" />
+    <text x="120" y="602" font-size="13" font-weight="bold" fill="#000000" text-anchor="middle">&lt;&lt;Actor&gt;&gt;</text>
+    <text x="120" y="625" font-size="14" font-weight="bold" fill="#005db3" text-anchor="middle">Cliente</text>
+  </g>
+
+  <!-- Actor Administrador (Derecha) -->
+  <g id="actor-admin">
+    <!-- Stick Figure -->
+    <circle cx="1180" cy="470" r="15" fill="#f4f6fc" stroke="#005db3" stroke-width="2" />
+    <line x1="1180" y1="485" x2="1180" y2="530" stroke="#005db3" stroke-width="2" />
+    <line x1="1155" y1="500" x2="1205" y2="500" stroke="#005db3" stroke-width="2" />
+    <line x1="1180" y1="530" x2="1165" y2="570" stroke="#005db3" stroke-width="2" />
+    <line x1="1180" y1="530" x2="1195" y2="570" stroke="#005db3" stroke-width="2" />
+    <!-- Label -->
+    <rect x="1120" y="585" width="120" height="25" fill="#ffffff" rx="3" ry="3" stroke="#b0bec5" stroke-width="1" />
+    <text x="1180" y="602" font-size="13" font-weight="bold" fill="#000000" text-anchor="middle">&lt;&lt;Actor&gt;&gt;</text>
+    <text x="1180" y="625" font-size="14" font-weight="bold" fill="#005db3" text-anchor="middle">Administrador</text>
+  </g>
+
+  <!-- ================= LINEAS DE ASOCIACIÓN ================= -->
+  <!-- Associations for Cliente (Izquierda) to Column 1 Use Cases -->
+  <line x1="135" y1="500" x2="330" y2="100" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="220" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="340" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="460" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="580" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="700" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="820" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="330" y2="940" stroke="#005db3" stroke-width="1.2" />
+  
+  <!-- Associations for Cliente (Izquierda) to Column 2 Shared Use Cases -->
+  <line x1="135" y1="500" x2="680" y2="120" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="680" y2="250" stroke="#005db3" stroke-width="1.2" />
+  <line x1="135" y1="500" x2="680" y2="380" stroke="#005db3" stroke-width="1.2" />
+
+  <!-- Associations for Administrador (Derecha) to Column 2 Use Cases -->
+  <line x1="1165" y1="500" x2="920" y2="120" stroke="#005db3" stroke-width="1.2" />
+  <line x1="1165" y1="500" x2="920" y2="250" stroke="#005db3" stroke-width="1.2" />
+  <line x1="1165" y1="500" x2="920" y2="380" stroke="#005db3" stroke-width="1.2" />
+  <line x1="1165" y1="500" x2="920" y2="510" stroke="#005db3" stroke-width="1.2" />
+  <line x1="1165" y1="500" x2="920" y2="640" stroke="#005db3" stroke-width="1.2" />
+  <line x1="1165" y1="500" x2="920" y2="770" stroke="#005db3" stroke-width="1.2" />
+  <line x1="1165" y1="500" x2="920" y2="900" stroke="#005db3" stroke-width="1.2" />
+
+  <!-- ================= CASOS DE USO ================= -->
+  <!-- ====== COLUMNA 1: CLIENTE (cx=450, rx=120, ry=25) ====== -->
+  <g id="uc-01">
+    <ellipse cx="450" cy="100" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="104" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-01: Registro de Usuario</text>
+  </g>
+  <g id="uc-04">
+    <ellipse cx="450" cy="220" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="224" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-04: Explorar Catálogo</text>
+  </g>
+  <g id="uc-05">
+    <ellipse cx="450" cy="340" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="344" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-05: Buscar Productos</text>
+  </g>
+  <g id="uc-07">
+    <ellipse cx="450" cy="460" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="464" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-07: Gestionar Carrito</text>
+  </g>
+  <g id="uc-08">
+    <ellipse cx="450" cy="580" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="584" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-08: Iniciar Checkout</text>
+  </g>
+  <g id="uc-09">
+    <ellipse cx="450" cy="700" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="704" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-09: Registrar Pago Móvil</text>
+  </g>
+  <g id="uc-14">
+    <ellipse cx="450" cy="820" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="824" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-14: Consultar Chatbot</text>
+  </g>
+  <g id="uc-15">
+    <ellipse cx="450" cy="940" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="450" y="944" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-15: Alertas de Stock</text>
+  </g>
+
+  <!-- ====== COLUMNA 2: ADMINISTRADOR / COMPARTIDOS (cx=800, rx=120, ry=25) ====== -->
+  <g id="uc-02">
+    <ellipse cx="800" cy="120" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="124" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-02: Iniciar Sesión</text>
+  </g>
+  <g id="uc-03">
+    <ellipse cx="800" cy="250" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="254" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-03: Recuperar Contraseña (OTP)</text>
+  </g>
+  <g id="uc-10">
+    <ellipse cx="800" cy="380" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="384" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-10: Generar Factura PDF</text>
+  </g>
+  <g id="uc-06">
+    <ellipse cx="800" cy="510" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="514" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-06: Moderar Reseñas</text>
+  </g>
+  <g id="uc-11">
+    <ellipse cx="800" cy="640" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="644" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-11: CRUD Prod. y Variantes</text>
+  </g>
+  <g id="uc-12">
+    <ellipse cx="800" cy="770" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="774" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-12: Logs de Inventario</text>
+  </g>
+  <g id="uc-13">
+    <ellipse cx="800" cy="900" rx="120" ry="25" fill="#f4f6fc" stroke="#005db3" stroke-width="1.5" />
+    <text x="800" y="904" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">UC-13: Configurar Tasa BCV</text>
+  </g>
+</svg>

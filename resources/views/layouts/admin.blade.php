@@ -78,6 +78,11 @@
                             <span class="material-symbols-outlined">loyalty</span>
                             Gestor de Ofertas
                         </a>
+                        <a href="{{ route('admin.reportes.index') }}"
+                           class="{{ request()->routeIs('admin.reportes.index') ? 'bg-primary/15 text-primary' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <span class="material-symbols-outlined">bar_chart</span>
+                            Reportes Gerenciales
+                        </a>
                     </div>
                 </div>
 

@@ -80,7 +80,12 @@ return new class extends Migration
             Schema::table('users', function (Blueprint $table) {
                 // Drop old cols if they exist
                 if (Schema::hasColumn('users', 'document_type')) $table->dropColumn('document_type');
-                if (Schema::hasColumn('users', 'document_number')) $table->dropColumn('document_number');
+                if (Schema::hasColumn('users', 'document_number')) {
+                    try {
+                        $table->dropUnique('users_document_number_unique');
+                    } catch (\Exception $e) {}
+                    $table->dropColumn('document_number');
+                }
                 if (Schema::hasColumn('users', 'cedula_identidad')) $table->dropColumn('cedula_identidad');
             });
             
@@ -129,6 +134,9 @@ return new class extends Migration
                 }
             }
             Schema::table('productos', function (Blueprint $table) {
+                try {
+                    $table->dropIndex('productos_categoria_index');
+                } catch (\Exception $e) {}
                 $table->dropColumn('categoria');
             });
         }

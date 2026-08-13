@@ -142,7 +142,9 @@
         const panel  = document.getElementById('pwd-strength-panel');
         if (panel) {
             panel.style.display = typed ? 'block' : 'none';
-            const score  = [lengthValid, caseValid, numValid, specValid, repValid].filter(Boolean).length;
+            // Validacion fuerte contra caracteres invalidos o repetidos
+            const isValidFormat = /^[a-zA-Z0-9*.\-_@#]*$/.test(pwd) && repValid;
+            const score  = isValidFormat ? [lengthValid, caseValid, numValid, specValid, repValid].filter(Boolean).length : 0;
             const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
             const labels = ['Muy débil','Débil','Regular','Fuerte'];
             ['bar1','bar2','bar3','bar4'].forEach((bid, i) => {
@@ -166,6 +168,28 @@
 
     document.getElementById('pass1')?.addEventListener('input', checkPasswordMatch);
     document.getElementById('pass2')?.addEventListener('input', checkPasswordMatch);
+
+    // Bloquear físicamente caracteres prohibidos y espacios (Mercantil / Google style)
+    ['pass1', 'pass2'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            el.addEventListener('keydown', function(e) {
+                if(e.key === ' ' || e.code === 'Space') e.preventDefault();
+                if (e.key.length === 1 && !/^[a-zA-Z0-9*.\-_@#]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+            el.addEventListener('paste', function(e) {
+                let pasteData = (e.clipboardData || window.clipboardData).getData('text');
+                const cleanData = pasteData.replace(/[^a-zA-Z0-9*.\-_@#]/g, '');
+                if (pasteData !== cleanData) {
+                    e.preventDefault();
+                    document.execCommand('insertText', false, cleanData);
+                }
+            });
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', checkPasswordMatch);
 </script>
 @endsection

@@ -18,6 +18,10 @@ class Proveedor extends Model
         'telefono',
         'email',
         'direccion',
+        'contacto_alternativo',
+        'cuenta_bancaria',
+        'redes_sociales',
+        'notas',
     ];
 
     public function productoVariantes()

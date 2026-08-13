@@ -20,7 +20,7 @@ class RegisterRequest extends FormRequest
             'email'    => [
                 'required', 
                 'email:rfc,filter', 
-                'regex:/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/', // Obliga formato valido x@x.com
+                'regex:/^[a-zA-Z0-9._%+\-]+@(gmail\.com|hotmail\.com|yahoo\.com|yahoo\.es|outlook\.com|icloud\.com|live\.com|msn\.com|mac\.com|me\.com|aol\.com|protonmail\.com)$/i', // Obliga formato valido con proveedores reales
                 'regex:/^\S*$/', // Sin espacios en lo absoluto
                 'unique:users,email'
             ],
@@ -28,12 +28,18 @@ class RegisterRequest extends FormRequest
             'documento_identidad' => [
                 'required', 
                 'numeric', 
-                'digits_between:6,9', 
-                'not_regex:/^(\d)\1+$/', // No permitir secuencias de un mismo número repetido (ej. 0000, 9999)
+                'not_regex:/^(\d)\1+$/', // No permitir secuencias de un mismo número repetido (ej. 111111)
+                'not_regex:/(123456|23456...|654321|987654)/', // Filtro basico de falsa secuencia
                 'unique:users,documento_identidad'
             ],
             'telefono_prefijo' => ['nullable', 'string', 'in:0412,0414,0424,0416,0426,0212'],
-            'telefono_numero'  => ['nullable', 'numeric', 'digits:7', 'not_regex:/^(\d)\1+$/'],
+            'telefono_numero'  => [
+                'nullable', 
+                'numeric', 
+                'digits:7', 
+                'not_regex:/^(\d)\1+$/',
+                'not_regex:/(1234567|23456...|7654321|9876543)/'
+            ],
             'password' => [
                 'required',
                 'confirmed',
@@ -43,6 +49,23 @@ class RegisterRequest extends FormRequest
         ];
 
         return $rules;
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $tipo = $this->tipo_documento;
+            $doc = $this->documento_identidad;
+            
+            if ($doc) {
+                if (in_array($tipo, ['V', 'E']) && (strlen($doc) < 6 || strlen($doc) > 8)) {
+                    $validator->errors()->add('documento_identidad', 'La cédula venezolana debe tener entre 6 y 8 números.');
+                }
+                if (in_array($tipo, ['J', 'G']) && strlen($doc) != 9) {
+                    $validator->errors()->add('documento_identidad', 'El RIF (J o G) debe tener exactamente 9 números numéricos.');
+                }
+            }
+        });
     }
 
     public function messages(): array
@@ -58,7 +81,7 @@ class RegisterRequest extends FormRequest
             'documento_identidad.not_regex' => 'El documento de identidad es inválido (secuencia numérica repetida).',
             'documento_identidad.digits_between' => 'La cédula debe tener entre 6 y 8 números enteros.',
             'email.email' => 'Debes usar un formato de correo electrónico estructuralmente válido.',
-            'email.regex' => 'El correo es inválido. Recuerda que no puede contener espacios, ni formatos incorrectos (ej. @.@).',
+            'email.regex' => 'El correo es inválido. Recuerda que no puede contener espacios y debe ser un proveedor válido (ej. @gmail.com, @hotmail.com, @yahoo.com).',
         ];
     }
 }

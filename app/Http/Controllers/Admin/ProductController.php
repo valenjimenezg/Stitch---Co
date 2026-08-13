@@ -149,13 +149,22 @@ class ProductController extends Controller
             'descuento_porcentaje' => 'nullable|numeric|min:0|max:100',
             'stock_base'           => 'required|numeric|min:0',
             'precio'               => 'required|numeric|min:0', // Precio USD
-            'proveedor_id'         => 'nullable|exists:proveedores,id',
+            'proveedor_id'         => 'nullable',
+            'nuevo_proveedor'      => 'nullable|string|max:150',
             'imagen'               => 'nullable|image|max:2048',
             'galeria'              => 'nullable|array',
             'galeria.*'            => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,mov|max:10240',
         ]);
 
         DB::transaction(function () use ($request) {
+            $proveedorId = $request->proveedor_id;
+            if ($proveedorId === 'nuevo' && $request->filled('nuevo_proveedor')) {
+                $nuevoProv = Proveedor::firstOrCreate(['nombre' => $request->nuevo_proveedor]);
+                $proveedorId = $nuevoProv->id;
+            } elseif ($proveedorId === '' || $proveedorId === null) {
+                $proveedorId = null;
+            }
+
             if ($request->filled('producto_id')) {
                 $producto = Producto::findOrFail($request->producto_id);
             } else {
@@ -202,7 +211,7 @@ class ProductController extends Controller
                 'marca'                => $request->marca,
                 'precio'               => $request->precio,
                 'stock_base'           => $request->stock_base,
-                'proveedor_id'         => $request->proveedor_id,
+                'proveedor_id'         => $proveedorId,
                 'en_oferta'            => $request->boolean('en_oferta'),
                 'descuento_porcentaje' => $request->descuento_porcentaje ?? 0,
                 'imagen'               => $imagenPath,
@@ -272,7 +281,8 @@ class ProductController extends Controller
             'descuento_porcentaje' => 'nullable|numeric|min:0|max:100',
             'stock_base'           => 'required|numeric|min:0',
             'precio'               => 'required|numeric|min:0',
-            'proveedor_id'         => 'nullable|exists:proveedores,id',
+            'proveedor_id'         => 'nullable',
+            'nuevo_proveedor'      => 'nullable|string|max:150',
             'imagen'               => 'nullable|image|max:2048',
             'galeria'              => 'nullable|array',
             'galeria.*'            => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,mov|max:10240',
@@ -323,7 +333,16 @@ class ProductController extends Controller
             $prodToUpdate->save();
         }
 
-        $data = $request->only('grosor', 'color', 'marca', 'talla', 'stock_base', 'precio', 'unidad_medida', 'proveedor_id');
+        $proveedorId = $request->proveedor_id;
+        if ($proveedorId === 'nuevo' && $request->filled('nuevo_proveedor')) {
+            $nuevoProv = Proveedor::firstOrCreate(['nombre' => $request->nuevo_proveedor]);
+            $proveedorId = $nuevoProv->id;
+        } elseif ($proveedorId === '' || $proveedorId === null) {
+            $proveedorId = null;
+        }
+
+        $data = $request->only('grosor', 'color', 'marca', 'talla', 'stock_base', 'precio', 'unidad_medida');
+        $data['proveedor_id']         = $proveedorId;
         $data['en_oferta']            = $request->boolean('en_oferta');
         $data['descuento_porcentaje'] = $request->descuento_porcentaje ?? 0;
 

@@ -190,7 +190,7 @@
                 <li id="req-case"    class="pwd-req"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Mayúscula y minúscula</span></li>
                 <li id="req-num"     class="pwd-req"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Al menos un número</span></li>
                 <li id="req-spec"    class="pwd-req"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Un símbolo <strong>*.-_@#</strong></span></li>
-                <li id="req-no-rep"  class="pwd-req"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Sin secuencias (abc, 123)</span></li>
+                <li id="req-no-rep"  class="pwd-req"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Sin secuencias o repetidas (abc, 111)</span></li>
                 <li id="req-identity" class="pwd-req"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Sin nombre ni cédula</span></li>
                 <li id="req-space"   class="pwd-req" style="grid-column:span 2;"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Sin espacios en blanco</span></li>
                 <li id="req-match"   class="pwd-req" style="grid-column:span 2; border-top:1px solid #f0ebff; padding-top:7px; margin-top:2px;"><span class="req-icon material-symbols-outlined">radio_button_unchecked</span><span>Ambas contraseñas <strong>coinciden</strong></span></li>
@@ -274,7 +274,7 @@
             'zyx','yxw','xwv','wvu','vut','uts','tsr','srq','rqp','qpo','pon','onm','nml','mlk','lkj','kji','jih','ihg','hgf','gfe','fed','edc','dcb','cba'
         ];
         const hasSequences = sequences.some(seq => lowerPwd.includes(seq));
-        const repValid   = pwd.length > 0 && !hasSequences;
+        const repValid   = pwd.length > 0 && !hasSequences && !/(.)\1\1/.test(lowerPwd);
         const spaceValid = pwd.length > 0 && !/\s/.test(pwd);
 
         const nom = document.querySelector('input[name="nombre"]')?.value.trim().toLowerCase() || '';
@@ -323,7 +323,11 @@
         const panel = document.getElementById('pwd-strength-panel');
         if (panel) {
             panel.style.display = typed ? 'block' : 'none';
-            const score = [lengthValid, caseValid, numValid, specValid, repValid].filter(Boolean).length;
+            
+            // Si contiene algo totalmente prohibido, la fortaleza no sube de 0
+            const isValidFormat = /^[a-zA-Z0-9*.\-_@#]*$/.test(pwd) && spaceValid && idValid && repValid;
+            const score = isValidFormat ? [lengthValid, caseValid, numValid, specValid, repValid].filter(Boolean).length : 0;
+            
             const bars = ['bar1','bar2','bar3','bar4'];
             const lbl  = document.getElementById('pwd-strength-label');
             const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
@@ -376,9 +380,19 @@
             if (!number) { feedbackEl.classList.remove('!flex'); validationErrorEl.classList.add('hidden'); checkPasswordMatch(); return; }
 
             let localError = '';
-            if (/^(\d)\1+$/.test(number)) localError = 'Secuencia numérica repetida inválida.';
-            else if ((type === 'V' || type === 'E') && (number.length < 6 || number.length > 9)) localError = 'El documento debe tener entre 6 y 9 números.';
-            else if ((type === 'J' || type === 'G') && (number.length < 6 || number.length > 9)) localError = 'El RIF debe tener entre 6 y 9 números.';
+            
+            // Secuencias inváĺidas o repetitivas exageradas
+            const secuenciasInvalidas = ['123456','234567','345678','456789','1234567','12345678','123456789','987654','876543','987654321'];
+            
+            if (/^(\d)\1+$/.test(number)) {
+                localError = 'Secuencia numérica repetida inválida (ej. 111111).';
+            } else if (secuenciasInvalidas.some(seq => number.includes(seq))) {
+                localError = 'El documento contiene una secuencia falsa (ej. 123456).';
+            } else if ((type === 'V' || type === 'E') && (number.length < 6 || number.length > 8)) {
+                localError = 'La cédula venezolana debe tener entre 6 y 8 números.';
+            } else if ((type === 'J' || type === 'G') && number.length !== 9) {
+                localError = 'El RIF (J/G) debe tener exactamente 9 números numéricos.';
+            }
 
             if (localError) {
                 validationErrorEl.querySelector('.error-text').textContent = localError;
@@ -408,8 +422,16 @@
         this.value = this.value.replace(/[^0-9]/g, '');
         const val = this.value;
         let localError = '';
-        if (val.length > 0 && val.length < 7) localError = 'El número debe tener 7 dígitos completos.';
-        else if (/^(\d)\1+$/.test(val) && val.length > 0) localError = 'Secuencia numérica repetida inválida.';
+        
+        const secuenciasTel = ['1234567','2345678','3456789','7654321','9876543'];
+        
+        if (val.length > 0 && val.length < 7) {
+            localError = 'El número debe tener 7 dígitos completos.';
+        } else if (/^(\d)\1+$/.test(val) && val.length > 0) {
+            localError = 'Secuencia numérica repetida inválida.';
+        } else if (secuenciasTel.some(seq => val.includes(seq))) {
+            localError = 'El teléfono parece ser falso (ej. 1234567).';
+        }
         if (localError && val.length > 0) {
             phoneFeedbackEl.querySelector('.error-text').textContent = localError;
             phoneFeedbackEl.classList.remove('hidden'); phoneFeedbackEl.classList.add('flex');
@@ -429,12 +451,44 @@
             input.parentNode.parentNode.appendChild(errorEl);
         } else { input.parentNode.appendChild(errorEl); }
 
+        // Bloquear físicamente caracteres prohibidos y espacios (Mercantil / Google style)
+        input.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault();
+            }
+            if (input.type === 'password' && e.key.length === 1 && !/^[a-zA-Z0-9*.\-_@#]$/.test(e.key)) {
+                e.preventDefault(); // Bloquea símbolos inválidos, tildes, etc.
+            }
+        });
+
+        // Prevenir también pegar texto con caracteres inválidos
+        input.addEventListener('paste', function(e) {
+            let pasteData = (e.clipboardData || window.clipboardData).getData('text');
+            
+            if (input.type === 'password') {
+                const cleanData = pasteData.replace(/[^a-zA-Z0-9*.\-_@#]/g, '');
+                if (pasteData !== cleanData) {
+                    e.preventDefault();
+                    document.execCommand('insertText', false, cleanData);
+                }
+            } else if (/\s/.test(pasteData)) {
+                e.preventDefault();
+                const noSpaceStr = pasteData.replace(/\s/g, '');
+                document.execCommand('insertText', false, noSpaceStr);
+            }
+        });
+
         const check = () => {
             const val = input.value;
             let msg = '';
             if (val.length === 0) { errorEl.classList.add('hidden'); errorEl.classList.remove('flex'); if(input.id === 'reg-password' || input.id === 'reg-password-confirm') checkPasswordMatch(); return; }
-            if (/\s/.test(val)) msg = 'No se permiten espacios en este campo.';
-            else if (input.type === 'email' && !/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(val)) msg = 'Formato de correo inválido (ej. usuario@dominio.com)';
+            
+            if (/\s/.test(val)) {
+                msg = 'No se permiten espacios en este campo.';
+            } else if (input.type === 'email' && !/^[a-zA-Z0-9._%+\-]+@(gmail\.com|hotmail\.com|yahoo\.com|yahoo\.es|outlook\.com|icloud\.com|live\.com|msn\.com|mac\.com|me\.com|aol\.com|protonmail\.com)$/i.test(val)) {
+                msg = 'Usa un dominio de correo real (ej. @gmail.com, @hotmail.com, @yahoo.com)';
+            }
+            
             if (msg) {
                 errorEl.querySelector('.error-text').textContent = msg;
                 errorEl.classList.remove('hidden'); errorEl.classList.add('flex');

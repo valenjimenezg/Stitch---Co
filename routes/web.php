@@ -30,6 +30,9 @@ Route::post('/lista-deseos/toggle', [\App\Http\Controllers\WishlistController::c
 // --- Autenticación ---
 Route::middleware('guest')->group(function () {
     Route::get('/acceso', [LoginController::class, 'showForm'])->name('login');
+    Route::get('/login', function() {
+        return redirect()->route('login');
+    });
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
     Route::post('/registro', [RegisterController::class, 'store'])->name('register')->middleware('throttle:3,15');
     Route::post('/api/auth/check-document', [RegisterController::class, 'checkDocument'])->name('api.check-document')->middleware('throttle:5,1');
@@ -86,6 +89,10 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Reportes
+    Route::get('/reportes', [\App\Http\Controllers\Admin\ReporteController::class, 'index'])->name('admin.reportes.index');
+    Route::get('/reportes/pdf', [\App\Http\Controllers\Admin\ReporteController::class, 'downloadPdf'])->name('admin.reportes.pdf');
+
     Route::get('/productos', [\App\Http\Controllers\Admin\ProductController::class, 'index'])->name('admin.products.index');
     Route::get('/productos/exportar', [\App\Http\Controllers\Admin\ProductController::class, 'export'])->name('admin.products.export');
     Route::get('/productos/reporte-reposicion', [\App\Http\Controllers\Admin\ProductController::class, 'restockReport'])->name('admin.products.restock');
@@ -133,6 +140,8 @@ Route::prefix('admin')->middleware(['auth', 'check.role'])->group(function () {
     Route::get('/envios', [\App\Http\Controllers\Admin\OrderController::class, 'shipping'])->name('admin.shipping');
     
     Route::get('/proveedores', [\App\Http\Controllers\Admin\ProveedorController::class, 'index'])->name('admin.proveedores.index');
+    Route::post('/proveedores', [\App\Http\Controllers\Admin\ProveedorController::class, 'store'])->name('admin.proveedores.store');
+    Route::delete('/proveedores/{id}', [\App\Http\Controllers\Admin\ProveedorController::class, 'destroy'])->name('admin.proveedores.destroy');
 
     Route::get('/clientes', [\App\Http\Controllers\Admin\DashboardController::class, 'clients'])->name('admin.clients');
     Route::get('/clientes/exportar', [\App\Http\Controllers\Admin\DashboardController::class, 'exportClients'])->name('admin.clients.export');

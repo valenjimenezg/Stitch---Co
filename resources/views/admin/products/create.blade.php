@@ -131,14 +131,17 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Proveedor</label>
-                        <select name="proveedor_id" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
+                        <select id="proveedor-select" name="proveedor_id" class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 mb-2">
                             <option value="">— Sin proveedor asignado —</option>
+                            <option value="nuevo">— ➕ Crear nuevo proveedor —</option>
                             @foreach($proveedores as $prov)
                                 <option value="{{ $prov->id }}" {{ old('proveedor_id') == $prov->id ? 'selected' : '' }}>
                                     {{ $prov->nombre }}
                                 </option>
                             @endforeach
                         </select>
+                        <input name="nuevo_proveedor" id="proveedor-input" type="text" value="{{ old('nuevo_proveedor') }}" placeholder="Escribe el nombre del nuevo proveedor..."
+                               class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-primary py-2.5 px-4 hidden" />
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Stock Base*</label>
@@ -351,13 +354,32 @@
         catInput.dispatchEvent(new Event('input'));
     });
     
-    // Set initial state
+    // Set initial state for Category
     if(catSelect.value) {
         catInput.classList.add('hidden');
         catInput.style.display = 'none';
         catInput.removeAttribute('required');
     }
 
+    // Provider dynamic logic
+    const provSelect = document.getElementById('proveedor-select');
+    const provInput  = document.getElementById('proveedor-input');
+    if (provSelect && provInput) {
+        provSelect.addEventListener('change', function() {
+            if (this.value === 'nuevo') {
+                provInput.classList.remove('hidden');
+                provInput.setAttribute('required', 'required');
+            } else {
+                provInput.classList.add('hidden');
+                provInput.removeAttribute('required');
+                provInput.value = '';
+            }
+        });
+        if(provSelect.value === 'nuevo') {
+            provInput.classList.remove('hidden');
+            provInput.setAttribute('required', 'required');
+        }
+    }
 
     // Initialize on load
     updateCategoryUnits();

@@ -61,6 +61,12 @@ class StrictPasswordRule implements ValidationRule, DataAwareRule
             return;
         }
 
+        // 3.5. Obligatorio al menos un símbolo permitido especial
+        if (!preg_match('/[*.\-_@#]/', $value)) {
+            $fail('Falta un símbolo especial (Solo se permite: * - _ . @ #).');
+            return;
+        }
+
         // 4. Caracteres Especiales (Solo letras permitidas, num y los exactos simbolos)
         // Esto prohíbe explícitamente ñ, Ñ, acentos, ; : , < > \ " ' & % $
         if (!preg_match('/^[a-zA-Z0-9*.\-_@#]+$/', $value)) {
@@ -92,6 +98,12 @@ class StrictPasswordRule implements ValidationRule, DataAwareRule
         }
         if ($añoNacimiento && str_contains($passLower, $añoNacimiento)) {
             $fail('Por seguridad, la contraseña no puede contener tu año de nacimiento.');
+            return;
+        }
+
+        // 5.5. Prohibición de caracteres idénticos consecutivos (ej. aaa, 111)
+        if (preg_match('/(.)\1\1/u', $passLower)) {
+            $fail('Por seguridad, no se permiten 3 caracteres idénticos consecutivos (ej. aaa, 111).');
             return;
         }
 

@@ -203,10 +203,22 @@
                 Color disponible: <span class="text-slate-500 font-normal">{{ $variante->color ?? '—' }}</span>
             </span>
             <div class="flex gap-4 flex-wrap">
-                @foreach($variante->producto->variantes as $v)
+                @php
+                    // Eliminar colores duplicados, pero mantener aquellas variantes que no usen color intactas
+                    $variantesAMostrar = $variante->producto->variantes->unique(function($v) {
+                        return !empty($v->color) ? strtolower(trim($v->color)) : $v->id;
+                    });
+                @endphp
+                @foreach($variantesAMostrar as $v)
                     @php 
                         $isOutOfStock = $v->stock_disponible <= 0; 
-                        $isActive = $v->id === $variante->id;
+                        $isActive = false;
+                        // Es activo si el color actual de la iteración coincide con el color de la variante visualizada
+                        if(!empty($v->color) && !empty($variante->color)) {
+                            $isActive = strtolower(trim($v->color)) === strtolower(trim($variante->color));
+                        } else {
+                            $isActive = $v->id === $variante->id;
+                        }
                     @endphp
                     
                     @if($v->color)
